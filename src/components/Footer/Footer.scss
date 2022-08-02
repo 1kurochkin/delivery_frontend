@@ -1,0 +1,14 @@
+@import "src/variables";
+
+.footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-top: 3px solid black;
+    background-color: $main-color;
+    padding: 15px;
+    font-family: NanumGhoticBold;
+    h2 {
+        text-align: center;
+    }
+}
