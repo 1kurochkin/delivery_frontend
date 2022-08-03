@@ -23,7 +23,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && rm -R ../delivery_backend/client && mv build ../delivery_backend/client",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint --ignore-path .gitignore ."
