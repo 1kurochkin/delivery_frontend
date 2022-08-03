@@ -1,11 +1,7 @@
 import React from 'react';
 import {Link} from "react-router-dom";
 import {ROUTES} from "../../configs/constants";
-import {Icon} from "../Icon";
-import logo from "../../images/logo.jpg";
 import './Header.scss';
-import { Content } from 'antd/lib/layout/layout';
-import { EnvironmentFilled } from '@ant-design/icons';
 
 
 export function Header() {
