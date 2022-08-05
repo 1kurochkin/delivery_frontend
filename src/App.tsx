@@ -1,14 +1,13 @@
 import React from 'react';
 import './App.scss';
-import {Layout} from 'antd';
 import 'antd/dist/antd.css';
-import {Header} from "./components/Header/Header";
+import {Header} from "./components/header/header.component";
 import {Route, Routes} from 'react-router-dom';
 import {ROUTES} from './configs/constants';
-import {MainPage} from './pages/MainPage/MainPage';
-import {AuthPage} from './pages/AuthPage';
-import { Content } from 'antd/lib/layout/layout';
-import { Footer } from './components/Footer/Footer';
+import {MainPage} from './pages/main/main.page';
+import { Footer} from './components/footer/footer.component';
+import {SignupPage} from "./pages/signup/signup.page";
+import {LoginPage} from "./pages/login/login.page";
 
 
 
@@ -19,7 +18,8 @@ function App() {
             {/*<div className={'container'}>*/}
                 <Routes>
                     <Route path={ROUTES.MAIN_PAGE} element={<MainPage/>}/>
-                    <Route path={ROUTES.AUTH_PAGE} element={<AuthPage/>}/>
+                    <Route path={ROUTES.LOGIN_PAGE} element={<LoginPage/>}/>
+                    <Route path={ROUTES.SIGNUP_PAGE} element={<SignupPage/>}/>
                 </Routes>
             {/*</div>*/}
             <Footer/>
