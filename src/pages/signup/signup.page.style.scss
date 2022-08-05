@@ -1,0 +1,15 @@
+@import 'src/variables';
+.signup-page {
+  //background-color: $main-color;
+  flex-direction: column;
+  display: flex;
+  justify-content: space-evenly;
+  h1 {
+    text-align: center;
+  }
+  &__form {
+    &__item {
+      margin-bottom: 50px;
+    }
+  }
+}
