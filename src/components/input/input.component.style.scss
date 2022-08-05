@@ -1,0 +1,28 @@
+@import "src/variables";
+
+.ant-form-item-control-input-content {
+    .ant-input-affix-wrapper {
+        border: 3px solid;
+        padding: 8px 8px 8px 20px;
+        border-radius: $border-radius;
+    }
+    input {
+        border: $border;
+        outline: none!important;
+        color: black;
+        font-family: NanumGhoticBold;
+        padding: 10px 10px 10px 20px;
+        border-radius: $border-radius;
+        background-color: unset!important;
+    }
+    input:focus {
+        border-color: $main-color!important;
+        box-shadow: 0px 0px 10px 0px $main-color!important;
+        -webkit-box-shadow: 0px 0px 10px 0px $main-color!important;
+        -moz-box-shadow: 0px 0px 10px 0px $main-color!important;
+    }
+    .ant-input:hover {
+        border-color: $main-color!important;
+        border-right-width: unset!important;
+    }
+}
