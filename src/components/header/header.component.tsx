@@ -1,7 +1,8 @@
+import { Button } from 'antd';
 import React from 'react';
 import {Link} from "react-router-dom";
 import {ROUTES} from "../../configs/constants";
-import './Header.scss';
+import './header.component.scss';
 
 
 export function Header() {
@@ -18,9 +19,15 @@ export function Header() {
                 </div>
 
                 <div className={'header__nav'}>
-                    <Link className={'header__nav-link button'} to={ROUTES.BECOME_COURIER}>Become a courier</Link>
-                    <Link className={'header__nav-link button'} to={ROUTES.CREATE_ORDER}>Make order</Link>
-                    <Link className={'header__nav-link button'} to={ROUTES.AUTH_PAGE}>Login and Sign up</Link>
+                    <Button className={'button-pink'}>
+                        <Link to={ROUTES.BECOME_COURIER}>Become a courier</Link>
+                    </Button>
+                    <Button className={'header__nav-link button-pink'}>
+                        <Link  to={ROUTES.CREATE_ORDER}>Make order</Link>
+                    </Button>
+                    <Button className={'header__nav-link button-pink'}>
+                        <Link to={ROUTES.LOGIN_PAGE}>Login and Sign up</Link>
+                    </Button>
                 </div>
             </div>
         </div>
