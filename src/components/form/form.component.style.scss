@@ -1,0 +1,16 @@
+@import "src/variables";
+
+.ant-form-item {
+  .ant-form-item-label{
+    label {
+      font-size: $font-sz-sm!important;
+    }
+    * {
+      font-family: NanumGhoticBold;
+    }
+  }
+  .ant-form-item-explain {
+    color: red;
+    font-family: NanumGhoticBold;
+  }
+}
