@@ -1,5 +1,5 @@
 import React from 'react';
-import './MainPage.scss';
+import './main.page.style.scss';
 import promoBoxes from '../../images/promo-boxes.png'
 import {Button, Card} from "antd";
 import boxes from '../../images/boxes.png';
