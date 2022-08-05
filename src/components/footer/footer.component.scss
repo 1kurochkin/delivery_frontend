@@ -1,0 +1,17 @@
+@import "src/variables";
+
+.footer {
+    height: $header-height;
+    width: 100%;
+    display: flex;
+    //flex-direction: column;
+    align-items: center;
+    //background-color: $main-color;
+    //padding: 15px;
+    font-family: NanumGhoticBold;
+    -webkit-box-shadow: 0px -5px 12px 1px rgba(0,0,0,0.63);
+    box-shadow: 0px -5px 12px 1px rgba(0,0,0,0.63);
+    h2 {
+        text-align: center;
+    }
+}
