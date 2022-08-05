@@ -1,0 +1,15 @@
+@import "src/variables";
+
+.ant-alert {
+    border: 3px solid black!important;
+    border-radius: $border-radius!important;
+    * {
+        font-family: NanumGhoticExtraBold;
+    }
+}
+
+.ant-alert-error {
+    * {
+        color: red!important;
+    }
+}
