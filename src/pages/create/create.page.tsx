@@ -6,9 +6,9 @@ import {useCountOrderPriceAndDurationMutation, useCreateOrderMutation} from "../
 import {DeliveryTypeEnum, OrderPointTypeEnum, PayTypeEnum} from "../../store/reducers/backend/backend.api.types";
 import {FormCard} from "../../components/form/form.card.component";
 import {useNavigate} from "react-router-dom";
-import {ROUTES} from "../../configs/constants";
+import {ROUTES} from "../../configs/app.constants";
 
-export function OrderPage() {
+export function CreatePage() {
     const [orderForm] = useForm();
     const [pickupForm] = useForm();
     const [deliveryForm] = useForm();
@@ -46,7 +46,7 @@ export function OrderPage() {
             orderForm.resetFields();
             pickupForm.resetFields();
             deliveryForm.resetFields();
-            navigate(ROUTES.LIST_ORDERS);
+            navigate(ROUTES.ORDERS_PAGE);
         }
     }, [createOrderData])
 
