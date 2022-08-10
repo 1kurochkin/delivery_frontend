@@ -3,19 +3,21 @@ import './App.scss';
 import 'antd/dist/antd.css';
 import {Header} from "./components/header/header.component";
 import {Route, Routes} from 'react-router-dom';
-import {ROUTES} from './configs/constants';
+import {ROUTES} from './configs/app.constants';
 import {MainPage} from './pages/main/main.page';
 import {Footer} from './components/footer/footer.component';
 import {SignupPage} from "./pages/signup/signup.page";
 import {LoginPage} from "./pages/login/login.page";
 import {useAppSelector} from "./hooks/useAppSelector";
 import {useLazyGetCourierInfoQuery, useLazyGetCustomerInfoQuery} from "./store/reducers/backend/backend.api";
-import {notification, Spin} from "antd";
+import {Layout, notification, Spin} from "antd";
 import {UserRoleEnum} from "./store/reducers/backend/backend.api.types";
 import {useActions} from "./hooks/useActions";
 import {SettingsPage} from './pages/settings/settings.page';
-import {OrderPage} from "./pages/order/order.page";
-import appConfig from "./configs/app.config";
+import {CreatePage} from "./pages/create/create.page";
+import {OrdersPage} from "./pages/orders/orders.page";
+import Sider from "antd/es/layout/Sider";
+import {Content} from "antd/es/layout/layout";
 
 
 function App() {
@@ -70,24 +72,31 @@ function App() {
     //-------------------------//
 
     return (
-        <div className={'app'}>
-            {
-                (fetchingGetCustomerInfo || fetchingGetCourierInfo) ?
-                    <Spin size={"large"}/> :
-                    <>
-                        <Header/>
-                        <Routes>
-                            <Route path={ROUTES.MAIN_PAGE} element={<MainPage/>}/>
-                            <Route path={ROUTES.LOGIN_PAGE} element={<LoginPage/>}/>
-                            <Route path={ROUTES.SIGNUP_PAGE} element={<SignupPage/>}/>
-                            <Route path={ROUTES.SETTINGS_PAGE} element={<SettingsPage/>}/>
-                            <Route path={ROUTES.CREATE_ORDER} element={<OrderPage/>}/>
-                        </Routes>
-                        <Footer/>
-                    </>
-            }
-
-        </div>
+        // <div className={'app'}>
+            <Layout>
+                <Sider>Sider</Sider>
+                <Layout>
+                    <Content>
+                        {
+                            (fetchingGetCustomerInfo || fetchingGetCourierInfo) ?
+                                <Spin size={"large"}/> :
+                                <>
+                                    {/*<Header/>*/}
+                                    <Routes>
+                                        <Route path={ROUTES.MAIN_PAGE} element={<MainPage/>}/>
+                                        <Route path={ROUTES.LOGIN_PAGE} element={<LoginPage/>}/>
+                                        <Route path={ROUTES.SIGNUP_PAGE} element={<SignupPage/>}/>
+                                        <Route path={ROUTES.SETTINGS_PAGE} element={<SettingsPage/>}/>
+                                        <Route path={ROUTES.CREATE_PAGE} element={<CreatePage/>}/>
+                                        <Route path={ROUTES.ORDERS_PAGE} element={<OrdersPage/>}/>
+                                    </Routes>
+                                    {/*<Footer/>*/}
+                                </>
+                        }
+                    </Content>
+                </Layout>
+            </Layout>
+        // </div>
     );
 }
 
