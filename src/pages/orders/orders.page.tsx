@@ -191,7 +191,7 @@ export function OrdersPage() {
     useEffect(() => {
         console.log('useEffect takeOrderData')
         if(takeOrderData) {
-            onTakeOrfetchChangeOrderStatusIsOk(`Order #${tookOrderId} was taken!`)
+            onTakeOrFetchChangeOrderStatusIsOk(`Order #${tookOrderId} was taken!`)
         }
     }, [takeOrderData])
 
@@ -203,7 +203,7 @@ export function OrdersPage() {
     useEffect(() => {
         console.log('useEffect completeOrderData')
         if(completeOrderData) {
-            onTakeOrfetchChangeOrderStatusIsOk(`Order #${tookOrderId} was complete!`)
+            onTakeOrFetchChangeOrderStatusIsOk(`Order #${tookOrderId} was complete!`)
         }
     }, [completeOrderData])
 
@@ -213,7 +213,7 @@ export function OrdersPage() {
     }
     //-------------------------//
 
-    const onTakeOrfetchChangeOrderStatusIsOk = (message: string) => {
+    const onTakeOrFetchChangeOrderStatusIsOk = (message: string) => {
         setDataSource(dataSource.filter(({id}) => id !== tookOrderId));
         notification.success({message});
         setTookOrderId('');
