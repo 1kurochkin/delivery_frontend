@@ -1,29 +1,24 @@
-import React, {useEffect, useState} from 'react';
-import {Alert, Form, Input, Button} from "antd";
+import React, {useEffect, useRef, useState} from 'react';
+import {Button, Carousel, Col, Form, Input, notification, Row, Select} from "antd";
 import './login.page.style.scss';
 // import {Button} from "../../components/button/button.component";
 import {ROUTES} from "../../configs/constants";
-import {Link} from "react-router-dom";
-import {validation} from "../../tools/validation";
-import formConfig from '../../configs/form.config'
+import {useNavigate} from "react-router-dom";
 import {useForm} from "antd/es/form/Form";
-import {FieldData} from "rc-field-form/lib/interface";
-import {
-    useLazyExistUserQuery,
-    useLazyGetCodeQuery,
-    useLoginMutation
-} from '../../store/reducers/backend/backend.reducer';
-import {UserRoleEnum} from "../../store/reducers/backend/backend.reducer.types";
+import {useLazyExistUserQuery, useLazyGetCodeQuery, useLoginMutation} from '../../store/reducers/backend/backend.api';
+import Title from "antd/lib/typography/Title";
+import {CarouselRef} from "antd/lib/carousel";
+import {FormFinishInfo} from "rc-field-form/lib/FormContext";
+import {useActions} from "../../hooks/useActions";
+import {batch} from "react-redux";
 
 export function LoginPage() {
 
+    const carouselRef = useRef<CarouselRef>(null)
     const [form] = useForm();
-
-    const [formState, setFormState] = useState({
-        phone: {isError: false, disabled: false},
-        code: {isError: false, disabled: false},
-    })
-    const {phone, code} = formState;
+    const navigate = useNavigate();
+    const [currentSlide, setCurrentSlide] = useState(0)
+    const {setAuth, setCookies} = useActions()
 
 
 
@@ -32,138 +27,148 @@ export function LoginPage() {
         fetchExistUser,
         {isFetching: fetchingExistUser, error: error1, data: existUserData},
     ] = useLazyExistUserQuery()
-    let {data: {message: errorExistUser = undefined} = {}} = error1 as any || {};
-
-    const [
-        fetchGetCode,
-        {error: error2}
-    ] = useLazyGetCodeQuery()
-    const {data: {message: errorGetCode = undefined} = {}} = error2 as any || {};
-    const [
-        fetchLogin,
-        {data: dataLogin, error: error3, isLoading: fetchingLogin}
-    ] = useLoginMutation()
-    const {data: {message: errorLogin = undefined} = {}} = error3 as any || {};
-    // const [
-    //     fetchExistUser,
-    //     {isFetching: isFetchingExistUser, isError: isErrorExistUser, data: existUserData}
-    // ] = useLazyExistUserQuery()
+    const {data: {message: errorExistUser = undefined} = {}} = error1 as any || {};
     useEffect(() => {
-        console.log(errorExistUser, 'errorExistUser')
-        // @ts-ignore
-        if(existUserData?.isExist) {
-            fetchGetCode(form.getFieldValue(formConfig.phone.field));
-        } else {
-            setFormStateHandler(
-                formConfig.phone.field,
-                {disabled: false}
-            );
+        if(existUserData?.exist) {
+            fetchGetCode(form.getFieldValue('phone'));
+            carouselRef?.current?.next();
         }
     }, [existUserData])
 
-    // const {} = useLoginMutation()
+    const [
+        fetchGetCode,
+        {error: error2, isFetching: fetchingGetCode}
+    ] = useLazyGetCodeQuery()
+    const {data: {message: errorGetCode = undefined} = {}} = error2 as any || {};
 
-    const setFormStateHandler = (field: string, changes: any) => {
-        setFormState(
-            (prev) => ({
-                ...prev,
-                // @ts-ignore
-                [field]: {...prev[field], ...changes}
-            })
-        )
-    }
+    const [
+        fetchLogin,
+        {data: loginData, error: error3, isLoading: fetchingLogin}
+    ] = useLoginMutation()
+    const {data: {message: errorLogin = undefined} = {}} = error3 as any || {};
+    useEffect(() => {
+        if (loginData?.sid) {
+            batch(() => {
+                setCookies({name: 'sid', value: loginData?.sid})
+                setAuth(true)
+            });
+            navigate(ROUTES.MAIN_PAGE)
+        }
+    }, [loginData])
 
-    const onFieldsChangeHandler = (changedFields: FieldData[], fields: FieldData[]) => {
-        for (const {name} of fields) {
-            const field = name.toString();
-            // @ts-ignore
-            if (formState[field].isError) {
-                setFormStateHandler(field, {isError: false});
-            } else return;
+    //--------CATCH-ERRORS------//
+    useEffect(() => {
+        if (errorExistUser || errorGetCode || errorLogin) {
+            console.log('ERROR')
+            notification.error({message: errorExistUser || errorGetCode});
         }
-    }
+    }, [errorExistUser, errorGetCode, errorLogin])
+    //-------------------------//
 
-    const onFinishFormHandler = (values: any) => {
-        const badFields = [];
-        for (const [key, value] of Object.entries(values)) {
-            const {isValid} = validation(key, value)
-            if (!isValid) badFields.push(key);
+    const onFinishFormHandler = (name: string, {forms}: FormFinishInfo) => {
+        const currentValues = forms[name].getFieldsValue()
+        if (name === '0') {
+            const phone = forms[0].getFieldValue('phone')
+            fetchExistUser(phone)
         }
-        if (badFields.length) {
-            for (const badField of badFields) {
-                setFormStateHandler(badField, {isError: true});
-            }
-            return;
-        }
-        if(existUserData?.isExist) {
+        if (name === '1') {
             fetchLogin({
-                phone: form.getFieldValue(formConfig.phone.field),
-                code: form.getFieldValue(formConfig.code.field),
-                role: existUserData.role as UserRoleEnum
-            })
-        } else {
-            setFormStateHandler(
-                formConfig.phone.field,
-                {disabled: true}
-            );
-            fetchExistUser(form.getFieldValue(formConfig.phone.field))
+                ...forms[0].getFieldsValue(),
+                code: currentValues.code,
+            });
         }
-        // console.log('field')
+    }
 
-        //запрашиваем код
-        //убираем форму ввода номера телефона и показываем форму ввода проверочного кода
-        //п
+    const onClickBackBtn = () => {
+        carouselRef?.current?.prev()
     }
 
     return (
         <div className={'login-page container'}>
-            {
-                (errorExistUser || errorGetCode || errorLogin) &&
-                <Alert message={errorExistUser || errorGetCode || errorLogin} type="error" showIcon/>
-            }
-            <h1 className={'title'}>Login</h1>
-            <Form
-                form={form}
-                className={'login-page__form'}
-                name="basic"
-                initialValues={{remember: true}}
-                onFinish={onFinishFormHandler}
-                onFieldsChange={onFieldsChangeHandler}
-            >
-                <Form.Item
-                    label={'Phone number'}
-                    help={phone.isError ? formConfig.phone.text : ''}
-                    className={'login-page__form__item'}
-                    name={formConfig.phone.field}
-                    labelCol={{span: 24}}
-                >
-                    <Input status={phone.isError ? 'error' : ''}
-                           disabled={fetchingExistUser || existUserData?.isExist}
-                           placeholder={'Write your phone number please 19008003080'}/>
-                </Form.Item>
-                {
-                    existUserData?.isExist &&
-                    <Form.Item
-                        label={'Verification code'}
-                        help={code.isError ? formConfig.code.text : ''}
-                        className={'login-page__form__item'}
-                        name={formConfig.code.field}
-                        labelCol={{span: 24}}
-                    >
-                        <Input status={code.isError ? 'error' : ''}
-                               disabled={fetchingExistUser || code.disabled}
-                               placeholder={'Write your verification code please!'}/>
-                    </Form.Item>
-                }
-                <Form.Item>
-                    <Button loading={fetchingExistUser || fetchingLogin} htmlType={'submit'} className={'button-pink'}>
-                        {existUserData?.isExist ? 'Login' : 'Get verification code'}
-                    </Button>
-                </Form.Item>
-            </Form>
-            <Button>
-                <Link to={ROUTES.SIGNUP_PAGE}>Sign up</Link>
-            </Button>
+            <Row justify={'start'}>
+                <Col>
+                    <Title>Login</Title>
+                </Col>
+            </Row>
+            <Form.Provider onFormFinish={onFinishFormHandler}>
+                <Carousel afterChange={setCurrentSlide} ref={carouselRef} dots={false}>
+                    <div>
+                        <Form form={form} name={'0'}>
+                            <Row justify={'center'}>
+                                <Col span={7}>
+                                    <Form.Item
+                                        rules={[{ required: true, message: '' }]}
+                                        colon={false}
+                                        name={'role'}
+                                        label="I'm a">
+                                        <Select value={'Customer'}>
+                                            <Select.Option value="courier">Courier</Select.Option>
+                                            <Select.Option value="customer">Customer</Select.Option>
+                                        </Select>
+                                    </Form.Item>
+                                </Col>
+                                <Col offset={1} span={8}>
+                                    <Form.Item
+                                        rules={[{ required: true, message: '' }]}
+                                        label={'Phone'}
+                                        colon={false}
+                                        wrapperCol={{span: 24}}
+                                        name={'phone'}
+                                    >
+                                        <Input placeholder={'19008003020'}/>
+                                    </Form.Item>
+                                </Col>
+                            </Row>
+                            <Row justify={'center'}>
+                                <Col span={16}>
+                                    <Form.Item wrapperCol={{span: 24}}>
+                                        <Button loading={fetchingExistUser || fetchingGetCode} htmlType={'submit'}>
+                                            Get code
+                                        </Button>
+                                    </Form.Item>
+                                </Col>
+                            </Row>
+                        </Form>
+                    </div>
+                    <div>
+                        <Row justify={'center'} style={{marginBottom: 30}}>
+                            <Col>
+                                <Title level={3}>We sent verification code to your phone number</Title>
+                            </Col>
+                        </Row>
+
+                        <Form name={'1'} layout={'horizontal'}>
+                            <Row justify={'center'}>
+                                <Col span={7}>
+                                    <Form.Item
+                                        label={'Code'}
+                                        colon={false}
+                                        wrapperCol={{span: 24}}
+                                        name={'code'}
+                                        rules={[{ required: true, message: '' }]}
+                                    >
+                                        <Input placeholder={'123456'}/>
+                                    </Form.Item>
+                                </Col>
+                                <Col offset={1} span={9}>
+                                    <Form.Item wrapperCol={{span: 24}}>
+                                        <Button loading={fetchingLogin} htmlType={'submit'}>{`Login`}</Button>
+                                    </Form.Item>
+                                </Col>
+                            </Row>
+                        </Form>
+                    </div>
+                </Carousel>
+            </Form.Provider>
+            <Row justify={'center'}>
+                <Col span={9}>
+                    {
+                        currentSlide === 0 ?
+                            <Button onClick={() => navigate(ROUTES.SIGNUP_PAGE)}>I dont have an account</Button> :
+                            <Button onClick={onClickBackBtn}>Back</Button>
+                    }
+                </Col>
+            </Row>
         </div>
     );
 };
