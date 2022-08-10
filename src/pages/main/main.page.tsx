@@ -10,7 +10,7 @@ import drugs from '../../images/drugs.png';
 import another from '../../images/another.png';
 import {CreditCardFilled, DollarCircleFilled} from '@ant-design/icons';
 import {Link} from "react-router-dom";
-import {ROUTES} from "../../configs/constants";
+import {ROUTES} from "../../configs/app.constants";
 
 export function MainPage() {
 
@@ -157,10 +157,10 @@ export function MainPage() {
                         </div>
                         <div className="main-page__section-four__widget__footer">
                             <div className="main-page__section-four__widget__footer__wrapper">
-                                <Link className={'main-page__section-four__widget__footer__wrapper__button button button-white'} to={ROUTES.CREATE_ORDER}>Make order</Link>
+                                <Link className={'main-page__section-four__widget__footer__wrapper__button button button-white'} to={ROUTES.CREATE_PAGE}>Make order</Link>
                                 <div className={'main-page__section-four__widget__footer__wrapper__questions'}>
                                     <span>Do you have questions? </span>
-                                    <Link to={ROUTES.CREATE_ORDER}>Write to us</Link>
+                                    <Link to={ROUTES.CREATE_PAGE}>Write to us</Link>
                                 </div>
                             </div>
                         </div>

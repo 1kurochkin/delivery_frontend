@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {Button, Carousel, Col, Form, Input, notification, Row, Select} from "antd";
 import './login.page.style.scss';
 // import {Button} from "../../components/button/button.component";
-import {ROUTES} from "../../configs/constants";
+import {ROUTES} from "../../configs/app.constants";
 import {useNavigate} from "react-router-dom";
 import {useForm} from "antd/es/form/Form";
 import {useLazyExistUserQuery, useLazyGetCodeQuery, useLoginMutation} from '../../store/reducers/backend/backend.api';

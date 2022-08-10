@@ -1,7 +1,7 @@
 import {Button, Col, Row} from 'antd';
 import React from 'react';
 import {Link} from "react-router-dom";
-import {ROUTES} from "../../configs/constants";
+import {ROUTES} from "../../configs/app.constants";
 import './header.component.scss';
 import {useAppSelector} from "../../hooks/useAppSelector";
 import Title from "antd/lib/typography/Title";
@@ -14,18 +14,18 @@ export function Header() {
     const navigationConfig = {
         authTrue: {
             courier: [
-                {link: ROUTES.CREATE_ORDER, label: "Orders"},
+                {link: ROUTES.CREATE_PAGE, label: "Orders"},
                 {link: ROUTES.SETTINGS_PAGE, label: "Settings"},
             ],
             customer: [
-                {link: ROUTES.CREATE_ORDER, label: "Create Order"},
-                {link: ROUTES.CREATE_ORDER, label: "My Orders"},
+                {link: ROUTES.CREATE_PAGE, label: "Create Order"},
+                {link: ROUTES.ORDERS_PAGE, label: "My Orders"},
                 {link: ROUTES.SETTINGS_PAGE, label: "Settings"},
             ]
         },
         authFalse: [
-            {link: ROUTES.BECOME_COURIER, label: "Become a courier"},
-            {link: ROUTES.CREATE_ORDER, label: "Create order"},
+            {link: ROUTES.BECOME_COURIER_PAGE, label: "Become a courier"},
+            {link: ROUTES.CREATE_PAGE, label: "Create order"},
             {link: ROUTES.LOGIN_PAGE, label: "Login and Sign up"},
         ]
     }

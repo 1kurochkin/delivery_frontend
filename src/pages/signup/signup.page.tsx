@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 import ReCAPTCHA, {ReCAPTCHAProps} from "react-google-recaptcha";
 import {Button, Carousel, Col, Form, Input, notification, Row, Select} from "antd";
 import './signup.page.style.scss';
-import {ROUTES} from "../../configs/constants";
+import {ROUTES} from "../../configs/app.constants";
 import {CarouselRef} from "antd/lib/carousel";
 import {validation} from "../../tools/validation";
 import {useLazyGetCodeQuery, useSignupMutation} from "../../store/reducers/backend/backend.api";
