@@ -5,5 +5,6 @@ export const ROUTES = {
     BECOME_COURIER: '/become_courier',
     CREATE_ORDER: '/create_order',
     LIST_ORDERS: '/list_orders',
-    SETTINGS_PAGE: '/settings'
+    SETTINGS_PAGE: '/settings',
+    RULES_PAGE: '/settings',
 }
