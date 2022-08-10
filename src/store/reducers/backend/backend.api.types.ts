@@ -20,6 +20,14 @@ export enum PayTypeEnum {
     ByBankApps = 'By bank apps',
 }
 
+export enum DeliveryStatusEnum {
+    Waiting = 'Waiting',
+    Process = 'Process',
+    Delivered = 'Delivered',
+    Canceled = 'Canceled',
+    Fault = 'Fault',
+}
+
 
 //---AUTH---//
 export type ExistUserType = {
@@ -91,12 +99,12 @@ export type OrderPointType = {
     address: string;
     floor: number;
     apt: string;
-    timeRangeFrom: number;
-    timeRangeTo: number;
-    date: Date;
+    timeRangeFrom: string;
+    timeRangeTo: string;
+    date: string;
     orderPointType: OrderPointTypeEnum;
     phone: string;
-    payForPickup: boolean;
+    // payForPickup: boolean;
     comment: string;
 }
 
@@ -107,5 +115,34 @@ export type CreateOrderMutationType = {
     packagePrice: number;
     payType: PayTypeEnum;
     pickupPoint: OrderPointType
-    deliveryPoints: [OrderPointType];
+    deliveryPoints: Array<OrderPointType>;
+}
+
+export type OrderType = {
+    id: string;
+    customerId: string;
+    courierId: string;
+    pickupPoint: OrderPointType
+    deliveryPoints: Array<OrderPointType>;
+    duration: number;
+    deliveryType: DeliveryTypeEnum;
+    deliveryStatus: DeliveryStatusEnum;
+    weight: string;
+    packageType: string;
+    packagePrice: number;
+    deliveryPrice: number;
+    payType: PayTypeEnum;
+    createdAt: Date;
+    updatedAt: Date;
+}
+export type GetOrdersQueryType = {
+    filter?: Partial<{ active: boolean, completed: boolean }>;
+    pagination: {
+        skip: number;
+        take: number;
+    }
+}
+export type GetOrdersQueryResponseType = {
+    list: Array<OrderType>,
+    pagination: {total: number}
 }

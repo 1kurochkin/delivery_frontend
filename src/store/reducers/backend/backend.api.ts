@@ -4,10 +4,10 @@ import {
     ContactUsMutationType,
     CountOrderPriceAndDurationResponseType,
     CountOrderPriceAndDurationType,
-    CreateOrderMutationType,
+    CreateOrderMutationType, DeliveryStatusEnum,
     ExistUserResponseType,
     GetCourierInfoQueryType,
-    GetCustomerInfoQueryType,
+    GetCustomerInfoQueryType, GetOrdersQueryResponseType, GetOrdersQueryType,
     LoginMutationType,
     LogoutMutationType,
     SignupMutationResponseType,
@@ -80,6 +80,15 @@ export const backendApi = createApi({
         createOrder: build.mutation<boolean, CreateOrderMutationType>({
             query: (body) => ({url: '/order/create', method: 'POST', body})
         }),
+        getOrders: build.query<GetOrdersQueryResponseType, GetOrdersQueryType>({
+            query: (params) => ({url: '/order/list', method: 'GET', params: {}})
+        }),
+        takeOrder: build.mutation<boolean, string>({
+            query: (orderId) => ({url: '/order/take', method: 'POST', body: {orderId}} )
+        }),
+        changeOrderStatus: build.mutation<boolean, { orderId: string, status: DeliveryStatusEnum }>({
+            query: ({orderId, status}, ) => ({url: '/order/complete', method: 'POST', body: {orderId, status}} )
+        }),
         //------------------------//
     })
 });
@@ -101,4 +110,7 @@ export const {
     //---ORDER---//
     useCountOrderPriceAndDurationMutation,
     useCreateOrderMutation,
+    useLazyGetOrdersQuery,
+    useTakeOrderMutation,
+    useChangeOrderStatusMutation,
 } = backendApi;
