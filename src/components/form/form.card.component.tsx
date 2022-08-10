@@ -1,4 +1,4 @@
-import {Checkbox, Col, DatePicker, Divider, Form, Input, TimePicker} from "antd";
+import {Checkbox, Col, DatePicker, Divider, Form, Input, Select, TimePicker} from "antd";
 import Title from "antd/lib/typography/Title";
 import React, {useEffect, useState} from "react";
 import {AimOutlined, HistoryOutlined, PhoneOutlined} from "@ant-design/icons";
@@ -55,10 +55,10 @@ export const FormCard: React.FC<FormCardPropsType> = (props) => {
                     </Col>
                     <Col offset={1}>
                         <Form.Item rules={[{required: true, message: ''}]} name={'date'}>
-                            <DatePicker defaultPickerValue={moment()}
-                                        disabledDate={(c) => c < moment().subtract(1, "days")}
-                                        format={'MM/DD/YY'}
-                            />
+                           <Select defaultValue={'Today'}>
+                               <Select.Option value={'Today'}>Today</Select.Option>
+                               <Select.Option value={'Tomorrow'}>Tomorrow</Select.Option>
+                           </Select>
                         </Form.Item>
                     </Col>
                     {['from', 'to'].map((label) =>
