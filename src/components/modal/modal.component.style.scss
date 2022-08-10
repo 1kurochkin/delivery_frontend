@@ -1,0 +1,15 @@
+@import "src/variables";
+
+.ant-modal-content {
+  border: $border!important;
+  border-radius: $border-radius!important;
+  overflow: hidden;
+
+  .ant-modal-header {
+    .ant-modal-title {
+      font-size: unset;
+      text-align: center;
+      font-family: NanumGhoticExtraBold;
+    }
+  }
+}
