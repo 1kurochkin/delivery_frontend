@@ -1,0 +1,17 @@
+@import 'src/variables';
+
+.orders-page {
+  //width: 100%;
+  .ant-list-header {
+    background-color: #f0f2f5;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .ant-list-footer {
+    //background-color: #f0f2f5;
+    //position: sticky;
+    //bottom: 0;
+    //z-index: 100;
+  }
+}
