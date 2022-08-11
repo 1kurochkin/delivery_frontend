@@ -44,7 +44,7 @@ export function SignupPage() {
                 setCookies({name: 'sid', value: signupData?.sid})
                 setAuth(true)
             });
-            navigate(ROUTES.SETTINGS_PAGE)
+            navigate(ROUTES.PROFILE.SETTINGS_PAGE)
         }
     }, [signupData])
 
@@ -199,7 +199,7 @@ export function SignupPage() {
                 <Col span={9}>
                     {
                         currentSlide === 0 ?
-                            <Button onClick={() => navigate(ROUTES.LOGIN_PAGE)}>I have an account</Button> :
+                            <Button onClick={() => navigate(ROUTES.AUTH.LOGIN_PAGE)}>I have an account</Button> :
                             <Button onClick={onClickBackBtn}>Back</Button>
                     }
                 </Col>

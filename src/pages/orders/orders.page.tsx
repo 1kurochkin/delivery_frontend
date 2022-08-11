@@ -263,7 +263,7 @@ export function OrdersPage() {
                 status: DeliveryStatusEnum.Canceled
             }); return;
             case "Update": navigate(
-                ROUTES.UPDATE_PAGE,
+                ROUTES.ORDER.UPDATE_PAGE,
                 {state: {orderId: tookOrderId}}
             ); return;
             default: return;

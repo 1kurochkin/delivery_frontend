@@ -164,7 +164,7 @@ export function LoginPage() {
                 <Col span={9}>
                     {
                         currentSlide === 0 ?
-                            <Button onClick={() => navigate(ROUTES.SIGNUP_PAGE)}>I dont have an account</Button> :
+                            <Button onClick={() => navigate(ROUTES.AUTH.SIGNUP_PAGE)}>I dont have an account</Button> :
                             <Button onClick={onClickBackBtn}>Back</Button>
                     }
                 </Col>
