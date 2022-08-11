@@ -1,28 +1,37 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import Title from "antd/lib/typography/Title";
 import {Alert, Button, Col, Divider, Form, Input, notification, Row, Select, Skeleton, Spin, Typography} from "antd";
 import {useForm} from "antd/es/form/Form";
 import {
     useCountOrderPriceAndDurationMutation,
-    useCreateOrderMutation,
-    useLazyGetOrderQuery,
+    useCreateOrderMutation, useLazyExistUserQuery, useLazyGetCodeQuery,
+    useLazyGetOrderQuery, useLoginMutation, useSignupMutation,
     useUpdateOrderMutation
 } from "../../store/reducers/backend/backend.api";
 import {DeliveryTypeEnum, OrderPointTypeEnum, PayTypeEnum} from "../../store/reducers/backend/backend.api.types";
 import {FormCard} from "../../components/form/form.card.component";
 import {useNavigate, useParams} from "react-router-dom";
 import {ROUTES} from "../../configs/app.constants";
+import {useAppSelector} from "../../hooks/useAppSelector";
 
 export function CreatePage() {
-    let {orderId} = useParams();
+    const {orderId} = useParams();
+    const navigate = useNavigate();
+
     const [orderForm] = useForm();
     const [pickupForm] = useForm();
     const [deliveryForm] = useForm();
-    const navigate = useNavigate();
+    const [verificationForm] = useForm();
+
+    const auth = useAppSelector(({app}) => app.auth)
+
     const [filledAddresses, setFilledAddresses] = useState({
         [OrderPointTypeEnum.Pickup]: false,
         [OrderPointTypeEnum.Delivery]: false,
     });
+
+    const IS_UPDATE_ORDER_PAGE = !!orderId;
+    const IS_AUTH_USER = auth;
 
     const [
         fetchGetOrder,
@@ -30,7 +39,7 @@ export function CreatePage() {
     ] = useLazyGetOrderQuery();
     const {data: {message: errorGetOrder = undefined} = {}} = error1 as any || {};
     useEffect(() => {
-        orderId && fetchGetOrder(orderId)
+        IS_UPDATE_ORDER_PAGE && fetchGetOrder(orderId)
     }, [orderId])
     useEffect(() => {
         if (getOrderData) {
@@ -60,7 +69,7 @@ export function CreatePage() {
     useEffect(() => {
         if (updateOrderData) {
             notification.success({message: 'Your order successful updated!'});
-            navigate(ROUTES.ORDERS_PAGE);
+            navigate(ROUTES.ORDER.LIST_PAGE);
         }
     }, [updateOrderData])
 
@@ -94,17 +103,24 @@ export function CreatePage() {
             orderForm.resetFields();
             pickupForm.resetFields();
             deliveryForm.resetFields();
-            navigate(ROUTES.ORDERS_PAGE);
+            navigate(ROUTES.ORDER.LIST_PAGE);
         }
     }, [createOrderData])
 
+    const [
+        fetchGetCode,
+        {error: error5, isLoading: fetchingGetCode, data: IS_HAVE_VERIFICATION_CODE = true}
+    ] = useLazyGetCodeQuery();
+    const {data: {message: errorGetCode = undefined} = {}} = error5 as any || {};
+
     //--------CATCH-ERRORS------//
-    if (errorCountOrderPriceAndDuration || errorCreateOrder || errorGetOrder || errorUpdateOrder) {
+    if (errorCountOrderPriceAndDuration || errorCreateOrder || errorGetOrder || errorUpdateOrder || errorGetCode) {
         notification.error({
             message: errorCountOrderPriceAndDuration ||
                 errorCreateOrder ||
                 errorGetOrder ||
-                errorUpdateOrder
+                errorUpdateOrder ||
+                errorGetCode
         })
     }
     //-------------------------//
@@ -122,21 +138,24 @@ export function CreatePage() {
                 orderForm.validateFields(),
                 pickupForm.validateFields(),
                 deliveryForm.validateFields(),
+                ...(!IS_AUTH_USER ? [verificationForm.validateFields()] : [])
             ]);
             const data = {
                 ...orderForm.getFieldsValue(),
                 pickupPoint: pickupForm.getFieldsValue(),
                 deliveryPoints: [deliveryForm.getFieldsValue()],
+                ...(!IS_AUTH_USER && verificationForm.getFieldsValue())
             }
-            orderId ?
+            IS_UPDATE_ORDER_PAGE ?
                 fetchUpdateOrder(data) :
                 fetchCreateOrder(data)
         } catch (e) {
             notification.error({message: 'Fill all fields please!'})
             return;
         }
-        // console.log(name, 'onFinishFormHandler')
-
+    }
+    const onFinishVerificationFormHandler = async () => {
+        fetchGetCode(verificationForm.getFieldValue('phone'));
     }
 
     const deliveryTypeConfigView = [
@@ -166,16 +185,36 @@ export function CreatePage() {
         {type: OrderPointTypeEnum.Delivery, ref: deliveryForm}
     ]
 
+    const createOrderButton = useCallback(() =>
+            <Skeleton active={true} loading={fetchingGetOrder}>
+                <Button
+                    loading={fetchingCountOrderPriceAndDuration || fetchingCreateOrder || fetchingUpdateOrder}
+                    onClick={onFinishFormHandler}
+                    style={{width: '100%'}}
+                    htmlType={'submit'}
+                >
+                    {IS_UPDATE_ORDER_PAGE ? 'Update' : 'Create'} order
+                </Button>
+            </Skeleton>,
+        [
+            IS_UPDATE_ORDER_PAGE,
+            IS_AUTH_USER,
+            fetchingGetOrder,
+            fetchingCountOrderPriceAndDuration,
+            fetchingCreateOrder,
+            fetchingUpdateOrder
+        ]
+    )
+
     return (
         <div className={'container'}>
             <Form.Provider onFormFinish={onFinishFormHandler}>
-                {/*<Space size={50} direction={'vertical'}>*/}
                 <Row gutter={20} justify={'space-between'}>
                     <Col span={6}>
-                        <Title>{orderId ? 'Update' : 'Create'} order</Title>
+                        <Title>{IS_UPDATE_ORDER_PAGE ? 'Update' : 'Create'} order</Title>
                     </Col>
                     <Col span={14}>
-                        <Form form={orderForm} name={'settingsForm'}>
+                        <Form form={orderForm}>
                             <Col style={{display: 'flex', justifyContent: 'space-between'}}>
                                 <Col span={7}>
                                     <Skeleton active={true} loading={fetchingGetOrder}>
@@ -234,22 +273,20 @@ export function CreatePage() {
                         <Col>
                             <Alert
                                 message={'Each courier pays a deposit to fulfill delivery orders, so in case of loss of cargo,\n' +
-                                    'we will compensate the cost within three working days in accordance with the regulations.'}
+                                'we will compensate the cost within three working days in accordance with the regulations.'}
                                 type={'warning'}
                             />
                         </Col>
                         <Divider/>
-                        {/*<Col style={{display: 'flex', justifyContent: 'space-between'}}>*/}
                         {formCardConfigView.map(({type, ref}) =>
                             <Col>
                                 <FormCard loadingData={fetchingGetOrder} onAddressFilled={onAddressFilledHandler}
                                           type={type} formRef={ref}/>
                             </Col>
                         )}
-                        {/*</Col>*/}
                         <Divider/>
-                        <Col style={{display: 'flex', justifyContent: 'space-between'}}>
-                            <Col span={12}>
+                        <Row>
+                            <Col span={24}>
                                 <Skeleton active={true} loading={fetchingGetOrder}>
                                     {
                                         fetchingCountOrderPriceAndDuration ?
@@ -261,21 +298,44 @@ export function CreatePage() {
                                     }
                                 </Skeleton>
                             </Col>
-                            <Col span={11}>
-                                <Skeleton active={true} loading={fetchingGetOrder}>
-                                    <Button
-                                        disabled={errorCountOrderPriceAndDuration}
-                                        loading={fetchingCountOrderPriceAndDuration || fetchingCreateOrder || fetchingUpdateOrder}
-                                        onClick={onFinishFormHandler}
-                                        style={{width: '100%'}}
-                                        htmlType={'submit'}
-                                    >
-                                        {orderId ? 'Update' : 'Create'} order
-                                    </Button>
-                                </Skeleton>
-                            </Col>
-
-                        </Col>
+                        </Row>
+                        {/*<Row>*/}
+                                {
+                                    !IS_AUTH_USER ?
+                                        <Form wrapperCol={{span: 24}} onFinish={onFinishVerificationFormHandler} form={verificationForm}>
+                                            <Row style={{marginTop: 10}} justify={'space-between'}>
+                                            {
+                                                !IS_HAVE_VERIFICATION_CODE ? <>
+                                                    <Col span={11}>
+                                                        <Form.Item rules={[{required: true, message: ''}]} name={'phone'}>
+                                                            <Input placeholder={'Phone number'}/>
+                                                        </Form.Item>
+                                                    </Col>
+                                                    <Col span={11}>
+                                                        <Form.Item rules={[{required: true, message: ''}]}>
+                                                            <Button loading={fetchingGetCode} style={{width: '100%'}}
+                                                                    htmlType={'submit'}>
+                                                                Get code
+                                                            </Button>
+                                                        </Form.Item>
+                                                    </Col>
+                                                </> : <>
+                                                    <Col span={11}>
+                                                        <Form.Item rules={[{required: true, message: ''}]} name={'code'}>
+                                                            <Input placeholder={'Verification code'}/>
+                                                        </Form.Item>
+                                                    </Col>
+                                                    <Col span={11}>
+                                                        {createOrderButton()}
+                                                    </Col>
+                                                </>
+                                            }
+                                            </Row>
+                                        </Form> :
+                                        createOrderButton()
+                                }
+                        {/*</Row>*/}
+                        <Divider/>
                     </Col>
                 </Row>
             </Form.Provider>
