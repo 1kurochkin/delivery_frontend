@@ -1,13 +1,25 @@
 export const ROUTES = {
+    AUTH: {
+        PATH: 'auth',
+        LOGIN_PAGE: '/auth/login',
+        SIGNUP_PAGE: '/auth/signup',
+    },
+    ORDER: {
+        PATH: 'order',
+        CREATE_PAGE: '/order/create',
+        UPDATE_PAGE: '/order/update:orderId',
+        LIST_PAGE: '/order/list',
+    },
+    PROFILE: {
+        PATH: 'profile',
+        SETTINGS_PAGE: '/profile/settings',
+        RULES_PAGE: '/profile/settings',
+    },
     MAIN_PAGE: '/',
-    LOGIN_PAGE: '/login',
-    SIGNUP_PAGE: '/signup',
     BECOME_COURIER_PAGE: '/become_courier',
-    CREATE_PAGE: '/create',
-    UPDATE_PAGE: '/update/:orderId',
-    ORDERS_PAGE: '/orders',
-    SETTINGS_PAGE: '/settings',
-    RULES_PAGE: '/settings',
+    404: '/404',
+    403: '/403',
+
 }
 
 export const PAGINATION = {
