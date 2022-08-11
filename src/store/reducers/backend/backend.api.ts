@@ -4,16 +4,21 @@ import {
     ContactUsMutationType,
     CountOrderPriceAndDurationResponseType,
     CountOrderPriceAndDurationType,
-    CreateOrderMutationType, DeliveryStatusEnum,
+    CreateOrderMutationType,
+    DeliveryStatusEnum,
     ExistUserResponseType,
     GetCourierInfoQueryType,
-    GetCustomerInfoQueryType, GetOrdersQueryResponseType, GetOrdersQueryType,
+    GetCustomerInfoQueryType,
+    GetOrderQueryResponseType,
+    GetOrdersQueryResponseType,
+    GetOrdersQueryType,
     LoginMutationType,
     LogoutMutationType,
     SignupMutationResponseType,
     SignupMutationType,
     UpdateCourierSettingsMutationType,
-    UpdateCustomerSettingsMutationType
+    UpdateCustomerSettingsMutationType,
+    UpdateOrderMutationType
 } from "./backend.api.types";
 
 // const axiosBaseQuery =
@@ -80,8 +85,14 @@ export const backendApi = createApi({
         createOrder: build.mutation<boolean, CreateOrderMutationType>({
             query: (body) => ({url: '/order/create', method: 'POST', body})
         }),
+        updateOrder: build.mutation<boolean, UpdateOrderMutationType>({
+            query: (body) => ({url: '/order/update', method: 'POST', body})
+        }),
         getOrders: build.query<GetOrdersQueryResponseType, GetOrdersQueryType>({
             query: (params) => ({url: '/order/list', method: 'GET', params: {}})
+        }),
+        getOrder: build.query<GetOrderQueryResponseType, string>({
+            query: (orderId) => ({url: '/order', method: 'GET', params: {orderId}})
         }),
         takeOrder: build.mutation<boolean, string>({
             query: (orderId) => ({url: '/order/take', method: 'POST', body: {orderId}} )
@@ -110,7 +121,9 @@ export const {
     //---ORDER---//
     useCountOrderPriceAndDurationMutation,
     useCreateOrderMutation,
+    useUpdateOrderMutation,
     useLazyGetOrdersQuery,
+    useLazyGetOrderQuery,
     useTakeOrderMutation,
     useChangeOrderStatusMutation,
 } = backendApi;

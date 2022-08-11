@@ -117,11 +117,16 @@ export type CreateOrderMutationType = {
     pickupPoint: OrderPointType
     deliveryPoints: Array<OrderPointType>;
 }
+export type UpdateOrderMutationType = Partial<CreateOrderMutationType>
 
 export type OrderType = {
     id: string;
     customerId: string;
     courierId: string;
+    courier: {
+        name: string;
+        phone: string;
+    }
     pickupPoint: OrderPointType
     deliveryPoints: Array<OrderPointType>;
     duration: number;
@@ -146,3 +151,4 @@ export type GetOrdersQueryResponseType = {
     list: Array<OrderType>,
     pagination: {total: number}
 }
+export type GetOrderQueryResponseType = OrderType
