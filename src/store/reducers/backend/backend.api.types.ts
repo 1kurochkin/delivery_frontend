@@ -45,9 +45,7 @@ export type LoginMutationType = {
 export type LoginMutationResponseType = {
     sid: string;
 };
-export type LogoutMutationType = {
-    userId: string;
-};
+
 export type SignupMutationType = {
     data: {
         name: string;
@@ -116,6 +114,8 @@ export type CreateOrderMutationType = {
     payType: PayTypeEnum;
     pickupPoint: OrderPointType
     deliveryPoints: Array<OrderPointType>;
+    phone: string;
+    code: string;
 }
 export type UpdateOrderMutationType = Partial<CreateOrderMutationType>
 

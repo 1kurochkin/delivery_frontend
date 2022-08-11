@@ -12,8 +12,8 @@ import {
     GetOrderQueryResponseType,
     GetOrdersQueryResponseType,
     GetOrdersQueryType,
+    LoginMutationResponseType,
     LoginMutationType,
-    LogoutMutationType,
     SignupMutationResponseType,
     SignupMutationType,
     UpdateCourierSettingsMutationType,
@@ -50,11 +50,11 @@ export const backendApi = createApi({
         getCode: build.query<boolean, string>({
             query: (phoneNumber) => ({url: `/authorization/code/${phoneNumber}`})
         }),
-        login: build.mutation<any, LoginMutationType>({
+        login: build.mutation<LoginMutationResponseType, LoginMutationType>({
             query: (body) => ({url: '/authorization/login', method: 'POST', body})
         }),
-        logout: build.mutation<any, LogoutMutationType>({
-            query: (body) => ({url: '/authorization/logout', method: 'POST', body})
+        logout: build.mutation<any, void>({
+            query: () => ({url: '/authorization/logout', method: 'POST'})
         }),
         signup: build.mutation<SignupMutationResponseType, SignupMutationType>({
             query: (body) => ({url: '/authorization/signup', method: 'POST', body})
@@ -110,6 +110,7 @@ export const {
     useLoginMutation,
     useLazyGetCodeQuery,
     useSignupMutation,
+    useLogoutMutation,
     //---COURIER---//
     useLazyGetCourierInfoQuery,
     useUpdateCourierSettingsMutation,
