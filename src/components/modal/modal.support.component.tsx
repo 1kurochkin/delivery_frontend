@@ -46,13 +46,9 @@ export const useModalSupport = () => {
                 title="Support"
                 visible={visible}
                 onCancel={onCancelModalHandler}
-                footer={null}
+                onOk={onFinishFormHandler}
             >
-                <Form onFinish={onFinishFormHandler}
-                      name={'supportForm'}
-                      wrapperCol={{span: 12}}
-                      layout="horizontal"
-                >
+                <Form name={'supportForm'} wrapperCol={{span: 12}} layout="horizontal">
                     <Col>
                         <Form.Item
                             rules={[{required: true, message: ''}]}
@@ -85,11 +81,6 @@ export const useModalSupport = () => {
                         >
                             <Input.TextArea rows={4}/>
                         </Form.Item>
-                    </Col>
-                    <Col>
-                        <Button htmlType={'submit'} loading={fetchingContactUs}>
-                            Send
-                        </Button>
                     </Col>
                 </Form>
             </Modal>
