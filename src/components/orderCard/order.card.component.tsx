@@ -1,6 +1,6 @@
-import {Alert, Button, Col, Collapse, Divider, List, Row, Timeline} from "antd";
+import {Alert, Badge, Button, Col, Collapse, Divider, List, Row, Timeline} from "antd";
 import Title from "antd/lib/typography/Title";
-import React, {useCallback} from "react";
+import React, {MouseEventHandler, useCallback} from "react";
 import {OrderPageTabsEnum} from "../../pages/orders/orders.page";
 import {DeliveryStatusEnum, OrderPointType, UserRoleEnum} from "../../store/reducers/backend/backend.api.types";
 
@@ -13,7 +13,12 @@ type OrderCardPropsType = {
     onClickCompleteButton: (orderId: string) => void;
     onClickCancelButton: (orderId: string) => void;
     onClickSupportButton: (orderId: string) => void;
+    onClickUpdateButton: (orderId: string) => void;
     id: string,
+    courier: {
+        name: string;
+        phone: string;
+    };
     pickupPoint: OrderPointType,
     deliveryPoints: Array<OrderPointType>,
     deliveryStatus: DeliveryStatusEnum;
@@ -26,10 +31,17 @@ type OrderCardPropsType = {
 }
 
 export const OrderCard: React.FC<OrderCardPropsType> = (props) => {
-    const {onClickTakeButton, onClickCompleteButton, onClickCancelButton, onClickSupportButton} = props;
+    const {
+        onClickTakeButton,
+        onClickCompleteButton,
+        onClickCancelButton,
+        onClickSupportButton,
+        onClickUpdateButton,
+    } = props;
 
-    const getButtonComponent = (label: string, onClick: () => void) => (
-        <Button onClick={onClick} loading={props.loading} style={{width: '100%'}}>
+    const getButtonComponent = (label: string, onClick: (orderId: string) => void) => (
+        <Button onClick={onClick as unknown as MouseEventHandler<HTMLElement>} loading={props.loading}
+                style={{width: '100%', marginTop: 10}}>
             {label}
         </Button>
     )
@@ -37,21 +49,43 @@ export const OrderCard: React.FC<OrderCardPropsType> = (props) => {
         let onClick, label;
         switch (props.type) {
             case OrderPageTabsEnum.Available: {
-                if(props.userRole === UserRoleEnum.Customer) {
-                    label = 'Cancel the order'; onClick = onClickCancelButton; break;
+                if (props.userRole === UserRoleEnum.Customer) {
+                    return [
+                        getButtonComponent('Cancel the order', onClickCancelButton),
+                        getButtonComponent('Update the order', onClickUpdateButton),
+                    ];
+                    break;
+                    label = 'Cancel the order';
+                    onClick = onClickCancelButton;
+                    break;
                 } else {
-                    label = 'Take the order'; onClick = onClickTakeButton; break;
+                    label = 'Take the order';
+                    onClick = onClickTakeButton;
+                    break;
                 }
             }
             case OrderPageTabsEnum.Active: {
-                if(props.userRole === UserRoleEnum.Customer) {
-                    label = 'Support'; onClick = onClickSupportButton; break;
+                if (props.userRole === UserRoleEnum.Customer) {
+                    label = 'Support';
+                    onClick = onClickSupportButton;
+                    break;
                 } else {
-                    label = 'Complete the order'; onClick = onClickCompleteButton; break;
+                    label = 'Complete the order';
+                    onClick = onClickCompleteButton;
+                    break;
                 }
             }
-            default: return <Alert message={"COMPLETED"} type={'error'}/>;
+            case OrderPageTabsEnum.Completed: {
+                if(props.userRole === UserRoleEnum.Customer) {
+                    return [
+                        <Alert message={"Order completed"} type={'error'}/>,
+                        getButtonComponent('Support', onClickSupportButton),
+                    ]; break;
+                } else return
+            }
+            default: return;
         }
+        return getButtonComponent(label, onClick);
     }
     const collapseView = useCallback((phone: string, comment: string) =>
         <Collapse accordion bordered>
@@ -63,32 +97,37 @@ export const OrderCard: React.FC<OrderCardPropsType> = (props) => {
             </Collapse.Panel>
         </Collapse>, [props]
     )
-    const getCollapseViewByUserRole = () => {
-        if(props.userRole === UserRoleEnum.Customer) return collapseView;
-        if(props.userRole === UserRoleEnum.Courier) {
-            if(props.type === OrderPageTabsEnum.Available) return;
-            else return collapseView;
+    const getCollapseViewByUserRole = (phone: string, comment: string) => {
+        if (props.userRole === UserRoleEnum.Customer) return collapseView(phone, comment);
+        if (props.userRole === UserRoleEnum.Courier) {
+            if (props.type === OrderPageTabsEnum.Available) return;
+            else return collapseView(phone, comment);
         }
     }
 
     return (
         <List.Item style={{backgroundColor: 'white', paddingTop: 20}}>
             <Row justify={'space-between'}>
-                <Col span={5}>
-                    <Row>
-                        <Col span={5}>
-                            <Title level={3}>#{props.id}</Title>
-                        </Col>
-                        <Col span={18}>
+                    <Col span={6}>
+                        <Badge.Ribbon placement={'start'} text={`#${props.id}`}>
+                        <Col offset={5} span={19}>
                             <Title level={3}>Price: {props.deliveryPrice}$</Title>
                         </Col>
-                    </Row>
-                    <Divider/>
-                    <Col span={24}>
-                        {getCardButtonViewByType()}
+                        </Badge.Ribbon>
+                        <Divider/>
+                        {   props.type === OrderPageTabsEnum.Active && props.userRole === UserRoleEnum.Customer ?
+                            <Col span={24}>
+                                <Alert type={"info"} message={'Courier info'}/>
+                                <Alert type={"warning"} message={`Name: ${props?.courier?.name}`}/>
+                                <Alert type={"success"} message={`Phone: ${props?.courier?.phone}`}/>
+                            </Col> : null
+                        }
+                        <Col span={24}>
+                            {getCardButtonViewByType()}
+                        </Col>
                     </Col>
-                </Col>
-                <Col offset={1} span={18}>
+                {/*</Badge.Ribbon>*/}
+                <Col offset={1} span={17}>
                     <Row>
                         <Col span={16}>
                             <Timeline>
@@ -100,7 +139,7 @@ export const OrderCard: React.FC<OrderCardPropsType> = (props) => {
                                                 description={`${point.date} from ${point.timeRangeFrom} to ${point.timeRangeTo}`}
                                                 type={i === 1 ? 'success' : 'info'}
                                             />
-                                            {getCollapseViewByUserRole()}
+                                            {getCollapseViewByUserRole(point.phone, point.comment)}
                                         </>
                                     </Timeline.Item>
                                 )}

@@ -6,11 +6,12 @@ import {
     useTakeOrderMutation
 } from "../../store/reducers/backend/backend.api";
 import {DeliveryStatusEnum, OrderType, UserRoleEnum} from "../../store/reducers/backend/backend.api.types";
-import {PAGINATION} from "../../configs/app.constants";
+import {PAGINATION, ROUTES} from "../../configs/app.constants";
 import './orders.page.style.scss'
 import {OrderCard} from "../../components/orderCard/order.card.component";
 import {useAppSelector} from "../../hooks/useAppSelector";
 import {useModalSupport} from "../../components/modal/modal.support.component";
+import {useNavigate} from "react-router-dom";
 
 const data = [
     {
@@ -146,17 +147,18 @@ export enum OrderPageTabsEnum {
     MyOrders = 'My orders',
     InProcess = 'In process',
 }
-type ModalStateType = {visible: boolean, type: 'Take' | 'Complete' | 'Cancel' | 'Support'}
+type ModalStateType = {visible: boolean, type: 'Take' | 'Complete' | 'Cancel' | 'Support' | 'Update'}
 
 export function OrdersPage() {
     const userRole = useAppSelector(({settings}) => settings.role);
+    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState<OrderPageTabsEnum>(OrderPageTabsEnum.Available);
     const [dataSource, setDataSource] = useState<OrderType[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [tookOrderId, setTookOrderId] = useState<string>('');
     const [modalState, setModalState] = useState<ModalStateType>({visible: false, type: 'Take'});
     const {modal: modalSupport, setVisible: setVisibleModalSupport} = useModalSupport()
-
+    console.log(userRole, 'userRole')
     const [
         fetchGetOrders,
         {
@@ -260,6 +262,10 @@ export function OrdersPage() {
                 orderId: tookOrderId,
                 status: DeliveryStatusEnum.Canceled
             }); return;
+            case "Update": navigate(
+                ROUTES.UPDATE_PAGE,
+                {state: {orderId: tookOrderId}}
+            ); return;
             default: return;
         }
     }
@@ -275,13 +281,6 @@ export function OrdersPage() {
         [OrderPageTabsEnum.Active, {active: true}],
         [OrderPageTabsEnum.Completed, {completed: true}]
     ]);
-
-    const tabPaneViewConfig = [
-        {tabLabel: OrderPageTabsEnum.Available},
-        {tabLabel: OrderPageTabsEnum.Active},
-        {tabLabel: OrderPageTabsEnum.Completed},
-    ]
-
 
     return (
         <div className={'orders-page'}>
@@ -299,7 +298,7 @@ export function OrdersPage() {
                 grid={{gutter: 16, column: 1}}
                 header={
                     <Row justify={'space-between'}>
-                        {tabPaneViewConfig.map(({tabLabel}) =>
+                        {Array.from(GetOrdersFilterMap.keys()).map((tabLabel) =>
                             <Col span={7}>
                                 <Button onClick={() => onClickTabButtonHandler(tabLabel)}
                                         style={{width: '100%'}}>{tabLabel}</Button>
@@ -312,6 +311,7 @@ export function OrdersPage() {
                     <Skeleton avatar title={false} loading={fetchingGetOrders} active>
                         <OrderCard userRole={userRole}
                                    onClickCancelButton={(orderId) => onClickButtonInOrderCardHandler(orderId, 'Cancel')}
+                                   onClickUpdateButton={(orderId) => onClickButtonInOrderCardHandler(orderId, 'Update')}
                                    onClickSupportButton={(orderId) => onClickButtonInOrderCardHandler(orderId, 'Support')}
                                    onClickCompleteButton={(orderId) => onClickButtonInOrderCardHandler(orderId, 'Complete')}
                                    onClickTakeButton={(orderId) => onClickButtonInOrderCardHandler(orderId, 'Take')}
