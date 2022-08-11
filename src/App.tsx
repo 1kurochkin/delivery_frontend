@@ -1,23 +1,24 @@
 import React, {useEffect} from 'react';
 import './App.scss';
 import 'antd/dist/antd.css';
-import {Header} from "./components/header/header.component";
-import {Route, Routes} from 'react-router-dom';
+import {CustomSider} from "./components/sider/sider.component";
+import {Link, Route, Routes, Navigate} from 'react-router-dom';
 import {ROUTES} from './configs/app.constants';
 import {MainPage} from './pages/main/main.page';
-import {Footer} from './components/footer/footer.component';
 import {SignupPage} from "./pages/signup/signup.page";
 import {LoginPage} from "./pages/login/login.page";
 import {useAppSelector} from "./hooks/useAppSelector";
 import {useLazyGetCourierInfoQuery, useLazyGetCustomerInfoQuery} from "./store/reducers/backend/backend.api";
-import {Layout, notification, Spin} from "antd";
+import {Button, Layout, notification, Result, Spin, Switch} from "antd";
 import {UserRoleEnum} from "./store/reducers/backend/backend.api.types";
 import {useActions} from "./hooks/useActions";
 import {SettingsPage} from './pages/settings/settings.page';
 import {CreatePage} from "./pages/create/create.page";
 import {OrdersPage} from "./pages/orders/orders.page";
-import Sider from "antd/es/layout/Sider";
 import {Content} from "antd/es/layout/layout";
+import {ProtectedRoute} from "./components/protectedRoute/protected.route.component";
+import {NotFoundPage} from "./pages/404/404.page";
+import {NotAuthorizedPage} from "./pages/403/403.page";
 
 
 function App() {
@@ -51,7 +52,7 @@ function App() {
     }, [auth])
 
     useEffect(() => {
-        if(getCourierInfoData || getCustomerInfoData) {
+        if (getCourierInfoData || getCustomerInfoData) {
             const userData = (getCourierInfoData || getCustomerInfoData)
             for (const field in userData) {
                 // @ts-ignore
@@ -62,42 +63,58 @@ function App() {
 
     //--------CATCH-ERRORS------//
     // useEffect(() => {
-        if (errorGetCourierInfo || errorGetCustomerInfo) {
-            notification.error({message: errorGetCourierInfo || errorGetCustomerInfo});
-        }
-        // else if (errorLoadGoogleMaps) {
-        //     notification.error({message: 'Error loading maps!'});
-        // }
+    if (errorGetCourierInfo || errorGetCustomerInfo) {
+        notification.error({message: errorGetCourierInfo || errorGetCustomerInfo});
+    }
+    // else if (errorLoadGoogleMaps) {
+    //     notification.error({message: 'Error loading maps!'});
+    // }
     // }, [errorGetCourierInfo, errorGetCustomerInfo])
     //-------------------------//
 
     return (
         // <div className={'app'}>
-            <Layout>
-                <Sider>Sider</Sider>
-                <Layout>
-                    <Content>
-                        {
-                            (fetchingGetCustomerInfo || fetchingGetCourierInfo) ?
-                                <Spin size={"large"}/> :
-                                <>
-                                    {/*<Header/>*/}
-                                    <Routes>
-                                        <Route path={ROUTES.MAIN_PAGE} element={<MainPage/>}/>
-                                        <Route path={ROUTES.LOGIN_PAGE} element={<LoginPage/>}/>
-                                        <Route path={ROUTES.SIGNUP_PAGE} element={<SignupPage/>}/>
-                                        <Route path={ROUTES.SETTINGS_PAGE} element={<SettingsPage/>}/>
-                                        <Route path={ROUTES.CREATE_PAGE} element={<CreatePage/>}/>
-                                        <Route path={ROUTES.UPDATE_PAGE} element={<CreatePage/>}/>
-                                        <Route path={ROUTES.ORDERS_PAGE} element={<OrdersPage/>}/>
-                                    </Routes>
-                                    {/*<Footer/>*/}
-                                </>
-                        }
-                    </Content>
-                </Layout>
-            </Layout>
-        // </div>
+        <Layout style={{minHeight: "100vh"}}>
+            <CustomSider/>
+            <Content>
+                {
+                    (fetchingGetCustomerInfo || fetchingGetCourierInfo) ?
+                        <Spin size={"large"}/> :
+                        <>
+                            <Routes>
+                                <Route path={ROUTES.AUTH.LOGIN_PAGE} element={<LoginPage/>}/>
+                                <Route path={ROUTES.AUTH.SIGNUP_PAGE} element={<SignupPage/>}/>
+                                <Route path={ROUTES.ORDER.CREATE_PAGE} element={<CreatePage/>}/>
+                                <Route path={ROUTES.MAIN_PAGE} element={<MainPage/>}/>
+                                <Route path={ROUTES["404"]} element={<NotFoundPage/>}/>
+                                <Route path={ROUTES["403"]} element={<NotAuthorizedPage/>}/>
+                                <Route path="*" element={<Navigate to={ROUTES["404"]}/>}/>
+                                <Route path={ROUTES.ORDER.LIST_PAGE}
+                                    element={
+                                        <ProtectedRoute auth={auth}>
+                                            <OrdersPage/>
+                                        </ProtectedRoute>
+                                    }
+                                />
+                                <Route path={ROUTES.ORDER.UPDATE_PAGE}
+                                    element={
+                                        <ProtectedRoute auth={auth}>
+                                            <CreatePage/>
+                                        </ProtectedRoute>
+                                    }
+                                />
+                                <Route path={ROUTES.PROFILE.SETTINGS_PAGE}
+                                    element={
+                                        <ProtectedRoute auth={auth}>
+                                            <SettingsPage/>
+                                        </ProtectedRoute>
+                                    }
+                                />
+                            </Routes>
+                        </>
+                }
+            </Content>
+        </Layout>
     );
 }
 
