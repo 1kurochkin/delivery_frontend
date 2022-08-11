@@ -88,6 +88,7 @@ function App() {
                                         <Route path={ROUTES.SIGNUP_PAGE} element={<SignupPage/>}/>
                                         <Route path={ROUTES.SETTINGS_PAGE} element={<SettingsPage/>}/>
                                         <Route path={ROUTES.CREATE_PAGE} element={<CreatePage/>}/>
+                                        <Route path={ROUTES.UPDATE_PAGE} element={<CreatePage/>}/>
                                         <Route path={ROUTES.ORDERS_PAGE} element={<OrdersPage/>}/>
                                     </Routes>
                                     {/*<Footer/>*/}
