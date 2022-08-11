@@ -24,7 +24,7 @@ export const settingsSlice = createSlice({
             // @ts-ignore
             state[field] = value;
         },
-        resetState(state, payload) {
+        resetSettingsState(state) {
             state = initialState;
         }
     }
