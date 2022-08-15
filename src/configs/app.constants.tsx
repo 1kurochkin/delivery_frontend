@@ -7,7 +7,10 @@ export const ROUTES = {
     ORDER: {
         PATH: 'order',
         CREATE_PAGE: '/order/create',
-        UPDATE_PAGE: '/order/update:orderId',
+        UPDATE_PAGE: {
+            PATH: '/order/update',
+            PARAMS: '/:orderId'
+        },
         LIST_PAGE: '/order/list',
     },
     PROFILE: {
@@ -23,5 +26,5 @@ export const ROUTES = {
 }
 
 export const PAGINATION = {
-    TAKE: 10,
+    TAKE: 2,
 }
