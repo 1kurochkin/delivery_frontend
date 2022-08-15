@@ -6,7 +6,7 @@ type AppSliceStateType = {
 }
 
 const initialState: AppSliceStateType = {
-    auth: false
+    auth: !!Cookies.get('sid') || false
 }
 
 export const appSlice = createSlice({
