@@ -1,3 +1,5 @@
+import {Moment} from "moment";
+
 export enum UserRoleEnum {
     Courier = 'Courier',
     Customer = 'Customer'
@@ -20,12 +22,23 @@ export enum PayTypeEnum {
     ByBankApps = 'By bank apps',
 }
 
-export enum DeliveryStatusEnum {
-    Waiting = 'Waiting',
-    Process = 'Process',
-    Delivered = 'Delivered',
+export enum OrderStatusEnum {
+    Available = 'Available',
+    Active = 'Active',
+    Completed = 'Completed',
     Canceled = 'Canceled',
     Fault = 'Fault',
+}
+
+
+export enum OrderWeightEnum {
+    Under1 = 'Under 1 lb',
+    Under2 = 'Under 2 lb',
+    Under5 = 'Under 5 lb',
+    Under10 = 'Under 10 lb',
+    Under15 = 'Under 15 lb',
+    Under20 = 'Under 20 lb',
+    More20 = 'More 20 lb',
 }
 
 
@@ -38,9 +51,11 @@ export type ExistUserResponseType = {
     role: string | undefined;
 };
 export type LoginMutationType = {
-    phone: string;
+    data: {
+        phone: string;
+        role: UserRoleEnum;
+    },
     code: string;
-    role: UserRoleEnum;
 };
 export type LoginMutationResponseType = {
     sid: string;
@@ -56,7 +71,7 @@ export type SignupMutationType = {
     }
     code: string;
 };
-export type SignupMutationResponseType = {sid: string};
+export type SignupMutationResponseType = { sid: string };
 
 //---CUSTOMER---//
 export type GetCustomerInfoQueryType = {
@@ -94,16 +109,20 @@ export type CountOrderPriceAndDurationResponseType = {
 };
 
 export type OrderPointType = {
+    id: string;
+    orderId: string;
     address: string;
     floor: number;
     apt: string;
-    timeRangeFrom: string;
-    timeRangeTo: string;
-    date: string;
+    timeRangeFrom: Moment;
+    timeRangeTo: Moment;
+    date: Moment;
     orderPointType: OrderPointTypeEnum;
     phone: string;
-    // payForPickup: boolean;
+    payForPickup: boolean;
     comment: string;
+    updatedAt: Moment;
+    createdAt: Moment;
 }
 
 export type CreateOrderMutationType = {
@@ -113,12 +132,14 @@ export type CreateOrderMutationType = {
     packagePrice: number;
     payType: PayTypeEnum;
     pickupPoint: OrderPointType
-    deliveryPoints: Array<OrderPointType>;
+    deliveryPoint: OrderPointType;
     phone: string;
     code: string;
 }
-export type UpdateOrderMutationType = Partial<CreateOrderMutationType>
-
+export type UpdateOrderMutationType = {
+    orderId: string;
+    update: Partial<CreateOrderMutationType>
+}
 export type OrderType = {
     id: string;
     customerId: string;
@@ -128,10 +149,10 @@ export type OrderType = {
         phone: string;
     }
     pickupPoint: OrderPointType
-    deliveryPoints: Array<OrderPointType>;
+    deliveryPoint: OrderPointType;
     duration: number;
     deliveryType: DeliveryTypeEnum;
-    deliveryStatus: DeliveryStatusEnum;
+    status: OrderStatusEnum;
     weight: string;
     packageType: string;
     packagePrice: number;
@@ -141,14 +162,12 @@ export type OrderType = {
     updatedAt: Date;
 }
 export type GetOrdersQueryType = {
-    filter?: Partial<{ active: boolean, completed: boolean }>;
-    pagination: {
-        skip: number;
-        take: number;
-    }
+    status?: OrderStatusEnum;
+    skip: number;
+    take: number;
 }
 export type GetOrdersQueryResponseType = {
     list: Array<OrderType>,
-    pagination: {total: number}
+    pagination: { total: number }
 }
 export type GetOrderQueryResponseType = OrderType

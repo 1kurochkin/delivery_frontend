@@ -1,17 +1,17 @@
 import {AutoComplete} from "antd";
-import React from "react";
+import React, {useEffect} from "react";
 import usePlacesAutocomplete from "use-places-autocomplete";
-import {SelectHandler} from "rc-select/lib/Select";
 
 type SearchPlacesProps = {
     onChange: (value: string) => void;
     onSelect: (value: string) => void;
+    value?: string;
 }
 
 export const SearchPlaces: React.FC<SearchPlacesProps> = (props) => {
-    const {onChange, onSelect} = props;
+    const {onChange, onSelect, value} = props;
     const {
-        value,
+        value: placesAutocompleteValue,
         suggestions: {data},
         setValue,
     } = usePlacesAutocomplete({
@@ -27,9 +27,13 @@ export const SearchPlaces: React.FC<SearchPlacesProps> = (props) => {
         // },
         debounce: 300
     });
+    useEffect(() => {
+        if(value) {setValue(value, true)}
+    }, [value])
     const preparedData = data.map(({description}) => ({value: description, label: ''}))
 
     const onChangeHandler = (value: string) => {
+        console.log('onChangeHandler', value)
         setValue(value, true);
         onChange(value);
     }
@@ -41,9 +45,11 @@ export const SearchPlaces: React.FC<SearchPlacesProps> = (props) => {
 
     return (
         <AutoComplete options={preparedData}
+                      allowClear
+                      onClear={() => onChangeHandler('')}
                       onSelect={onSelectHandler}
                       onSearch={onChangeHandler}
-                      value={value}
+                      value={placesAutocompleteValue || value}
                       placeholder='1299 Ocean ave, Brooklyn'
         />
     )

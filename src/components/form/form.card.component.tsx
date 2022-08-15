@@ -1,37 +1,43 @@
-import {Checkbox, Col, DatePicker, Divider, Form, Input, Select, Skeleton, TimePicker} from "antd";
+import {Checkbox, Col, DatePicker, Divider, Form, Input, Skeleton, TimePicker} from "antd";
 import Title from "antd/lib/typography/Title";
 import React, {useEffect, useState} from "react";
-import {AimOutlined, HistoryOutlined, PhoneOutlined} from "@ant-design/icons";
-import moment from "moment";
+import {AimOutlined, PhoneOutlined} from "@ant-design/icons";
+import moment, {Moment} from "moment";
 import {FormInstance} from "antd/es/form/hooks/useForm";
-import {OrderPointTypeEnum} from "../../store/reducers/backend/backend.api.types";
-import Search from "antd/es/input/Search";
 import {SearchPlaces} from "../searchPlaces/search.places.component";
+import {OrderPointTypeEnum} from "../../store/reducers/backend/backend.api.types";
 
 type FormCardPropsType = {
-    type: OrderPointTypeEnum,
+    state: any;
     formRef: FormInstance,
-    onAddressFilled: (filled: boolean, type: OrderPointTypeEnum) => void,
     loadingData: boolean;
+    onAddressChange: Function;
 }
 
 export const FormCard: React.FC<FormCardPropsType> = (props) => {
-    const {type, formRef, onAddressFilled, loadingData} = props;
+    const {formRef, loadingData, state, onAddressChange} = props;
     const [selected, setSelected] = useState(false)
-    useEffect(() => {
-        onAddressFilled(selected, type);
-    }, [selected])
+
     const onSelectSearchPlacesHandler = (value: any) => {
         setSelected(true)
+        formRef.setFieldValue('address', value);
     }
     const onChangeSearchPlacesHandler = (value: any) => {
-        if (!value.length) setSelected(false)
+        console.log('onChangeSearchPlacesHandler', value)
+        if (!value) {
+            onAddressChange(value)
+            setSelected(false)
+        }
     }
+
+    const disabledDate: (current: Moment) => boolean = (current) => {
+        return current && current < moment().subtract(1, "days");
+    };
 
     return (
         <Form.Item rules={[{required: true, message: ''}]}>
-            <Title style={{textAlign: 'center'}} level={3}>{type}</Title>
-            <Form form={formRef} style={{border: '1px solid', padding: 15}}>
+            <Title style={{textAlign: 'center'}} level={3}>{state.orderPointType}</Title>
+            <Form initialValues={state} form={formRef} style={{border: '1px solid', padding: 15}}>
                 <Col>
                     <Skeleton active={true} loading={loadingData}>
                         <Form.Item rules={[{required: true, message: ''}]} colon={false} label={<AimOutlined/>}
@@ -41,7 +47,7 @@ export const FormCard: React.FC<FormCardPropsType> = (props) => {
                         </Form.Item>
                     </Skeleton>
                 </Col>
-                {selected &&
+                {(selected || formRef.getFieldValue('apt') || formRef.getFieldValue('floor')) &&
                 <Col style={{display: 'flex', justifyContent: 'space-between'}}>
                     <Col span={11}>
                         <Skeleton active={true} loading={loadingData}>
@@ -71,18 +77,15 @@ export const FormCard: React.FC<FormCardPropsType> = (props) => {
                     <Col offset={1}>
                         <Skeleton active={true} loading={loadingData}>
                             <Form.Item rules={[{required: true, message: ''}]} name={'date'}>
-                                <Select defaultValue={'Today'}>
-                                    <Select.Option value={'Today'}>Today</Select.Option>
-                                    <Select.Option value={'Tomorrow'}>Tomorrow</Select.Option>
-                                </Select>
+                                <DatePicker format={'MM/DD/YY'} disabledDate={disabledDate} />
                             </Form.Item>
                         </Skeleton>
                     </Col>
-                    {['from', 'to'].map((label) =>
+                    {[{label: 'from', name: 'timeRangeFrom'}, {label: 'to', name: 'timeRangeTo'}].map(({label, name}) =>
                         <Col>
                             <Skeleton active={true} loading={loadingData}>
                                 <Form.Item rules={[{required: true, message: ''}]} labelCol={{offset: 1}} label={label}
-                                           colon={false} name={'timeRangeFrom'}>
+                                           colon={false} name={name}>
                                     <TimePicker use12Hours defaultValue={moment()}
                                                 format={'HH:MM A'}/>
                                 </Form.Item>
@@ -90,17 +93,19 @@ export const FormCard: React.FC<FormCardPropsType> = (props) => {
                         </Col>
                     )}
                 </Col>
-                <Col style={{display: type === OrderPointTypeEnum.Pickup ? 'block' : 'none'}}>
+                <Col style={{display: state.orderPointType === OrderPointTypeEnum.Pickup ? 'block' : 'none'}}>
                     <Skeleton active={true} loading={loadingData}>
-                        <Form.Item rules={[{required: true, message: ''}]} name={'comment'}>
-                            <Checkbox value={false}>Should the courier pay for get package?</Checkbox>
+                        <Form.Item valuePropName="checked" rules={[{required: true, message: ''}]} name={'payForPickup'}>
+                            <Checkbox>Should the courier pay for get package?</Checkbox>
                         </Form.Item>
                     </Skeleton>
                 </Col>
                 <Divider style={{marginTop: 5}}/>
                 <Col>
                     <Skeleton active={true} loading={loadingData}>
-                        <Form.Item rules={[{required: true, message: ''}]} name={'comment'}>
+                        <Form.Item rules={[{required: !!formRef.getFieldValue('payForPickup'), message: ''}]}
+                                   name={'comment'}
+                        >
                             <Input.TextArea placeholder={'Comment for address'}/>
                         </Form.Item>
                     </Skeleton>

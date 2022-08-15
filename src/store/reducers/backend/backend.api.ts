@@ -5,7 +5,7 @@ import {
     CountOrderPriceAndDurationResponseType,
     CountOrderPriceAndDurationType,
     CreateOrderMutationType,
-    DeliveryStatusEnum,
+    OrderStatusEnum,
     ExistUserResponseType,
     GetCourierInfoQueryType,
     GetCustomerInfoQueryType,
@@ -20,6 +20,7 @@ import {
     UpdateCustomerSettingsMutationType,
     UpdateOrderMutationType
 } from "./backend.api.types";
+import Cookies from "js-cookie";
 
 // const axiosBaseQuery =
 //     ({ baseUrl } = { baseUrl: "" }) =>
@@ -40,8 +41,14 @@ export const backendApi = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: appConfig.isProd ?
             `${appConfig.backend.prod.url}${appConfig.backend.api}`:
-            `${appConfig.backend.local.url}${appConfig.backend.api}`
+            `${appConfig.backend.local.url}${appConfig.backend.api}`,
+        prepareHeaders: headers => {
+            console.log('prepareHeaders')
+            Cookies.get('sid') && headers.set("auth-token", Cookies.get('sid') || '');
+            return headers;
+        },
     }),
+    tagTypes: ['Order', 'User'],
     endpoints: build => ({
         //----------AUTH-----------//
         existUser: build.query<ExistUserResponseType, string>({
@@ -60,19 +67,22 @@ export const backendApi = createApi({
             query: (body) => ({url: '/authorization/signup', method: 'POST', body})
         }),
         //----------CUSTOMER-----------//
-        getCustomerInfo: build.query<GetCustomerInfoQueryType, any>({
-            query: () => ({url: '/customer/info'})
+        getCustomerInfo: build.query<GetCustomerInfoQueryType, void>({
+            query: () => ({url: '/customer/info'}),
+            // providesTags: () => ['User']
         }),
         updateCustomerSettings: build.mutation<boolean, UpdateCustomerSettingsMutationType>({
-            query: (body) => ({url: '/customer/settings', method: 'POST', body})
+            query: (body) => ({url: '/customer/settings', method: 'POST', body}),
+            // invalidatesTags: () => ['User']
         }),
         //----------COURIER-----------//
-        getCourierInfo: build.query<GetCourierInfoQueryType, any>({
+        getCourierInfo: build.query<GetCourierInfoQueryType, void>({
             query: () => ({url: '/courier/info'}),
-
+            // providesTags: () => ['User']
         }),
         updateCourierSettings: build.mutation<boolean, UpdateCourierSettingsMutationType>({
-            query: (body) => ({url: '/courier/settings', method: 'POST', body})
+            query: (body) => ({url: '/courier/settings', method: 'POST', body}),
+            // invalidatesTags: () => ['User']
         }),
         //----------MAIL-----------//
         contactUs: build.mutation<boolean, ContactUsMutationType>({
@@ -82,23 +92,28 @@ export const backendApi = createApi({
         countOrderPriceAndDuration: build.mutation<CountOrderPriceAndDurationResponseType, CountOrderPriceAndDurationType>({
             query: (body) => ({url: '/order/count', method: 'POST', body})
         }),
-        createOrder: build.mutation<boolean, CreateOrderMutationType>({
+        createOrder: build.mutation<{ result: true, sid: string }, CreateOrderMutationType>({
             query: (body) => ({url: '/order/create', method: 'POST', body})
         }),
         updateOrder: build.mutation<boolean, UpdateOrderMutationType>({
             query: (body) => ({url: '/order/update', method: 'POST', body})
         }),
         getOrders: build.query<GetOrdersQueryResponseType, GetOrdersQueryType>({
-            query: (params) => ({url: '/order/list', method: 'GET', params: {}})
+            query: (params) => ({url: '/order/list', method: 'GET', params}),
+            providesTags: () => ['Order']
         }),
         getOrder: build.query<GetOrderQueryResponseType, string>({
-            query: (orderId) => ({url: '/order', method: 'GET', params: {orderId}})
+            query: (orderId) => ({url: `/order`, method: 'GET', params: {orderId}})
         }),
         takeOrder: build.mutation<boolean, string>({
             query: (orderId) => ({url: '/order/take', method: 'POST', body: {orderId}} )
         }),
-        changeOrderStatus: build.mutation<boolean, { orderId: string, status: DeliveryStatusEnum }>({
-            query: ({orderId, status}, ) => ({url: '/order/complete', method: 'POST', body: {orderId, status}} )
+        changeOrderStatus: build.mutation<boolean, { orderId: string, status: OrderStatusEnum }>({
+            query: (body, ) => {
+                console.log(body, "BODY changeOrderStatus")
+                return {url: '/order/status', method: 'POST', body}
+            },
+            invalidatesTags: result => ['Order']
         }),
         //------------------------//
     })
@@ -124,6 +139,7 @@ export const {
     useCreateOrderMutation,
     useUpdateOrderMutation,
     useLazyGetOrdersQuery,
+    useGetOrdersQuery,
     useLazyGetOrderQuery,
     useTakeOrderMutation,
     useChangeOrderStatusMutation,

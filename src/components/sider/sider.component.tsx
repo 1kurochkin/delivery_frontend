@@ -44,24 +44,35 @@ export function CustomSider() {
     const [fetchLogout, {error: error1, data: logoutData}] = useLogoutMutation();
     const {data: {message: errorLogout = undefined} = {}} = error1 as any || {};
     useEffect(() => {
-        if(logoutData) {
-            batch(() => {
-                removeCookies('sid');
-                resetSettingsState();
-                setAuth(false);
-            })
+        if (logoutData) {
+            navigate(ROUTES.MAIN_PAGE);
+            const timeoutId = setTimeout(() => {
+                batch(() => {
+                    removeCookies('sid');
+                    resetSettingsState();
+                    setAuth(false);
+                })
+            }, 300)
+            return () => clearTimeout(timeoutId)
         }
     }, [logoutData])
     useEffect(() => {
-        if(errorLogout) notification.error({message: errorLogout});
+        if (errorLogout) notification.error({message: errorLogout});
     }, [errorLogout]);
 
     const {modal: modalSupport, setVisible: setVisibleModalSupport} = useModalSupport();
-    const onSelectMenuItemHandler = ({key, keyPath}:any) => {
+    const onSelectMenuItemHandler = ({key, keyPath}: any) => {
         switch (key) {
-            case 'logout': fetchLogout(); return;
-            case 'support': setVisibleModalSupport(true); return;
-            default: navigate(key); return;
+            case 'logout': {
+                fetchLogout();
+            }
+                return;
+            case 'support':
+                setVisibleModalSupport(true);
+                return;
+            default:
+                navigate(key);
+                return;
         }
     }
 
@@ -104,11 +115,11 @@ export function CustomSider() {
             </Col>
             <Col span={24}>
                 <Menu onSelect={onSelectMenuItemHandler}
-                    theme={'dark'}
-                    defaultOpenKeys={[ROUTES.AUTH.PATH, ROUTES.ORDER.PATH, ROUTES.PROFILE.PATH]}
-                    selectedKeys={[pathname]}
-                    mode="inline"
-                    items={items}
+                      theme={'dark'}
+                      defaultOpenKeys={[ROUTES.AUTH.PATH, ROUTES.ORDER.PATH, ROUTES.PROFILE.PATH]}
+                      selectedKeys={[pathname]}
+                      mode="inline"
+                      items={items}
                 />
             </Col>
         </Sider>

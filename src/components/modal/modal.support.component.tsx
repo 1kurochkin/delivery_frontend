@@ -23,7 +23,12 @@ export const useModalSupport = () => {
     ] = useContactUsMutation();
     const {data: {message: errorContactUs = undefined} = {}} = error3 as any || {};
     useEffect(() => {
-        setVisible(false);
+        if(contactUsData) {
+            setVisible(false);
+            notification.success({message: 'We will contact you within 24 hours'})
+            supportForm.resetFields();
+        }
+
     }, [contactUsData])
     //--------CATCH-ERRORS------//
     useEffect(() => {
@@ -32,8 +37,14 @@ export const useModalSupport = () => {
         }
     }, [errorContactUs])
     //-------------------------//
-    const onFinishFormHandler = (values: any) => {
-        fetchContactUs(values);
+    const onFinishFormHandler = async () => {
+        try {
+            await supportForm.validateFields()
+            console.log(supportForm.getFieldsValue())
+            fetchContactUs(supportForm.getFieldsValue());
+        } catch (e) {
+            return;
+        }
     }
     const onCancelModalHandler = () => {
         setVisible(false)
@@ -45,10 +56,11 @@ export const useModalSupport = () => {
             <Modal
                 title="Support"
                 visible={visible}
+                confirmLoading={fetchingContactUs}
                 onCancel={onCancelModalHandler}
                 onOk={onFinishFormHandler}
             >
-                <Form name={'supportForm'} wrapperCol={{span: 12}} layout="horizontal">
+                <Form form={supportForm} name={'supportForm'} wrapperCol={{span: 12}} layout="horizontal">
                     <Col>
                         <Form.Item
                             rules={[{required: true, message: ''}]}

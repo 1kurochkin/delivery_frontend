@@ -15,31 +15,25 @@ import {batch} from "react-redux";
 export function LoginPage() {
 
     const carouselRef = useRef<CarouselRef>(null)
-    const [form] = useForm();
+    const [loginForm] = useForm();
+    const [verificationForm] = useForm();
+
     const navigate = useNavigate();
     const [currentSlide, setCurrentSlide] = useState(0)
-    const {setAuth, setCookies} = useActions()
+    const {setAuth, setCookies, setSettingsField} = useActions()
 
 
 
     //----REQUESTS----//
-    const [
-        fetchExistUser,
-        {isFetching: fetchingExistUser, error: error1, data: existUserData},
-    ] = useLazyExistUserQuery()
-    const {data: {message: errorExistUser = undefined} = {}} = error1 as any || {};
-    useEffect(() => {
-        if(existUserData?.exist) {
-            fetchGetCode(form.getFieldValue('phone'));
-            carouselRef?.current?.next();
-        }
-    }, [existUserData])
 
     const [
         fetchGetCode,
-        {error: error2, isFetching: fetchingGetCode}
+        {error: error2, isFetching: fetchingGetCode, data: getCodeData}
     ] = useLazyGetCodeQuery()
     const {data: {message: errorGetCode = undefined} = {}} = error2 as any || {};
+    useEffect(() => {
+        if(getCodeData) carouselRef?.current?.next()
+    }, [getCodeData])
 
     const [
         fetchLogin,
@@ -49,8 +43,12 @@ export function LoginPage() {
     useEffect(() => {
         if (loginData?.sid) {
             batch(() => {
-                setCookies({name: 'sid', value: loginData?.sid})
-                setAuth(true)
+                setCookies({name: 'sid', value: loginData?.sid});
+                setSettingsField({
+                    field: 'role',
+                    value: loginForm.getFieldValue('role')
+                });
+                setAuth(true);
             });
             navigate(ROUTES.MAIN_PAGE)
         }
@@ -58,23 +56,20 @@ export function LoginPage() {
 
     //--------CATCH-ERRORS------//
     useEffect(() => {
-        if (errorExistUser || errorGetCode || errorLogin) {
-            console.log('ERROR')
-            notification.error({message: errorExistUser || errorGetCode});
+        if (errorGetCode || errorLogin) {
+            notification.error({message: errorGetCode | errorLogin});
         }
-    }, [errorExistUser, errorGetCode, errorLogin])
+    }, [errorGetCode, errorLogin])
     //-------------------------//
 
-    const onFinishFormHandler = (name: string, {forms}: FormFinishInfo) => {
-        const currentValues = forms[name].getFieldsValue()
-        if (name === '0') {
-            const phone = forms[0].getFieldValue('phone')
-            fetchExistUser(phone)
+    const onFinishFormHandler = (name: 'loginForm' | 'verificationForm' | string, {forms}: FormFinishInfo) => {
+        if (name === 'loginForm') {
+            fetchGetCode(loginForm.getFieldValue('phone'));
         }
-        if (name === '1') {
+        if (name === 'verificationForm') {
             fetchLogin({
-                ...forms[0].getFieldsValue(),
-                code: currentValues.code,
+                data: loginForm.getFieldsValue(),
+                code: verificationForm.getFieldValue('code'),
             });
         }
     }
@@ -93,7 +88,7 @@ export function LoginPage() {
             <Form.Provider onFormFinish={onFinishFormHandler}>
                 <Carousel afterChange={setCurrentSlide} ref={carouselRef} dots={false}>
                     <div>
-                        <Form form={form} name={'0'}>
+                        <Form form={loginForm} name={'loginForm'}>
                             <Row justify={'center'}>
                                 <Col span={7}>
                                     <Form.Item
@@ -122,7 +117,7 @@ export function LoginPage() {
                             <Row justify={'center'}>
                                 <Col span={16}>
                                     <Form.Item wrapperCol={{span: 24}}>
-                                        <Button loading={fetchingExistUser || fetchingGetCode} htmlType={'submit'}>
+                                        <Button loading={fetchingGetCode} htmlType={'submit'}>
                                             Get code
                                         </Button>
                                     </Form.Item>
@@ -137,7 +132,7 @@ export function LoginPage() {
                             </Col>
                         </Row>
 
-                        <Form name={'1'} layout={'horizontal'}>
+                        <Form form={verificationForm} name={'verificationForm'} layout={'horizontal'}>
                             <Row justify={'center'}>
                                 <Col span={7}>
                                     <Form.Item
@@ -147,7 +142,7 @@ export function LoginPage() {
                                         name={'code'}
                                         rules={[{ required: true, message: '' }]}
                                     >
-                                        <Input placeholder={'123456'}/>
+                                        <Input placeholder={'Verification code'}/>
                                     </Form.Item>
                                 </Col>
                                 <Col offset={1} span={9}>

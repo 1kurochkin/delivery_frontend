@@ -1,63 +1,130 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import Title from "antd/lib/typography/Title";
-import {Alert, Button, Col, Divider, Form, Input, notification, Row, Select, Skeleton, Spin, Typography} from "antd";
+import {Alert, Button, Carousel, Col, Divider, Form, Input, notification, Row, Select, Skeleton, Spin} from "antd";
 import {useForm} from "antd/es/form/Form";
 import {
     useCountOrderPriceAndDurationMutation,
-    useCreateOrderMutation, useLazyExistUserQuery, useLazyGetCodeQuery,
-    useLazyGetOrderQuery, useLoginMutation, useSignupMutation,
+    useCreateOrderMutation,
+    useLazyGetCodeQuery,
+    useLazyGetOrderQuery,
     useUpdateOrderMutation
 } from "../../store/reducers/backend/backend.api";
-import {DeliveryTypeEnum, OrderPointTypeEnum, PayTypeEnum} from "../../store/reducers/backend/backend.api.types";
+import {
+    DeliveryTypeEnum,
+    OrderPointType,
+    OrderPointTypeEnum, OrderType,
+    OrderWeightEnum,
+    PayTypeEnum, UserRoleEnum
+} from "../../store/reducers/backend/backend.api.types";
 import {FormCard} from "../../components/form/form.card.component";
 import {useNavigate, useParams} from "react-router-dom";
 import {ROUTES} from "../../configs/app.constants";
 import {useAppSelector} from "../../hooks/useAppSelector";
+import moment from "moment";
+import {CarouselRef} from "antd/lib/carousel";
+import {batch} from "react-redux";
+import {useActions} from "../../hooks/useActions";
+
+export type InitialOrderStateType = Pick<OrderType, 'deliveryType' | 'weight' | 'deliveryPrice' | 'payType' | 'packageType' | 'packagePrice'>;
 
 export function CreatePage() {
+    const carouselRef = useRef<CarouselRef>(null)
     const {orderId} = useParams();
     const navigate = useNavigate();
 
+    console.log(orderId, "ORDER ID")
+
+    const {setSettingsField, setAuth, setCookies} = useActions()
+
     const [orderForm] = useForm();
+
     const [pickupForm] = useForm();
     const [deliveryForm] = useForm();
     const [verificationForm] = useForm();
 
     const auth = useAppSelector(({app}) => app.auth)
 
-    const [filledAddresses, setFilledAddresses] = useState({
-        [OrderPointTypeEnum.Pickup]: false,
-        [OrderPointTypeEnum.Delivery]: false,
-    });
-
     const IS_UPDATE_ORDER_PAGE = !!orderId;
     const IS_AUTH_USER = auth;
 
+    const deliveryTypeConfigView = Object.values(DeliveryTypeEnum);
+    const weightConfigView = Object.values(OrderWeightEnum);
+    const payTypeConfigView = Object.values(PayTypeEnum);
+
+    const [initialStateOrderForm, setInitialStateOrderForm] = useState<InitialOrderStateType>({
+        deliveryType: deliveryTypeConfigView[0],
+        weight: weightConfigView[0],
+        deliveryPrice: 0,
+        packageType: '',
+        payType: PayTypeEnum.SenderCash,
+        packagePrice: '' as unknown as number
+    });
+    const setInitialStateOrderFormHandler = (field: keyof typeof initialStateOrderForm, value: any) => {
+        setInitialStateOrderForm((prevState) => ({
+            ...prevState,
+            [field]: value
+        }))
+    }
+    const [initialStatePickupForm] = useState({
+        orderPointType: OrderPointTypeEnum.Pickup,
+        address: '', apt: undefined, floor: undefined,
+        phone: '',
+        date: moment(), timeRangeFrom: moment(), timeRangeTo: moment().add(2, 'hours'),
+        payForPickup: false,
+        comment: ''
+    });
+    const [initialStateDeliveryForm] = useState({
+        ...initialStatePickupForm,
+        orderPointType: OrderPointTypeEnum.Delivery,
+        timeRangeFrom: moment().add(2, 'hours'),
+        timeRangeTo: moment().add(4, 'hours')
+    });
+    const formCardConfigView = [
+        {type: OrderPointTypeEnum.Pickup, ref: pickupForm, state: initialStatePickupForm},
+        {type: OrderPointTypeEnum.Delivery, ref: deliveryForm, state: initialStateDeliveryForm}
+    ]
+
     const [
         fetchGetOrder,
-        {error: error1, isLoading: fetchingGetOrder = false, data: getOrderData}
-    ] = useLazyGetOrderQuery();
+        {error: error1, isFetching: fetchingGetOrder = false, data: getOrderData}
+    ] = useLazyGetOrderQuery({
+
+        // selectFromResult: (result) => {
+        //     const {data, ...restResult} = result;
+        //     if(!data) return result;
+        //     const {
+        //         id:_0, courierId, customerId, courier, createdAt:_1, updatedAt:_2,
+        //         pickupPoint: {id:_3, orderId:_4, createdAt:_5, updatedAt:_6, ...restPickupPoint} = {},
+        //         deliveryPoint: {id, orderId, createdAt, updatedAt, ...restDeliveryPoint} = {},
+        //         ...restData
+        //     } = data;
+        //     return {...restResult, data: {...restData, pickupPoint: restPickupPoint, deliveryPoint: restDeliveryPoint}}
+        // }
+    });
+
     const {data: {message: errorGetOrder = undefined} = {}} = error1 as any || {};
     useEffect(() => {
+        console.log('useEffect orderId')
         IS_UPDATE_ORDER_PAGE && fetchGetOrder(orderId)
     }, [orderId])
     useEffect(() => {
         if (getOrderData) {
-            const {deliveryPoints: [deliveryPoint], pickupPoint, ...restGetOrderData} = getOrderData;
-            for (const key in restGetOrderData) {
-                // @ts-ignore
-                orderForm.setFields([{name: key, value: restGetOrderData[key]}]);
-            }
-            for (const key in pickupPoint) {
-                // @ts-ignore
-                pickupForm.setFields([{name: key, value: pickupPoint[key]}]);
-            }
-            for (const key in deliveryPoint) {
-                deliveryForm.setFields([{
-                    // @ts-ignore
-                    name: key, value: deliveryPoint[key]
-                }]);
-            }
+            console.log('useEffect getOrderData')
+            const {deliveryPoint, pickupPoint, deliveryPrice, ...restGetOrderData} = getOrderData;
+            orderForm.setFieldsValue(restGetOrderData);
+            setInitialStateOrderFormHandler('deliveryPrice', deliveryPrice);
+            pickupForm.setFieldsValue({
+                ...pickupPoint,
+                date: moment(pickupPoint.date),
+                timeRangeFrom: moment(pickupPoint.timeRangeFrom),
+                timeRangeTo: moment(pickupPoint.timeRangeTo),
+            });
+            deliveryForm.setFieldsValue({
+                ...deliveryPoint,
+                date: moment(deliveryPoint.date),
+                timeRangeFrom: moment(deliveryPoint.timeRangeFrom),
+                timeRangeTo: moment(deliveryPoint.timeRangeTo),
+            });
         }
     }, [getOrderData])
 
@@ -67,6 +134,7 @@ export function CreatePage() {
     ] = useUpdateOrderMutation();
     const {data: {message: errorUpdateOrder = undefined} = {}} = error2 as any || {};
     useEffect(() => {
+        console.log('useEffect updateOrderData')
         if (updateOrderData) {
             notification.success({message: 'Your order successful updated!'});
             navigate(ROUTES.ORDER.LIST_PAGE);
@@ -77,20 +145,19 @@ export function CreatePage() {
     const [
         fetchCountOrderPriceAndDuration,
         {error: error3, isLoading: fetchingCountOrderPriceAndDuration, data: countOrderPriceAndDurationData}
-    ] = useCountOrderPriceAndDurationMutation();
+    ] = useCountOrderPriceAndDurationMutation({
+        // selectFromResult: (result) => ({...result, data: {price: result.data?.price || 10}}),
+    });
     const {data: {message: errorCountOrderPriceAndDuration = undefined} = {}} = error3 as any || {};
     useEffect(() => {
-        if (
-            filledAddresses[OrderPointTypeEnum.Delivery] &&
-            filledAddresses[OrderPointTypeEnum.Pickup]
-        ) {
-            fetchCountOrderPriceAndDuration({
-                origins: pickupForm.getFieldValue('address'),
-                destinations: [deliveryForm.getFieldValue('address')],
-                deliveryType: orderForm.getFieldValue('deliveryType')
-            })
+        console.log('useEffect countOrderPriceAndDurationData', countOrderPriceAndDurationData)
+        if (countOrderPriceAndDurationData) {
+            setInitialStateOrderForm((prevState) => ({
+                ...prevState,
+                deliveryPrice: countOrderPriceAndDurationData?.price || getOrderData?.deliveryPrice || 10
+            }))
         }
-    }, [filledAddresses])
+    }, [countOrderPriceAndDurationData])
 
     const [
         fetchCreateOrder,
@@ -98,23 +165,44 @@ export function CreatePage() {
     ] = useCreateOrderMutation();
     const {data: {message: errorCreateOrder = undefined} = {}} = error4 as any || {};
     useEffect(() => {
-        if (createOrderData) {
+        console.log('useEffect createOrderData')
+        if (createOrderData?.result) {
             notification.success({message: 'Your order successful created!'});
             orderForm.resetFields();
             pickupForm.resetFields();
             deliveryForm.resetFields();
-            navigate(ROUTES.ORDER.LIST_PAGE);
+            if(IS_AUTH_USER) navigate(ROUTES.ORDER.LIST_PAGE);
+            else {
+                batch(() => {
+                    setSettingsField({
+                        field: 'role',
+                        value: UserRoleEnum.Customer
+                    });
+                    setCookies({
+                        name: 'sid',
+                        value: createOrderData.sid
+                    });
+                    setAuth(true);
+                });
+                navigate(ROUTES.ORDER.LIST_PAGE);
+            }
         }
     }, [createOrderData])
 
-    const [
+    let [
         fetchGetCode,
-        {error: error5, isLoading: fetchingGetCode, data: IS_HAVE_VERIFICATION_CODE = true}
+        {error: error5, isFetching: fetchingGetCode, data: IS_HAVE_VERIFICATION_CODE = false}
     ] = useLazyGetCodeQuery();
     const {data: {message: errorGetCode = undefined} = {}} = error5 as any || {};
+    useEffect(() => {
+        if (IS_HAVE_VERIFICATION_CODE) {
+            notification.success({message: 'We have sent verification code to your phone!'})
+        }
+    }, [IS_HAVE_VERIFICATION_CODE])
 
     //--------CATCH-ERRORS------//
     if (errorCountOrderPriceAndDuration || errorCreateOrder || errorGetOrder || errorUpdateOrder || errorGetCode) {
+        console.log(errorCountOrderPriceAndDuration || errorCreateOrder || errorGetOrder || errorUpdateOrder || errorGetCode)
         notification.error({
             message: errorCountOrderPriceAndDuration ||
                 errorCreateOrder ||
@@ -125,14 +213,8 @@ export function CreatePage() {
     }
     //-------------------------//
 
-    const onAddressFilledHandler = (filled: boolean, type: OrderPointTypeEnum) => {
-        setFilledAddresses((prevState) => ({
-            ...prevState,
-            [type]: filled
-        }))
-    }
-
     const onFinishFormHandler = async () => {
+        console.log('onFinishFormHandler')
         try {
             await Promise.all([
                 orderForm.validateFields(),
@@ -140,60 +222,79 @@ export function CreatePage() {
                 deliveryForm.validateFields(),
                 ...(!IS_AUTH_USER ? [verificationForm.validateFields()] : [])
             ]);
+            console.log('HELLO CREATING')
             const data = {
                 ...orderForm.getFieldsValue(),
-                pickupPoint: pickupForm.getFieldsValue(),
-                deliveryPoints: [deliveryForm.getFieldsValue()],
+                pickupPoint: {
+                    orderPointType: OrderPointTypeEnum.Pickup,
+                    ...pickupForm.getFieldsValue()
+                },
+                deliveryPoint: {
+                    orderPointType: OrderPointTypeEnum.Delivery,
+                    ...deliveryForm.getFieldsValue()
+                },
                 ...(!IS_AUTH_USER && verificationForm.getFieldsValue())
             }
             IS_UPDATE_ORDER_PAGE ?
-                fetchUpdateOrder(data) :
+                fetchUpdateOrder({orderId: getOrderData?.id || '', update: data}) :
                 fetchCreateOrder(data)
         } catch (e) {
+            console.log(e)
             notification.error({message: 'Fill all fields please!'})
             return;
         }
     }
-    const onFinishVerificationFormHandler = async () => {
+    const onClickGetCodeHandler = async () => {
+        console.log('onClickGetCodeHandler')
         fetchGetCode(verificationForm.getFieldValue('phone'));
+        carouselRef?.current?.next()
+    }
+    const onFormOrderChangeHandler = (changedValues: any, values: any) => {
+        if ('deliveryType' in changedValues || !changedValues) {
+            setInitialStateOrderFormHandler('deliveryPrice', 0)
+        }
+    }
+    const onChangeVerificationFormHandler = (changedValues: any, values: any) => {
+        if ('phone' in changedValues || !changedValues) {
+            setInitialStateOrderFormHandler('deliveryPrice', 0)
+        }
+    }
+    const onAddressChangeFormCardHandler = () => {
+        setInitialStateOrderFormHandler('deliveryPrice', 0)
     }
 
-    const deliveryTypeConfigView = [
-        {value: DeliveryTypeEnum.Walking},
-        {value: DeliveryTypeEnum.Car},
-        {value: DeliveryTypeEnum.Truck},
-    ];
+    const onClickCountPriceButtonHandler = async () => {
+        try {
+            const [
+                {deliveryType},
+                {address: pickupAddress},
+                {address: deliveryAddress}
+            ] = await Promise.all([
+                orderForm.validateFields(['deliveryType']),
+                pickupForm.validateFields(['address']),
+                deliveryForm.validateFields(['address']),
+            ])
+            fetchCountOrderPriceAndDuration({
+                origins: pickupAddress,
+                destinations: [deliveryAddress],
+                deliveryType: deliveryType
+            })
+        } catch (e) {
+            notification.error({
+                message: 'Please fill pickup address and delivery address for count delivery price'
+            })
+        }
+    }
 
-    const weightConfigView = [
-        {value: 'Under 1 lb'},
-        {value: 'Under 2 lb'},
-        {value: 'Under 5 lb'},
-        {value: 'Under 10 lb'},
-        {value: 'Under 15 lb'},
-        {value: 'Under 20 lb'},
-        {value: 'More 20 lb'},
-    ];
-
-    const payTypeConfigView = [
-        {value: PayTypeEnum.SenderCash},
-        {value: PayTypeEnum.RecipientCash},
-        {value: PayTypeEnum.ByBankApps},
-    ];
-
-    const formCardConfigView = [
-        {type: OrderPointTypeEnum.Pickup, ref: pickupForm},
-        {type: OrderPointTypeEnum.Delivery, ref: deliveryForm}
-    ]
-
-    const createOrderButton = useCallback(() =>
+    const createOrderButton = useCallback((isUpdateOrderPage: boolean) =>
             <Skeleton active={true} loading={fetchingGetOrder}>
                 <Button
                     loading={fetchingCountOrderPriceAndDuration || fetchingCreateOrder || fetchingUpdateOrder}
-                    onClick={onFinishFormHandler}
                     style={{width: '100%'}}
                     htmlType={'submit'}
+                    onClick={onFinishFormHandler}
                 >
-                    {IS_UPDATE_ORDER_PAGE ? 'Update' : 'Create'} order
+                    {isUpdateOrderPage ? 'Update' : 'Create'} order
                 </Button>
             </Skeleton>,
         [
@@ -206,31 +307,88 @@ export function CreatePage() {
         ]
     )
 
+    const getFooterView = () => {
+        if (!initialStateOrderForm.deliveryPrice) {
+            return (
+                <Button loading={fetchingCountOrderPriceAndDuration}
+                        style={{width: '100%'}}
+                        onClick={onClickCountPriceButtonHandler}
+                >
+                    Count delivery price
+                </Button>
+            )
+        } else {
+            if (!IS_AUTH_USER) {
+                return (
+                    <Form style={{maxWidth: '100%'}} layout={"horizontal"}
+                          onValuesChange={onChangeVerificationFormHandler} form={verificationForm}>
+                        <Carousel ref={carouselRef} effect="fade" dots={false}>
+                            <Row>
+                                <Col style={{marginBottom: 10}}>
+                                    <Form.Item style={{marginBottom: 0}} rules={[{required: true, message: ''}]}
+                                               name={'phone'}>
+                                        <Input placeholder={'Phone number'}/>
+                                    </Form.Item>
+                                </Col>
+                                <Col>
+                                    <Button loading={fetchingGetCode} style={{width: '100%'}} onClick={onClickGetCodeHandler}>
+                                        Get code
+                                    </Button>
+                                </Col>
+                            </Row>
+                            <Row justify={'space-between'}>
+                                <Col style={{marginBottom: 10}}>
+                                    <Button style={{width: '100%'}} onClick={() => carouselRef?.current?.prev()}>
+                                        Back
+                                    </Button>
+                                </Col>
+                                <Col style={{marginBottom: 10}}>
+                                    <Form.Item style={{marginBottom: 0}} rules={[{required: true, message: ''}]}
+                                               name={'code'}>
+                                        <Input placeholder={'Verification code'}/>
+                                    </Form.Item>
+                                </Col>
+                                <Col>
+                                    <Form.Item>
+                                        {createOrderButton(false)}
+                                    </Form.Item>
+                                </Col>
+                            </Row>
+                        </Carousel>
+                    </Form>
+                )
+            }
+        }
+        if (IS_UPDATE_ORDER_PAGE) return createOrderButton(true);
+        else return createOrderButton(false);
+    }
+
+
     return (
         <div className={'container'}>
-            <Form.Provider onFormFinish={onFinishFormHandler}>
+            <Form.Provider>
                 <Row gutter={20} justify={'space-between'}>
                     <Col span={6}>
                         <Title>{IS_UPDATE_ORDER_PAGE ? 'Update' : 'Create'} order</Title>
                     </Col>
                     <Col span={14}>
-                        <Form form={orderForm}>
+                        <Form onValuesChange={onFormOrderChangeHandler} initialValues={initialStateOrderForm}
+                              form={orderForm}>
                             <Col style={{display: 'flex', justifyContent: 'space-between'}}>
                                 <Col span={7}>
                                     <Skeleton active={true} loading={fetchingGetOrder}>
                                         <Form.Item rules={[{required: true, message: ''}]} name={'deliveryType'}>
-                                            <Select defaultValue={deliveryTypeConfigView[0].value}>
-                                                {deliveryTypeConfigView.map(({value}) =>
+                                            <Select>
+                                                {deliveryTypeConfigView.map((value) =>
                                                     <Select.Option value={value}>{value}</Select.Option>
                                                 )}
                                             </Select>
                                         </Form.Item>
                                     </Skeleton>
-                                    {/*</Skeleton.Input>*/}
                                 </Col>
                                 <Col span={7} offset={1}>
                                     <Skeleton active={true} loading={fetchingGetOrder}>
-                                        <Form.Item rules={[{required: true, message: ''}]} name={'packageCost'}>
+                                        <Form.Item rules={[{required: true, message: ''}]} name={'packagePrice'}>
                                             <Input placeholder={'Package cost in $'}/>
                                         </Form.Item>
                                     </Skeleton>
@@ -249,7 +407,7 @@ export function CreatePage() {
                                     <Skeleton active={true} loading={fetchingGetOrder}>
                                         <Form.Item rules={[{required: true, message: ''}]} name={'payType'}>
                                             <Select placeholder={'Way for pay'}>
-                                                {payTypeConfigView.map(({value}) =>
+                                                {payTypeConfigView.map((value) =>
                                                     <Select.Option value={value}>{value}</Select.Option>
                                                 )}
                                             </Select>
@@ -259,8 +417,8 @@ export function CreatePage() {
                                 <Col span={12}>
                                     <Skeleton active={true} loading={fetchingGetOrder}>
                                         <Form.Item rules={[{required: true, message: ''}]} name={'weight'}>
-                                            <Select defaultValue={weightConfigView[0].value}>
-                                                {weightConfigView.map(({value}) =>
+                                            <Select>
+                                                {weightConfigView.map((value) =>
                                                     <Select.Option value={value}>{value}</Select.Option>
                                                 )}
                                             </Select>
@@ -278,63 +436,30 @@ export function CreatePage() {
                             />
                         </Col>
                         <Divider/>
-                        {formCardConfigView.map(({type, ref}) =>
+                        {formCardConfigView.map(({type, ref, state}) =>
                             <Col>
-                                <FormCard loadingData={fetchingGetOrder} onAddressFilled={onAddressFilledHandler}
-                                          type={type} formRef={ref}/>
+                                <FormCard onAddressChange={onAddressChangeFormCardHandler} state={state}
+                                          loadingData={fetchingGetOrder} formRef={ref}/>
                             </Col>
                         )}
                         <Divider/>
                         <Row>
                             <Col span={24}>
                                 <Skeleton active={true} loading={fetchingGetOrder}>
-                                    {
-                                        fetchingCountOrderPriceAndDuration ?
-                                            <Spin/> :
-                                            <Alert
-                                                type={'success'}
-                                                message={`The cost of delivery will be: ${countOrderPriceAndDurationData?.price || 10}$`}
-                                            />
-                                    }
+                                    <Row gutter={[0, 20]}>
+                                        {
+                                            initialStateOrderForm.deliveryPrice ?
+                                                <Col span={24}>
+                                                    <Alert type={'success'}
+                                                           message={`The cost of delivery will be: ${initialStateOrderForm.deliveryPrice}$`}/>
+                                                </Col> : null
+                                        }
+                                        {getFooterView()}
+                                    </Row>
+
                                 </Skeleton>
                             </Col>
                         </Row>
-                        {/*<Row>*/}
-                                {
-                                    !IS_AUTH_USER ?
-                                        <Form wrapperCol={{span: 24}} onFinish={onFinishVerificationFormHandler} form={verificationForm}>
-                                            <Row style={{marginTop: 10}} justify={'space-between'}>
-                                            {
-                                                !IS_HAVE_VERIFICATION_CODE ? <>
-                                                    <Col span={11}>
-                                                        <Form.Item rules={[{required: true, message: ''}]} name={'phone'}>
-                                                            <Input placeholder={'Phone number'}/>
-                                                        </Form.Item>
-                                                    </Col>
-                                                    <Col span={11}>
-                                                        <Form.Item rules={[{required: true, message: ''}]}>
-                                                            <Button loading={fetchingGetCode} style={{width: '100%'}}
-                                                                    htmlType={'submit'}>
-                                                                Get code
-                                                            </Button>
-                                                        </Form.Item>
-                                                    </Col>
-                                                </> : <>
-                                                    <Col span={11}>
-                                                        <Form.Item rules={[{required: true, message: ''}]} name={'code'}>
-                                                            <Input placeholder={'Verification code'}/>
-                                                        </Form.Item>
-                                                    </Col>
-                                                    <Col span={11}>
-                                                        {createOrderButton()}
-                                                    </Col>
-                                                </>
-                                            }
-                                            </Row>
-                                        </Form> :
-                                        createOrderButton()
-                                }
-                        {/*</Row>*/}
                         <Divider/>
                     </Col>
                 </Row>

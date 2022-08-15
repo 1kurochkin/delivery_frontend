@@ -8,27 +8,44 @@ import {
 } from "../../store/reducers/backend/backend.api";
 import {UserRoleEnum} from "../../store/reducers/backend/backend.api.types";
 import {useModalSupport} from "../../components/modal/modal.support.component";
+import {useActions} from "../../hooks/useActions";
+import {batch} from "react-redux";
+import {useForm} from "antd/es/form/Form";
+import {FieldData} from "rc-field-form/lib/interface";
 
 export function SettingsPage() {
-    const {role, phone, name} = useAppSelector(({settings}) => settings)
+    const {setSettingsField} = useActions()
+    const [settingsForm] = useForm()
+    const settingsReduxState = useAppSelector(({settings}) => settings)
+    const fields = Object
+        .entries(settingsReduxState)
+        .map(([key, value]) => ({name: key, value}))
+    console.log(fields)
+    const {role, id, phone, name} = settingsReduxState;
     const {modal, setVisible} = useModalSupport()
 
     const [
-        fetchUpdateCourierSettings,
-        {error: error1, isLoading: fetchingUpdateCourierSettings}
+        fetchUpdateCustomerSettings,
+        {error: error1, isLoading: fetchingUpdateCourierSettings, data: updateCustomerData}
     ] = useUpdateCustomerSettingsMutation();
     const {data: {message: errorUpdateCourierSettings = undefined} = {}} = error1 as any || {};
     const [
-        fetchUpdateCustomerSettings,
-        {error: error2, isLoading: fetchingUpdateCustomerSettings}
+        fetchUpdateCourierSettings,
+        {error: error2, isLoading: fetchingUpdateCustomerSettings, data: updateCourierData}
     ] = useUpdateCourierSettingsMutation();
     const {data: {message: errorUpdateCustomerSettings = undefined} = {}} = error2 as any || {};
+    useEffect(() => {
+        if(updateCustomerData || updateCustomerData) {
+            notification.success({message: 'Your settings updated successful!'})
+        }
+    }, [updateCustomerData, updateCourierData])
 
     //--------CATCH-ERRORS------//
     useEffect(() => {
         if (errorUpdateCourierSettings || errorUpdateCustomerSettings) {
             notification.error({
-                message: errorUpdateCourierSettings || errorUpdateCustomerSettings});
+                message: errorUpdateCourierSettings || errorUpdateCustomerSettings
+            });
         }
     }, [errorUpdateCustomerSettings, errorUpdateCourierSettings])
     //-------------------------//
@@ -37,7 +54,13 @@ export function SettingsPage() {
         role === UserRoleEnum.Customer ?
             fetchUpdateCustomerSettings(values) :
             fetchUpdateCourierSettings(values)
+    }
 
+    const onValuesChangeHandler = (values: any) => {
+        console.log('onValuesChangeHandler')
+        for (const key in values) {
+            setSettingsField({field: key, value: values[key]})
+        }
     }
 
     // const onCancelModalHandler = () => {
@@ -53,7 +76,10 @@ export function SettingsPage() {
                     <Title>Settings</Title>
                 </Row>
                 <Row justify={'space-evenly'}>
-                    <Form onFinish={onFinishFormHandler}
+                    <Form form={settingsForm} onFinish={onFinishFormHandler}
+                          onValuesChange={onValuesChangeHandler}
+                          initialValues={settingsReduxState}
+                          // fields={fields}
                           wrapperCol={{span: 12}}
                           name={'settingsForm'}
                           layout="horizontal">
@@ -64,7 +90,7 @@ export function SettingsPage() {
                                 label={'Im the'}
                                 name={'role'}
                             >
-                                <Input disabled value={role}/>
+                                <Input disabled/>
                             </Form.Item>
                         </Col>
                         <Col>
@@ -74,7 +100,7 @@ export function SettingsPage() {
                                 label={'Phone'}
                                 name={'phone'}
                             >
-                                <Input disabled value={phone}/>
+                                <Input disabled/>
                             </Form.Item>
                         </Col>
                         {/*</Row>*/}
@@ -87,7 +113,7 @@ export function SettingsPage() {
                                 name={'name'}
                                 // wrapperCol={{span: 24}}
                             >
-                                <Input value={name}/>
+                                <Input/>
                             </Form.Item>
                         </Col>
                         {/*</Row>*/}
