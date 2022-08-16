@@ -143,12 +143,14 @@ export function OrdersPage() {
                     orderId: tookOrderId,
                     status: OrderStatusEnum.Completed
                 });
+                setDataSource([])
                 return;
             case "Cancel":
                 fetchChangeOrderStatus({
                     orderId: tookOrderId,
                     status: OrderStatusEnum.Canceled
                 });
+                setDataSource([])
                 return;
             default:
                 return;

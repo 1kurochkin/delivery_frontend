@@ -15,6 +15,7 @@ import {FormFinishInfo} from "rc-field-form/lib/FormContext";
 import {FieldData} from "rc-field-form/lib/interface";
 import {batch} from "react-redux";
 import {useActions} from "../../hooks/useActions";
+import {UserRoleEnum} from "../../store/reducers/backend/backend.api.types";
 
 export function SignupPage() {
 
@@ -51,13 +52,11 @@ export function SignupPage() {
         {isFetching: fetchingGetCode, error: error3, data: getCodeData}
     ] = useLazyGetCodeQuery()
     const {data: {message: errorGetCode = undefined} = {}} = error3 as any || {};
-    useEffect(() => {
-        if(getCodeData) carouselRef?.current?.next()
-    }, [getCodeData])
 
     //--------CATCH-ERRORS------//
     useEffect(() => {
         if (errorGetCode || errorSignup) {
+            if(errorGetCode) carouselRef?.current?.prev()
             notification.error({message: errorGetCode || errorSignup});
         }
     }, [errorGetCode, errorSignup])
@@ -66,9 +65,9 @@ export function SignupPage() {
     const onFinishFormHandler = (name: 'signupForm' | 'verificationForm' | string, {forms}: FormFinishInfo) => {
         if (name === 'signupForm') {
             console.log(signupForm.getFieldsValue(), 'PHONE')
-            fetchGetCode(
-                signupForm.getFieldValue('phone')
-            );
+            fetchGetCode(signupForm.getFieldValue('phone'));
+            notification.success({message: 'We have sent code to your phone'});
+            carouselRef?.current?.next()
         }
         if (name === 'verificationForm') {
             fetchSignup({
@@ -100,9 +99,10 @@ export function SignupPage() {
                                         name={'role'}
                                         rules={[{ required: true, message: '' }]}
                                         label="I'm a">
-                                        <Select value={'Customer'}>
-                                            <Select.Option value="courier">Courier</Select.Option>
-                                            <Select.Option value="customer">Customer</Select.Option>
+                                        <Select value={UserRoleEnum.Customer}>
+                                            {[UserRoleEnum.Courier, UserRoleEnum.Customer].map(el =>
+                                                <Select.Option value={el}>{el}</Select.Option>
+                                            )}
                                         </Select>
                                     </Form.Item>
                                 </Col>

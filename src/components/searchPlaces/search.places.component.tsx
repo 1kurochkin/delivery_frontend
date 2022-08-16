@@ -1,6 +1,6 @@
 import {AutoComplete} from "antd";
 import React, {useEffect} from "react";
-import usePlacesAutocomplete from "use-places-autocomplete";
+import usePlacesAutocomplete, {getLatLng} from "use-places-autocomplete";
 
 type SearchPlacesProps = {
     onChange: (value: string) => void;
@@ -15,23 +15,30 @@ export const SearchPlaces: React.FC<SearchPlacesProps> = (props) => {
         suggestions: {data},
         setValue,
     } = usePlacesAutocomplete({
-        // requestOptions: {
-        //     // @ts-ignore
-        //     // location: {lat: () => 40.730610, lng: () => -73.935242},
-        //     // origin: {lat: 40.730610, lng: -73.935242},
-        //     // componentRestrictions: {country: 'us'},
-        //     // location: new google.maps.LatLng(40.73,-73.93),
-        //     // origin: new google.maps.LatLng(40.73,-73.93),
-        //     radius: 100 * 100,
-        //     language: 'en'
-        // },
+        requestOptions: {
+            // @ts-ignore
+            // location: {lat: () => 40.730610, lng: () => -73.935242},
+            // origin: {lat: 40.730610, lng: -73.935242},
+            componentRestrictions: {country: 'us'},
+            location: new google.maps.LatLng({lat: 40.730610, lng: -73.935242}),
+            // origin: new google.maps.LatLng(40.73,-73.93),
+            // language: 'en'
+        },
         debounce: 300
     });
     useEffect(() => {
         if(value) {setValue(value, true)}
     }, [value])
-    const preparedData = data.map(({description}) => ({value: description, label: ''}))
-
+    const preparedData = data.reduce((result:any, {description}) => {
+        if(
+            !description.includes('Brooklyn') ||
+            !description.includes('Queens') ||
+            !description.includes('Manhattan') ||
+            !description.includes('Bronx')
+        ) return result;
+        else result.push({value: description, label: ''})
+        return result;
+    }, [])
     const onChangeHandler = (value: string) => {
         console.log('onChangeHandler', value)
         setValue(value, true);

@@ -21,6 +21,7 @@ import {NotFoundPage} from "./pages/404/404.page";
 import {NotAuthorizedPage} from "./pages/403/403.page";
 import {usePrevious} from "./hooks/usePrevious";
 import Cookies from "js-cookie";
+import {batch} from "react-redux";
 
 
 function App() {
@@ -32,7 +33,7 @@ function App() {
     const auth = useAppSelector(({app}) => app.auth)
     const userRole = useAppSelector(({settings}) => settings.role)
     const prevAuthState = usePrevious(auth)
-    const {setSettingsField} = useActions();
+    const {setAuth, removeCookies, setSettingsField} = useActions()
 
     const [
         fetchGetCourierInfo,
@@ -56,6 +57,7 @@ function App() {
     }, [auth])
 
     useEffect(() => {
+        console.log('useEffect getCourierInfoData, getCustomerInfoData')
         if (getCourierInfoData || getCustomerInfoData) {
             const userData = (getCourierInfoData || getCustomerInfoData)
             console.log(userData)
@@ -68,7 +70,16 @@ function App() {
 
     //--------CATCH-ERRORS------//
     if (errorGetCourierInfo || errorGetCustomerInfo) {
+        batch(() => {
+            removeCookies('sid');
+            setSettingsField({
+                field: 'role',
+                value: ''
+            });
+            setAuth(false);
+        });
         notification.error({message: errorGetCourierInfo || errorGetCustomerInfo});
+
     }
     //-------------------------//
 

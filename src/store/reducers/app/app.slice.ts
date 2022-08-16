@@ -17,6 +17,7 @@ export const appSlice = createSlice({
             Cookies.set(name, value);
         },
         removeCookies(state, {payload}: PayloadAction<string>) {
+            console.log(payload, 'removeCookies')
             Cookies.remove(payload);
         },
         setAuth(state, {payload}: PayloadAction<boolean>) {

@@ -11,6 +11,7 @@ import {CarouselRef} from "antd/lib/carousel";
 import {FormFinishInfo} from "rc-field-form/lib/FormContext";
 import {useActions} from "../../hooks/useActions";
 import {batch} from "react-redux";
+import {UserRoleEnum} from "../../store/reducers/backend/backend.api.types";
 
 export function LoginPage() {
 
@@ -22,6 +23,10 @@ export function LoginPage() {
     const [currentSlide, setCurrentSlide] = useState(0)
     const {setAuth, setCookies, setSettingsField} = useActions()
 
+    // useEffect(() => {
+    //     carouselRef?.current?.goTo(1)
+    // }, [])
+
 
 
     //----REQUESTS----//
@@ -31,9 +36,6 @@ export function LoginPage() {
         {error: error2, isFetching: fetchingGetCode, data: getCodeData}
     ] = useLazyGetCodeQuery()
     const {data: {message: errorGetCode = undefined} = {}} = error2 as any || {};
-    useEffect(() => {
-        if(getCodeData) carouselRef?.current?.next()
-    }, [getCodeData])
 
     const [
         fetchLogin,
@@ -57,7 +59,10 @@ export function LoginPage() {
     //--------CATCH-ERRORS------//
     useEffect(() => {
         if (errorGetCode || errorLogin) {
-            notification.error({message: errorGetCode | errorLogin});
+            console.log(errorLogin, 'error login')
+            if(errorGetCode) carouselRef?.current?.prev()
+            notification.error({message: errorGetCode || errorLogin});
+
         }
     }, [errorGetCode, errorLogin])
     //-------------------------//
@@ -65,6 +70,8 @@ export function LoginPage() {
     const onFinishFormHandler = (name: 'loginForm' | 'verificationForm' | string, {forms}: FormFinishInfo) => {
         if (name === 'loginForm') {
             fetchGetCode(loginForm.getFieldValue('phone'));
+            notification.success({message: 'We have sent code to your phone'});
+            carouselRef?.current?.next()
         }
         if (name === 'verificationForm') {
             fetchLogin({
@@ -96,9 +103,10 @@ export function LoginPage() {
                                         colon={false}
                                         name={'role'}
                                         label="I'm a">
-                                        <Select value={'Customer'}>
-                                            <Select.Option value="courier">Courier</Select.Option>
-                                            <Select.Option value="customer">Customer</Select.Option>
+                                        <Select value={UserRoleEnum.Customer}>
+                                            {[UserRoleEnum.Courier, UserRoleEnum.Customer].map(el =>
+                                                <Select.Option value={el}>{el}</Select.Option>
+                                            )}
                                         </Select>
                                     </Form.Item>
                                 </Col>

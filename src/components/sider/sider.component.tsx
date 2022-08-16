@@ -46,6 +46,7 @@ export function CustomSider() {
     useEffect(() => {
         if (logoutData) {
             navigate(ROUTES.MAIN_PAGE);
+            notification.success({message: 'You successful logout!'});
             const timeoutId = setTimeout(() => {
                 batch(() => {
                     removeCookies('sid');
