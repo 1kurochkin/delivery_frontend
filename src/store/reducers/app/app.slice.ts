@@ -13,13 +13,6 @@ export const appSlice = createSlice({
     name: 'appSlice',
     initialState,
     reducers: {
-        setCookies(state, {payload: {name, value}}: PayloadAction<{name: string, value: any}>) {
-            Cookies.set(name, value);
-        },
-        removeCookies(state, {payload}: PayloadAction<string>) {
-            console.log(payload, 'removeCookies')
-            Cookies.remove(payload);
-        },
         setAuth(state, {payload}: PayloadAction<boolean>) {
             state.auth = payload
         }

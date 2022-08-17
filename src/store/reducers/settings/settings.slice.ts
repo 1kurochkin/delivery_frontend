@@ -6,6 +6,10 @@ type SettingsSliceStateType = {
     role: UserRoleEnum | '';
     phone: string | undefined;
     name: string | undefined;
+    wallet?: {
+        courier_id: string;
+        value: number;
+    }
 }
 
 const initialState: SettingsSliceStateType = {
@@ -31,7 +35,6 @@ export const settingsSlice = createSlice({
         }
     }
 });
-
-export const settingsSliceActions = settingsSlice.actions;
 export const settingsReducer = settingsSlice.reducer;
+export const settingsSliceActions = settingsSlice.actions;
 

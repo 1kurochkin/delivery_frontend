@@ -2,15 +2,14 @@ import React, {useEffect} from 'react';
 import './App.scss';
 import 'antd/dist/antd.css';
 import {CustomSider} from "./components/sider/sider.component";
-import {Link, Route, Routes, Navigate} from 'react-router-dom';
+import {Route, Routes} from 'react-router-dom';
 import {ROUTES} from './configs/app.constants';
 import {MainPage} from './pages/main/main.page';
 import {SignupPage} from "./pages/signup/signup.page";
 import {LoginPage} from "./pages/login/login.page";
 import {useAppSelector} from "./hooks/useAppSelector";
-import {useLazyGetCourierInfoQuery, useLazyGetCustomerInfoQuery} from "./store/reducers/backend/backend.api";
-import {Button, Layout, notification, Result, Spin, Switch} from "antd";
-import {UserRoleEnum} from "./store/reducers/backend/backend.api.types";
+import {useLazyGetUserInfoQuery} from "./store/reducers/backend/backend.api";
+import {Layout, notification, Spin} from "antd";
 import {useActions} from "./hooks/useActions";
 import {SettingsPage} from './pages/settings/settings.page';
 import {CreatePage} from "./pages/create/create.page";
@@ -20,10 +19,8 @@ import {ProtectedRoute} from "./components/protectedRoute/protected.route.compon
 import {NotFoundPage} from "./pages/404/404.page";
 import {NotAuthorizedPage} from "./pages/403/403.page";
 import {usePrevious} from "./hooks/usePrevious";
-import Cookies from "js-cookie";
-import {batch} from "react-redux";
 
-
+// 366625
 function App() {
 
     // const {loadError: errorLoadGoogleMaps} = useLoadScript({
@@ -33,53 +30,37 @@ function App() {
     const auth = useAppSelector(({app}) => app.auth)
     const userRole = useAppSelector(({settings}) => settings.role)
     const prevAuthState = usePrevious(auth)
-    const {setAuth, removeCookies, setSettingsField} = useActions()
+    const {setAuth, setSettingsField} = useActions()
 
     const [
-        fetchGetCourierInfo,
-        {error: error1, isFetching: fetchingGetCourierInfo, data: getCourierInfoData}
-    ] = useLazyGetCourierInfoQuery();
-    const {data: {message: errorGetCourierInfo = undefined} = {}} = error1 as any || {};
-    const [
-        fetchGetCustomerInfo,
-        {error: error2, isFetching: fetchingGetCustomerInfo, data: getCustomerInfoData}
-    ] = useLazyGetCustomerInfoQuery();
-    const {data: {message: errorGetCustomerInfo = undefined} = {}} = error2 as any || {};
+        fetchGetUserInfo,
+        {error: error2, isFetching: fetchingGetUserInfo}
+    ] = useLazyGetUserInfoQuery();
+    const {data: {message: errorGetUserInfo = undefined} = {}} = error2 as any || {};
 
     // useEffect(() => {Cookies.set('sid', '2bb974bc-f4b1-45cd-91cd-5cc14ab377d6')}, [])
 
     useEffect(() => {
         if (!prevAuthState && auth) {
-            userRole === UserRoleEnum.Courier ?
-                fetchGetCourierInfo() :
-                fetchGetCustomerInfo()
+            fetchGetUserInfo()
         }
     }, [auth])
 
-    useEffect(() => {
-        console.log('useEffect getCourierInfoData, getCustomerInfoData')
-        if (getCourierInfoData || getCustomerInfoData) {
-            const userData = (getCourierInfoData || getCustomerInfoData)
-            console.log(userData)
-            for (const field in userData) {
-                // @ts-ignore
-                setSettingsField({field, value: userData[field]})
-            }
-        }
-    }, [getCourierInfoData, getCustomerInfoData])
+    // useEffect(() => {
+    //     console.log('useEffect getCourierInfoData, getCustomerInfoData')
+    //     if (getCourierInfoData || getCustomerInfoData) {
+    //         const userData = (getCourierInfoData || getCustomerInfoData)
+    //         console.log(userData)
+    //         for (const field in userData) {
+    //             // @ts-ignore
+    //             setSettingsField({field, value: userData[field]})
+    //         }
+    //     }
+    // }, [getCourierInfoData, getCustomerInfoData])
 
     //--------CATCH-ERRORS------//
-    if (errorGetCourierInfo || errorGetCustomerInfo) {
-        batch(() => {
-            removeCookies('sid');
-            setSettingsField({
-                field: 'role',
-                value: ''
-            });
-            setAuth(false);
-        });
-        notification.error({message: errorGetCourierInfo || errorGetCustomerInfo});
-
+    if (errorGetUserInfo) {
+        notification.error({message: errorGetUserInfo});
     }
     //-------------------------//
 
@@ -89,7 +70,7 @@ function App() {
             <CustomSider/>
             <Content>
                 {
-                    (fetchingGetCustomerInfo || fetchingGetCourierInfo) ?
+                    (fetchingGetUserInfo) ?
                         <Spin size={"large"}/> :
                         <>
                             <Routes>

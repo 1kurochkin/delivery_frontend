@@ -77,6 +77,7 @@ export type SignupMutationResponseType = { sid: string };
 export type GetCustomerInfoQueryType = {
     name: string;
     phone: string;
+    role: UserRoleEnum;
 };
 export type UpdateCustomerSettingsMutationType = {
     name: string
@@ -86,6 +87,7 @@ export type UpdateCustomerSettingsMutationType = {
 export type GetCourierInfoQueryType = {
     name: string;
     phone: string;
+    role: UserRoleEnum;
 };
 export type UpdateCourierSettingsMutationType = {
     name: string

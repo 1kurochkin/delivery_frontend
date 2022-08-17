@@ -21,7 +21,7 @@ export function LoginPage() {
 
     const navigate = useNavigate();
     const [currentSlide, setCurrentSlide] = useState(0)
-    const {setAuth, setCookies, setSettingsField} = useActions()
+    // const {setAuth, setCookies, setSettingsField} = useActions()
 
     // useEffect(() => {
     //     carouselRef?.current?.goTo(1)
@@ -44,14 +44,6 @@ export function LoginPage() {
     const {data: {message: errorLogin = undefined} = {}} = error3 as any || {};
     useEffect(() => {
         if (loginData?.sid) {
-            batch(() => {
-                setCookies({name: 'sid', value: loginData?.sid});
-                setSettingsField({
-                    field: 'role',
-                    value: loginForm.getFieldValue('role')
-                });
-                setAuth(true);
-            });
             navigate(ROUTES.MAIN_PAGE)
         }
     }, [loginData])

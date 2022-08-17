@@ -1,72 +1,29 @@
 import React, {useEffect} from 'react';
 import Title from "antd/lib/typography/Title";
-import {Button, Col, Divider, Form, Input, notification, Row, Space, Typography} from "antd";
+import {Button, Col, Divider, Form, Input, Row, Space, Typography} from "antd";
 import {useAppSelector} from "../../hooks/useAppSelector";
-import {
-    useUpdateCourierSettingsMutation,
-    useUpdateCustomerSettingsMutation
-} from "../../store/reducers/backend/backend.api";
-import {UserRoleEnum} from "../../store/reducers/backend/backend.api.types";
 import {useModalSupport} from "../../components/modal/modal.support.component";
-import {useActions} from "../../hooks/useActions";
-import {batch} from "react-redux";
 import {useForm} from "antd/es/form/Form";
-import {FieldData} from "rc-field-form/lib/interface";
+import {useUpdateUserSettingsMutation} from "../../store/reducers/backend/backend.api";
 
 export function SettingsPage() {
-    const {setSettingsField} = useActions()
     const [settingsForm] = useForm()
     const settingsReduxState = useAppSelector(({settings}) => settings)
-    const fields = Object
-        .entries(settingsReduxState)
-        .map(([key, value]) => ({name: key, value}))
-    console.log(fields)
-    const {role, id, phone, name} = settingsReduxState;
     const {modal, setVisible} = useModalSupport()
 
-    const [
-        fetchUpdateCustomerSettings,
-        {error: error1, isLoading: fetchingUpdateCourierSettings, data: updateCustomerData}
-    ] = useUpdateCustomerSettingsMutation();
-    const {data: {message: errorUpdateCourierSettings = undefined} = {}} = error1 as any || {};
-    const [
-        fetchUpdateCourierSettings,
-        {error: error2, isLoading: fetchingUpdateCustomerSettings, data: updateCourierData}
-    ] = useUpdateCourierSettingsMutation();
-    const {data: {message: errorUpdateCustomerSettings = undefined} = {}} = error2 as any || {};
     useEffect(() => {
-        if(updateCustomerData || updateCustomerData) {
-            notification.success({message: 'Your settings updated successful!'})
-        }
-    }, [updateCustomerData, updateCourierData])
+        settingsForm.setFieldsValue(settingsReduxState);
+    }, [settingsReduxState])
 
-    //--------CATCH-ERRORS------//
-    useEffect(() => {
-        if (errorUpdateCourierSettings || errorUpdateCustomerSettings) {
-            notification.error({
-                message: errorUpdateCourierSettings || errorUpdateCustomerSettings
-            });
-        }
-    }, [errorUpdateCustomerSettings, errorUpdateCourierSettings])
-    //-------------------------//
+    const [
+        fetchUpdateUserSettings,
+        {isLoading: fetchingUpdateUserSettings}
+    ] = useUpdateUserSettingsMutation();
 
     const onFinishFormHandler = (values: any) => {
-        role === UserRoleEnum.Customer ?
-            fetchUpdateCustomerSettings(values) :
-            fetchUpdateCourierSettings(values)
+        fetchUpdateUserSettings(values);
     }
 
-    const onValuesChangeHandler = (values: any) => {
-        console.log('onValuesChangeHandler')
-        for (const key in values) {
-            setSettingsField({field: key, value: values[key]})
-        }
-    }
-
-    // const onCancelModalHandler = () => {
-    //     setVisible(false)
-    //     supportForm.resetFields()
-    // }
 
     return (
         <div style={{display: 'flex', alignItems: 'center'}} className={'container'}>
@@ -77,9 +34,6 @@ export function SettingsPage() {
                 </Row>
                 <Row justify={'space-evenly'}>
                     <Form form={settingsForm} onFinish={onFinishFormHandler}
-                          onValuesChange={onValuesChangeHandler}
-                          initialValues={settingsReduxState}
-                          // fields={fields}
                           wrapperCol={{span: 12}}
                           name={'settingsForm'}
                           layout="horizontal">
@@ -121,7 +75,7 @@ export function SettingsPage() {
                         <Col>
                             <Form.Item wrapperCol={{span: 24}}>
                                 <Button
-                                    loading={fetchingUpdateCourierSettings || fetchingUpdateCustomerSettings}
+                                    loading={fetchingUpdateUserSettings}
                                     htmlType={'submit'}
                                 >Save
                                 </Button>

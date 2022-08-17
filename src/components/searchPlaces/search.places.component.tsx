@@ -20,7 +20,7 @@ export const SearchPlaces: React.FC<SearchPlacesProps> = (props) => {
             // location: {lat: () => 40.730610, lng: () => -73.935242},
             // origin: {lat: 40.730610, lng: -73.935242},
             componentRestrictions: {country: 'us'},
-            location: new google.maps.LatLng({lat: 40.730610, lng: -73.935242}),
+            // location: new google.maps.LatLng({lat: 40.730610, lng: -73.935242}),
             // origin: new google.maps.LatLng(40.73,-73.93),
             // language: 'en'
         },
@@ -31,10 +31,11 @@ export const SearchPlaces: React.FC<SearchPlacesProps> = (props) => {
     }, [value])
     const preparedData = data.reduce((result:any, {description}) => {
         if(
-            !description.includes('Brooklyn') ||
-            !description.includes('Queens') ||
-            !description.includes('Manhattan') ||
-            !description.includes('Bronx')
+            !description.includes('Brooklyn') &&
+            !description.includes('Queens') &&
+            !description.includes('Manhattan') &&
+            !description.includes('Bronx') &&
+            !description.includes('New York')
         ) return result;
         else result.push({value: description, label: ''})
         return result;

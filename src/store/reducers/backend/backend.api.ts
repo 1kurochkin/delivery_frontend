@@ -5,7 +5,6 @@ import {
     CountOrderPriceAndDurationResponseType,
     CountOrderPriceAndDurationType,
     CreateOrderMutationType,
-    OrderStatusEnum,
     ExistUserResponseType,
     GetCourierInfoQueryType,
     GetCustomerInfoQueryType,
@@ -14,13 +13,22 @@ import {
     GetOrdersQueryType,
     LoginMutationResponseType,
     LoginMutationType,
+    OrderStatusEnum,
     SignupMutationResponseType,
     SignupMutationType,
     UpdateCourierSettingsMutationType,
     UpdateCustomerSettingsMutationType,
-    UpdateOrderMutationType
+    UpdateOrderMutationType, UserRoleEnum
 } from "./backend.api.types";
 import Cookies from "js-cookie";
+import {batch} from "react-redux";
+import {settingsSliceActions} from '../settings/settings.slice'
+import {appSliceActions} from '../app/app.slice'
+import {notification} from "antd";
+
+const {setSettingsField, resetSettingsState} = settingsSliceActions;
+const {setAuth} = appSliceActions;
+// const {setSettingsField, setAuth} = StoreActions;
 
 // const axiosBaseQuery =
 //     ({ baseUrl } = { baseUrl: "" }) =>
@@ -58,30 +66,99 @@ export const backendApi = createApi({
             query: (phoneNumber) => ({url: `/authorization/code/${phoneNumber}`})
         }),
         login: build.mutation<LoginMutationResponseType, LoginMutationType>({
-            query: (body) => ({url: '/authorization/login', method: 'POST', body})
+            query: (body) => ({url: '/authorization/login', method: 'POST', body}),
+            async onQueryStarted({data: {role}}, { dispatch, queryFulfilled }) {
+                try {
+                    const {data: loginData} = await queryFulfilled;
+                    batch(() => {
+                        Cookies.set('sid', loginData?.sid)
+                        dispatch(setAuth(true))
+                    })
+                } catch {}
+            },
         }),
         logout: build.mutation<any, void>({
-            query: () => ({url: '/authorization/logout', method: 'POST'})
+            query: () => ({url: '/authorization/logout', method: 'POST'}),
+            async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                    notification.success({message: 'You successful logout!'});
+                    batch(() => {
+                        Cookies.remove('sid')
+                        dispatch(setAuth(false))
+                        dispatch(resetSettingsState())
+                    })
+                } catch {
+                    notification.error({message: "Error logout!"});
+                }
+            },
         }),
         signup: build.mutation<SignupMutationResponseType, SignupMutationType>({
-            query: (body) => ({url: '/authorization/signup', method: 'POST', body})
+            query: (body) => ({url: '/authorization/signup', method: 'POST', body}),
+            async onQueryStarted({data: {role}}, { dispatch, queryFulfilled }) {
+                try {
+                    const {data: signupData} = await queryFulfilled;
+                    batch(() => {
+                        Cookies.set('sid', signupData?.sid)
+                        dispatch(setAuth(true))
+                    })
+                } catch {}
+            },
         }),
-        //----------CUSTOMER-----------//
-        getCustomerInfo: build.query<GetCustomerInfoQueryType, void>({
-            query: () => ({url: '/customer/info'}),
+        //----------USER-----------//
+        getUserInfo: build.query<GetCustomerInfoQueryType | GetCourierInfoQueryType, void>({
+            query: () => ({url: '/user/info'}),
+            async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+                try {
+                    const {data: userSetting} = await queryFulfilled;
+                    batch(() => {
+                        for (const field in userSetting) {
+                            dispatch(
+                                setSettingsField({
+                                    field,
+                                    // @ts-ignore
+                                    value: userSetting[field]
+                                })
+                            );
+                            localStorage.setItem('role', userSetting.role);
+                        }
+                    })
+                } catch (error) {
+                    console.log(error, 'Error getUserInfo')
+                    const {data: {status = null} = {}} = error as any || {};
+                    if(status === 401) {
+                        batch(() => {
+                            Cookies.remove('sid')
+                            dispatch(setAuth(false))
+                            dispatch(resetSettingsState())
+                        })
+                    }
+                }
+            },
             // providesTags: () => ['User']
         }),
-        updateCustomerSettings: build.mutation<boolean, UpdateCustomerSettingsMutationType>({
-            query: (body) => ({url: '/customer/settings', method: 'POST', body}),
-            // invalidatesTags: () => ['User']
-        }),
-        //----------COURIER-----------//
-        getCourierInfo: build.query<GetCourierInfoQueryType, void>({
-            query: () => ({url: '/courier/info'}),
-            // providesTags: () => ['User']
-        }),
-        updateCourierSettings: build.mutation<boolean, UpdateCourierSettingsMutationType>({
-            query: (body) => ({url: '/courier/settings', method: 'POST', body}),
+        updateUserSettings: build.mutation<boolean, UpdateCustomerSettingsMutationType | UpdateCourierSettingsMutationType>({
+            query: (body) => ({url: '/user/update', method: 'POST', body}),
+            async onQueryStarted(update, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                    notification.success({message: 'Your settings updated successful!'})
+                    batch(() => {
+                        for (const field in update) {
+                            dispatch(
+                                setSettingsField({
+                                    field,
+                                    // @ts-ignore
+                                    value: update[field]
+                                })
+                            );
+                        }
+                    })
+                } catch (e) {
+                    console.log(e, 'ERROR')
+                   notification.error({message: 'Error update user info!'})
+                }
+            },
             // invalidatesTags: () => ['User']
         }),
         //----------MAIL-----------//
@@ -93,7 +170,18 @@ export const backendApi = createApi({
             query: (body) => ({url: '/order/count', method: 'POST', body})
         }),
         createOrder: build.mutation<{ result: true, sid: string }, CreateOrderMutationType>({
-            query: (body) => ({url: '/order/create', method: 'POST', body})
+            query: (body) => ({url: '/order/create', method: 'POST', body}),
+            async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+                try {
+                    const {data} = await queryFulfilled;
+                    if(data?.sid) {
+                        batch(() => {
+                            Cookies.set('sid', data?.sid)
+                            dispatch(setAuth(true))
+                        })
+                    }
+                } catch {}
+            },
         }),
         updateOrder: build.mutation<boolean, UpdateOrderMutationType>({
             query: (body) => ({url: '/order/update', method: 'POST', body})
@@ -106,13 +194,11 @@ export const backendApi = createApi({
             query: (orderId) => ({url: `/order`, method: 'GET', params: {orderId}})
         }),
         takeOrder: build.mutation<boolean, string>({
-            query: (orderId) => ({url: '/order/take', method: 'POST', body: {orderId}} )
+            query: (orderId) => ({url: '/order/take/', method: 'POST', body: {orderId}} ),
+            invalidatesTags: result => ['Order']
         }),
         changeOrderStatus: build.mutation<boolean, { orderId: string, status: OrderStatusEnum }>({
-            query: (body, ) => {
-                console.log(body, "BODY changeOrderStatus")
-                return {url: '/order/status', method: 'POST', body}
-            },
+            query: (body, ) => ({url: '/order/status', method: 'POST', body}),
             invalidatesTags: result => ['Order']
         }),
         //------------------------//
@@ -126,12 +212,9 @@ export const {
     useLazyGetCodeQuery,
     useSignupMutation,
     useLogoutMutation,
-    //---COURIER---//
-    useLazyGetCourierInfoQuery,
-    useUpdateCourierSettingsMutation,
-    //---CUSTOMER---//
-    useLazyGetCustomerInfoQuery,
-    useUpdateCustomerSettingsMutation,
+    //---USER---//
+    useLazyGetUserInfoQuery,
+    useUpdateUserSettingsMutation,
     //---MAIL---//
     useContactUsMutation,
     //---ORDER---//

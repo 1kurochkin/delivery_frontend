@@ -1,8 +1,8 @@
 import {configureStore} from "@reduxjs/toolkit";
-import {appReducer} from "./reducers/app/app.slice";
+import {appReducer, appSliceActions} from "./reducers/app/app.slice";
 import {setupListeners} from "@reduxjs/toolkit/query";
 import {backendApi} from "./reducers/backend/backend.api";
-import {settingsReducer} from "./reducers/settings/settings.slice";
+import {settingsReducer, settingsSliceActions} from "./reducers/settings/settings.slice";
 
 export const store = configureStore({
     reducer: {

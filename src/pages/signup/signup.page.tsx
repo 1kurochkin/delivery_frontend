@@ -20,7 +20,7 @@ import {UserRoleEnum} from "../../store/reducers/backend/backend.api.types";
 export function SignupPage() {
 
     const navigate = useNavigate();
-    const {setCookies, setAuth, setSettingsField} = useActions();
+    const {setAuth} = useActions();
     const [signupForm] = useForm();
     const [verificationForm] = useForm();
 
@@ -35,14 +35,6 @@ export function SignupPage() {
     const {data: {message: errorSignup = undefined} = {}} = error2 as any || {};
     useEffect(() => {
         if (signupData?.sid) {
-            batch(() => {
-                setSettingsField({
-                    field: 'role',
-                    value: signupForm.getFieldValue('role')
-                });
-                setCookies({name: 'sid', value: signupData?.sid})
-                setAuth(true)
-            });
             navigate(ROUTES.MAIN_PAGE)
         }
     }, [signupData])

@@ -34,7 +34,7 @@ export function CreatePage() {
 
     console.log(orderId, "ORDER ID")
 
-    const {setSettingsField, setAuth, setCookies} = useActions()
+    const {setSettingsField, setAuth} = useActions()
 
     const [orderForm] = useForm();
 
@@ -172,20 +172,7 @@ export function CreatePage() {
             pickupForm.resetFields();
             deliveryForm.resetFields();
             if(IS_AUTH_USER) navigate(ROUTES.ORDER.LIST_PAGE);
-            else {
-                batch(() => {
-                    setSettingsField({
-                        field: 'role',
-                        value: UserRoleEnum.Customer
-                    });
-                    setCookies({
-                        name: 'sid',
-                        value: createOrderData.sid
-                    });
-                    setAuth(true);
-                });
-                navigate(ROUTES.ORDER.LIST_PAGE);
-            }
+            else navigate(ROUTES.ORDER.LIST_PAGE);
         }
     }, [createOrderData])
 
@@ -194,11 +181,6 @@ export function CreatePage() {
         {error: error5, isFetching: fetchingGetCode, data: IS_HAVE_VERIFICATION_CODE = false}
     ] = useLazyGetCodeQuery();
     const {data: {message: errorGetCode = undefined} = {}} = error5 as any || {};
-    useEffect(() => {
-        if (IS_HAVE_VERIFICATION_CODE) {
-            notification.success({message: 'We have sent verification code to your phone!'})
-        }
-    }, [IS_HAVE_VERIFICATION_CODE])
 
     //--------CATCH-ERRORS------//
     if (errorCountOrderPriceAndDuration || errorCreateOrder || errorGetOrder || errorUpdateOrder || errorGetCode) {
@@ -245,20 +227,22 @@ export function CreatePage() {
         }
     }
     const onClickGetCodeHandler = async () => {
-        console.log('onClickGetCodeHandler')
         fetchGetCode(verificationForm.getFieldValue('phone'));
+        notification.success({message: 'We have sent verification code to your phone!'})
         carouselRef?.current?.next()
     }
     const onFormOrderChangeHandler = (changedValues: any, values: any) => {
+        console.log('onFormOrderChangeHandler', changedValues)
         if ('deliveryType' in changedValues || !changedValues) {
             setInitialStateOrderFormHandler('deliveryPrice', 0)
         }
     }
-    const onChangeVerificationFormHandler = (changedValues: any, values: any) => {
-        if ('phone' in changedValues || !changedValues) {
-            setInitialStateOrderFormHandler('deliveryPrice', 0)
-        }
-    }
+    // const onChangeVerificationFormHandler = (changedValues: any, values: any) => {
+    //     console.log('onFormOrderChangeHandler', changedValues)
+    //     if ('phone' in changedValues || !changedValues) {
+    //         setInitialStateOrderFormHandler('deliveryPrice', 0)
+    //     }
+    // }
     const onAddressChangeFormCardHandler = () => {
         setInitialStateOrderFormHandler('deliveryPrice', 0)
     }
@@ -320,8 +304,7 @@ export function CreatePage() {
         } else {
             if (!IS_AUTH_USER) {
                 return (
-                    <Form style={{maxWidth: '100%'}} layout={"horizontal"}
-                          onValuesChange={onChangeVerificationFormHandler} form={verificationForm}>
+                    <Form style={{maxWidth: '100%'}} layout={"horizontal"} form={verificationForm}>
                         <Carousel ref={carouselRef} effect="fade" dots={false}>
                             <Row>
                                 <Col style={{marginBottom: 10}}>

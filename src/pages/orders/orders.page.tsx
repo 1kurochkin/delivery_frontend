@@ -137,20 +137,21 @@ export function OrdersPage() {
         switch (modalState.type) {
             case "Take":
                 fetchTakeOrder(tookOrderId);
+                onClickTabButtonHandler(OrderStatusEnum.Active);
                 return;
             case "Complete":
                 fetchChangeOrderStatus({
                     orderId: tookOrderId,
                     status: OrderStatusEnum.Completed
                 });
-                setDataSource([])
+                onClickTabButtonHandler(OrderStatusEnum.Completed);
                 return;
             case "Cancel":
                 fetchChangeOrderStatus({
                     orderId: tookOrderId,
                     status: OrderStatusEnum.Canceled
                 });
-                setDataSource([])
+                onClickTabButtonHandler(OrderStatusEnum.Canceled);
                 return;
             default:
                 return;

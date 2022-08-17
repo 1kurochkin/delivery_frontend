@@ -1,5 +1,5 @@
-import {Col, Divider, Menu, MenuProps, notification} from 'antd';
-import React, {useEffect} from 'react';
+import {Col, Divider, Menu, MenuProps} from 'antd';
+import React from 'react';
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import {ROUTES} from "../../configs/app.constants";
 import './sider.component.scss';
@@ -9,9 +9,7 @@ import Sider from "antd/es/layout/Sider";
 import {AppstoreOutlined, DesktopOutlined, SettingOutlined} from "@ant-design/icons";
 import {UserRoleEnum} from "../../store/reducers/backend/backend.api.types";
 import {useModalSupport} from "../modal/modal.support.component";
-import {useCountOrderPriceAndDurationMutation, useLogoutMutation} from "../../store/reducers/backend/backend.api";
-import {useActions} from "../../hooks/useActions";
-import {batch} from "react-redux";
+import {useLogoutMutation} from "../../store/reducers/backend/backend.api";
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -35,37 +33,19 @@ function getItem(
 export function CustomSider() {
     const auth = useAppSelector(({app}) => app.auth)
     const userRole = useAppSelector(({settings}) => settings.role)
-    const {setAuth, removeCookies, resetSettingsState} = useActions()
 
     const navigate = useNavigate();
     const {pathname} = useLocation()
 
 
-    const [fetchLogout, {error: error1, data: logoutData}] = useLogoutMutation();
-    const {data: {message: errorLogout = undefined} = {}} = error1 as any || {};
-    useEffect(() => {
-        if (logoutData) {
-            navigate(ROUTES.MAIN_PAGE);
-            notification.success({message: 'You successful logout!'});
-            const timeoutId = setTimeout(() => {
-                batch(() => {
-                    removeCookies('sid');
-                    resetSettingsState();
-                    setAuth(false);
-                })
-            }, 300)
-            return () => clearTimeout(timeoutId)
-        }
-    }, [logoutData])
-    useEffect(() => {
-        if (errorLogout) notification.error({message: errorLogout});
-    }, [errorLogout]);
+    const [fetchLogout] = useLogoutMutation();
 
     const {modal: modalSupport, setVisible: setVisibleModalSupport} = useModalSupport();
     const onSelectMenuItemHandler = ({key, keyPath}: any) => {
         switch (key) {
             case 'logout': {
                 fetchLogout();
+                navigate(ROUTES.MAIN_PAGE);
             }
                 return;
             case 'support':
@@ -126,16 +106,3 @@ export function CustomSider() {
         </Sider>
     );
 }
-
-// <div className="header">
-//     <Row justify={'space-around'}>
-//         <Col span={3}>
-//             <Link to={ROUTES.MAIN_PAGE}>
-//                 <Title level={2}>Bringa.me</Title>
-//             </Link>
-//         </Col>
-//         <Col style={{display: 'flex'}} span={14}>
-//             {getNavigationView()}
-//         </Col>
-//     </Row>
-// </div>
