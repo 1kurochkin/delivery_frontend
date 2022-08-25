@@ -116,8 +116,8 @@ export type OrderPointType = {
     address: string;
     floor: number;
     apt: string;
-    timeRange: Moment;
-    // timeRangeTo: Moment;
+    timeRangeFrom: Moment;
+    timeRangeTo: Moment;
     date: Moment;
     orderPointType: OrderPointTypeEnum;
     phone: string;

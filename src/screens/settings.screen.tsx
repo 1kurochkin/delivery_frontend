@@ -14,17 +14,19 @@ export function SettingsScreen() {
     const {modal, setVisible} = useModalSupport()
     const IS_USER_ROLE_CUSTOMER = settingsReduxState.role === UserRoleEnum.Customer
     const navigate = useNavigate();
-    const [fetchLogout] = useLogoutMutation();
+    const [
+        fetchLogout,
+        {isLoading: fetchingLogout}
+    ] = useLogoutMutation();
+    const [
+        fetchUpdateUserSettings,
+        {isLoading: fetchingUpdateUserSettings}
+    ] = useUpdateUserSettingsMutation();
     const {modal: modalSupport, setVisible: setVisibleModalSupport} = useModalSupport()
 
     useEffect(() => {
         settingsForm.setFieldsValue(settingsReduxState);
     }, [settingsReduxState])
-
-    const [
-        fetchUpdateUserSettings,
-        {isLoading: fetchingUpdateUserSettings}
-    ] = useUpdateUserSettingsMutation();
 
     const onFinishFormHandler = (values: any) => {
         fetchUpdateUserSettings(values);
@@ -32,7 +34,6 @@ export function SettingsScreen() {
 
     const onClickLogoutButton = () => {
         fetchLogout()
-        navigate(ROUTES.MAIN_PAGE)
     }
 
 
@@ -49,7 +50,7 @@ export function SettingsScreen() {
                     Your profile
                 </Typography.Title>
             </Row>
-            <Row style={{marginBottom: 20}}>
+            <Row style={{marginBottom: 40}}>
                 <Form style={{width: '100%'}} form={settingsForm} onFinish={onFinishFormHandler}>
                     <Form.Item style={{width: '100%'}} colon={false} label={'User role'} name={'role'}>
                         <Input disabled/>
@@ -57,8 +58,11 @@ export function SettingsScreen() {
                     <Form.Item style={{width: '100%'}} colon={false} label={'Your name'} name={'name'}>
                         <Input placeholder={'Pablo Escobar'}/>
                     </Form.Item>
-                    <Form.Item style={{width: '100%'}} colon={false} label={'Your phone'} name={'phone'}>
+                    <Form.Item style={{width: '100%', marginBottom: 20}} colon={false} label={'Your phone'} name={'phone'}>
                         <InputNumber style={{width: '100%'}} prefix={'+'} placeholder={'000000'}/>
+                    </Form.Item>
+                    <Form.Item style={{width: '100%'}}>
+                        <Button loading={fetchingUpdateUserSettings} htmlType={'submit'}>Save</Button>
                     </Form.Item>
                 </Form>
             </Row>
@@ -76,7 +80,7 @@ export function SettingsScreen() {
                 <Button style={{marginBottom: 20}} size={'large'} onClick={() => setVisibleModalSupport(true)}>
                     Support
                 </Button>
-                <Button type={'primary'} onClick={onClickLogoutButton}>
+                <Button loading={fetchingLogout} type={'primary'} onClick={onClickLogoutButton}>
                     Logout
                 </Button>
             </Row>

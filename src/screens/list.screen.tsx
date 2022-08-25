@@ -22,17 +22,16 @@ type ModalStateType = { visible: boolean, type: 'Take' | 'Complete' | 'Cancel' |
 export function ListScreen() {
     const userRole = useAppSelector(({settings}) => settings.role);
     const navigate = useNavigate();
-    const carouselRef = useRef<CarouselRef>(null)
-    const [currentSlide, setCurrentSlide] = useState(0);
+    // const carouselRef = useRef<CarouselRef>(null)
+    // const [currentSlide, setCurrentSlide] = useState(0);
     const [activeTab, setActiveTab] = useState<OrderStatusEnum>(OrderStatusEnum.Available);
     const [dataSource, setDataSource] = useState<OrderType[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [tookOrderId, setTookOrderId] = useState<string>('');
-    const setCurrentSlideHandler = (slide: number) => {
-        setCurrentSlide(slide);
-        carouselRef?.current?.goTo(slide);
-    }
-    console.log('CURRENT SLIDE', currentSlide)
+    // const [tookOrderId, setTookOrderId] = useState<string>('');
+    // const setCurrentSlideHandler = (slide: number) => {
+    //     setCurrentSlide(slide);
+    //     carouselRef?.current?.goTo(slide);
+    // }
     const [
         fetchGetOrders,
         {
@@ -75,8 +74,7 @@ export function ListScreen() {
     }
 
     const onClickOrderCard = (orderId: string) => {
-        setTookOrderId(orderId);
-        setCurrentSlideHandler(1)
+        navigate(ROUTES.ORDER.ORDER_PAGE.PATH + '/' + orderId)
     }
 
     const tabs = [
@@ -86,7 +84,7 @@ export function ListScreen() {
         ...(userRole === UserRoleEnum.Customer ? [OrderStatusEnum.Canceled] : [])
     ]
     return (
-        <Carousel effect={'fade'} swipe={false} ref={carouselRef} dots={false}>
+        // <Carousel effect={'fade'} swipe={false} ref={carouselRef} dots={false}>
             <>
                 <Row justify={'space-between'} style={{marginBottom: 30}}>
                     <Col span={4}>
@@ -136,14 +134,5 @@ export function ListScreen() {
                     }
                 />
             </>
-            <>
-                {
-                    currentSlide === 1 ?
-                        <OrderScreen orderId={tookOrderId} onClickButtonBack={() => setCurrentSlideHandler(0)}/> :
-                        null
-                }
-            </>
-
-        </Carousel>
     );
 };

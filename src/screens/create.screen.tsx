@@ -28,12 +28,8 @@ export function CreateScreen() {
     const {orderId} = useParams();
     const IS_UPDATE_ORDER_PAGE = !!orderId;
     const IS_AUTH_USER = useAppSelector(({app}) => app.auth)
-    const {
-        state: {
-            pickupAddress = '',
-            deliveryAddress = ''
-        } = {}
-    }: any = useLocation();
+    const {state}: any = useLocation();
+    const {pickupAddress = undefined, deliveryAddress = undefined} = state || {};
     const navigate = useNavigate();
     // const carouselRef = useRef<CarouselRef>(null)
     const [orderForm] = useForm();
@@ -75,12 +71,12 @@ export function CreateScreen() {
                 pickupForm.setFieldsValue({
                     ...pickupPoint,
                     date: moment(pickupPoint.date),
-                    timeRange: moment(pickupPoint.timeRange),
+                    timeRange: [moment(pickupPoint.timeRangeFrom), moment(pickupPoint.timeRangeTo)],
                 });
                 deliveryForm.setFieldsValue({
                     ...deliveryPoint,
                     date: moment(deliveryPoint.date),
-                    timeRange: moment(deliveryPoint.timeRange),
+                    timeRange: [moment(deliveryPoint.timeRangeFrom), moment(deliveryPoint.timeRangeTo)],
                 });
             })
         } else {
@@ -155,16 +151,25 @@ export function CreateScreen() {
                 deliveryForm.validateFields(),
                 // ...(!IS_AUTH_USER ? [verificationForm.validateFields()] : [])
             ]);
-            console.log('HELLO CREATING')
+            console.log(
+                'HELLO CREATING',
+                orderForm.validateFields(),
+                pickupForm.validateFields(),
+                deliveryForm.validateFields(),
+            )
             const data = {
                 ...orderForm.getFieldsValue(),
                 pickupPoint: {
                     orderPointType: OrderPointTypeEnum.Pickup,
-                    ...pickupForm.getFieldsValue()
+                    ...pickupForm.getFieldsValue(),
+                    timeRangeFrom: pickupForm.getFieldValue('time')[0],
+                    timeRangeTo: pickupForm.getFieldValue('time')[1]
                 },
                 deliveryPoint: {
                     orderPointType: OrderPointTypeEnum.Delivery,
-                    ...deliveryForm.getFieldsValue()
+                    ...deliveryForm.getFieldsValue(),
+                    timeRangeFrom: deliveryForm.getFieldValue('time')[0],
+                    timeRangeTo: deliveryForm.getFieldValue('time')[1]
                 },
                 // ...(!IS_AUTH_USER && verificationForm.getFieldsValue())
             }

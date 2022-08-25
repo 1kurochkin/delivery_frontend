@@ -15,9 +15,13 @@ export const ROUTES = {
             PARAMS: '/:orderId'
         },
         LIST_PAGE: '/order/list',
+        ORDER_PAGE: {
+            PATH: '/order',
+            PARAMS: '/:orderId'
+        },
     },
     SETTINGS_PAGE: '/settings',
-    MAIN_PAGE: '/',
+    MAIN_PAGE: '/home',
     BECOME_COURIER_PAGE: '/become_courier',
     404: '/404',
     403: '/403',

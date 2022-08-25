@@ -67,6 +67,7 @@ export const backendApi = createApi({
             async onQueryStarted(_, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled;
+                    notification.success({message: 'We have sent code to your phone'});
                 } catch (e:any) {
                     const {error: {error}} = e
                     notification.error({message: error});
@@ -212,7 +213,8 @@ export const backendApi = createApi({
             providesTags: () => ['Order']
         }),
         getOrder: build.query<GetOrderQueryResponseType, string>({
-            query: (orderId) => ({url: `/order`, method: 'GET', params: {orderId}})
+            query: (orderId) => ({url: `/order`, method: 'GET', params: {orderId}}),
+            providesTags: () => ['Order']
         }),
         takeOrder: build.mutation<boolean, string>({
             query: (orderId) => ({url: '/order/take/', method: 'POST', body: {orderId}} ),

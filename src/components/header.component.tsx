@@ -39,7 +39,6 @@ export function Header() {
     }
 
     const items: MenuItem[] = [
-        // getItem('Home', ROUTES.MAIN_PAGE),
         ...(
             IS_USER_ROLE_CUSTOMER ?
                 [getItem('Create', ROUTES.ORDER.CREATE_PAGE)] :
@@ -63,9 +62,9 @@ export function Header() {
     return (
         <>
             <Row justify={"space-between"}>
-                <Col>
-                    <ButtonBack onClick={() => navigate(-1)}/>
-                </Col>
+                {/*<Col>*/}
+                {/*    <ButtonBack onClick={() => navigate(-1)}/>*/}
+                {/*</Col>*/}
                 <Col span={5}>
                     <Button size={"large"} onClick={() => setVisible(true)}>
                         <MenuOutlined/>

@@ -6,7 +6,7 @@ import {
     useTakeOrderMutation
 } from "../store/reducers/backend/backend.api";
 import {useAppSelector} from "../hooks/useAppSelector";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {ButtonBack} from "../components/button/buttonBack.component";
 import {OrderStatusEnum, UserRoleEnum} from "../store/reducers/backend/backend.api.types";
 import {ROUTES} from "../configs/app.constants";
@@ -14,13 +14,9 @@ import {SizeType} from "antd/es/config-provider/SizeContext";
 import {useModalSupport} from "../components/modal/modal.support.component";
 import moment from "moment";
 
-type OrderScreenType = {
-    onClickButtonBack: () => void;
-    orderId: string;
-}
 
-export function OrderScreen(props: OrderScreenType) {
-    const {onClickButtonBack, orderId} = props;
+export function OrderScreen() {
+    const {orderId} = useParams();
     const userRole = useAppSelector(({settings}) => settings.role);
     const IS_USER_ROLE_CUSTOMER = userRole === UserRoleEnum.Customer;
     const navigate = useNavigate();
@@ -37,7 +33,7 @@ export function OrderScreen(props: OrderScreenType) {
 
     useEffect(() => {
         console.log('MOUNT')
-        fetchGetOrder(orderId)
+        fetchGetOrder(orderId as string)
     }, [orderId]);
 
     const [
@@ -71,13 +67,16 @@ export function OrderScreen(props: OrderScreenType) {
         navigate(ROUTES.ORDER.UPDATE_PAGE.PATH + '/' + orderId)
     }
     const onClickOkCancelModal = () => {
-        fetchChangeOrderStatus({orderId: id, status: OrderStatusEnum.Canceled});
+        fetchChangeOrderStatus({
+            orderId: id,
+            status: OrderStatusEnum.Canceled
+        }).unwrap().then(() => setModalStateHandler('cancel', false))
     }
     const onClickOkTakeModal = () => {
-        fetchTakeOrder(orderId)
+        fetchTakeOrder(orderId as string).unwrap().then(() => setModalStateHandler('take', false))
     }
     const onClickOkCompleteModal = () => {
-        fetchChangeOrderStatus({orderId: id, status: OrderStatusEnum.Completed});
+        fetchChangeOrderStatus({orderId: id, status: OrderStatusEnum.Completed}).unwrap().then(() => setModalStateHandler('complete', false))
     }
 
     const actionButtonViewConfig = [
@@ -129,16 +128,14 @@ export function OrderScreen(props: OrderScreenType) {
                     <Modal
                         // @ts-ignore
                         visible={modalState[name]}
-                        onOk={onOk}
-                        confirmLoading={loading}
-                        onCancel={() => setModalStateHandler(name, false)}
                         footer={
                             <Row justify={"space-around"}>
                                 <Col span={10}>
-                                    <Button style={{backgroundColor: 'red'}} onClick={() => setModalStateHandler(name, false)}>No</Button>
+                                    <Button loading={loading} style={{backgroundColor: 'red'}}
+                                            onClick={() => setModalStateHandler(name, false)}>No</Button>
                                 </Col>
                                 <Col span={10}>
-                                    <Button onClick={onOk}>Yes</Button>
+                                    <Button loading={loading} onClick={onOk}>Yes</Button>
                                 </Col>
                             </Row>
                         }
@@ -150,7 +147,7 @@ export function OrderScreen(props: OrderScreenType) {
             {modalSupport}
             <Row justify={'space-between'} style={{marginBottom: 30}}>
                 <Col span={4}>
-                    <ButtonBack onClick={onClickButtonBack}/>
+                    <ButtonBack onClick={() => navigate(-1)}/>
                 </Col>
                 <Col offset={1} span={19}>
                     <Typography.Title level={2} style={{textAlign: 'center'}}>
@@ -166,13 +163,13 @@ export function OrderScreen(props: OrderScreenType) {
                     <Timeline.Item>
                         <Typography.Title level={5}>{pickupPoint?.address}</Typography.Title>
                         <Typography.Paragraph>{`Apt: ${pickupPoint?.apt} Floor: ${pickupPoint?.floor}`}</Typography.Paragraph>
-                        <Typography.Paragraph>{`${moment(pickupPoint?.date).format('MM/DD')} ${pickupPoint?.timeRange}`}</Typography.Paragraph>
+                        <Typography.Paragraph>{`${moment(pickupPoint?.date).format('MM/DD')} from ${moment(pickupPoint?.timeRangeFrom).format('HH:MM A')} to ${moment(deliveryPoint?.timeRangeTo).format('HH:MM A')}`}</Typography.Paragraph>
                         <Typography.Paragraph>{pickupPoint?.phone}</Typography.Paragraph>
                     </Timeline.Item>
                     <Timeline.Item>
                         <Typography.Title level={5}>{deliveryPoint?.address}</Typography.Title>
                         <Typography.Paragraph>{`Apt: ${deliveryPoint?.apt} Floor: ${deliveryPoint?.floor}`}</Typography.Paragraph>
-                        <Typography.Paragraph>{`${moment(deliveryPoint?.date).format('MM/DD')} ${deliveryPoint?.timeRange}`}</Typography.Paragraph>
+                        <Typography.Paragraph>{`${moment(deliveryPoint?.date).format('MM/DD')} from ${moment(deliveryPoint?.timeRangeFrom).format('HH:MM A')} to ${moment(deliveryPoint?.timeRangeTo).format('HH:MM A')}`}</Typography.Paragraph>
                         <Typography.Paragraph>{deliveryPoint?.phone}</Typography.Paragraph>
                     </Timeline.Item>
                 </Timeline>
@@ -181,7 +178,7 @@ export function OrderScreen(props: OrderScreenType) {
                 comment &&
                 <Row style={{marginBottom: 10}}>
                     <Form.Item labelCol={{span: 24}} style={{width: '100%'}} label={'Comment for courier'}>
-                        <Input.TextArea>{comment}</Input.TextArea>
+                        <Input.TextArea value={comment}/>
                     </Form.Item>
                 </Row>
             }
@@ -220,4 +217,6 @@ export function OrderScreen(props: OrderScreenType) {
             </Row>
         </>
     );
-};
+}
+
+;

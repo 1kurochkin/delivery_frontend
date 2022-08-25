@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import './styles/App.css'
 // import './App.less';
 // import 'antd/dist/antd.css';
-import {Route, Routes, useLocation, useNavigate} from 'react-router-dom';
+import {Navigate, Route, Routes, useLocation, useNavigate} from 'react-router-dom';
 import {ROUTES} from './configs/app.constants';
 import {useAppSelector} from "./hooks/useAppSelector";
 import {useLazyGetUserInfoQuery} from "./store/reducers/backend/backend.api";
@@ -21,6 +21,8 @@ import {SettingsScreen} from "./screens/settings.screen";
 import {ButtonBack} from "./components/button/buttonBack.component";
 import {MenuOutlined} from "@ant-design/icons";
 import {Header} from "./components/header.component";
+import {LoginScreen} from "./screens/login.screen";
+import {OrderScreen} from "./screens/order.screen";
 
 // 366625
 function App() {
@@ -77,32 +79,52 @@ function App() {
                         <PreloaderScreen/> :
                         <>
                             <Routes>
-                                {/*<Route path={ROUTES.AUTH.LOGIN_PAGE.PATH + ROUTES.AUTH.LOGIN_PAGE.PARAMS} element={<LoginScreen/>}/>*/}
-                                {/*<Route path={ROUTES.AUTH.SIGNUP_PAGE} element={<SignupPage/>}/>*/}
-                                {/*<Route path={ROUTES.ORDER.CREATE_PAGE} element={<CreateScreen/>}/>*/}
-                                <Route path={ROUTES.MAIN_PAGE} element={<StartScreen/>}/>
-                                <Route path={ROUTES["404"]} element={<NotFoundPage/>}/>
-                                <Route path={ROUTES["403"]} element={<NotAuthorizedPage/>}/>
-                                {/*<Route path="*" element={<Navigate to={ROUTES["404"]}/>}/>*/}
+                                {
+                                    !auth &&
+                                    <Route path={ROUTES.AUTH.LOGIN_PAGE.PATH + ROUTES.AUTH.LOGIN_PAGE.PARAMS}
+                                           element={<LoginScreen/>}/>
+                                }
+                                {
+                                    !auth &&
+                                    <Route path={ROUTES.MAIN_PAGE} element={<StartScreen/>}/>
+                                }
+                                <Route path={ROUTES.ORDER.CREATE_PAGE} element={<CreateScreen/>}/>
                                 <Route path={ROUTES.ORDER.LIST_PAGE}
-                                    element={
-                                        <ProtectedRoute auth={auth}>
-                                            <ListScreen/>
-                                        </ProtectedRoute>
-                                    }
+                                       element={
+                                           <ProtectedRoute auth={auth}>
+                                               <ListScreen/>
+                                           </ProtectedRoute>
+                                       }
+                                />
+                                <Route path={ROUTES.ORDER.ORDER_PAGE.PATH + ROUTES.ORDER.ORDER_PAGE.PARAMS}
+                                       element={
+                                           <ProtectedRoute auth={auth}>
+                                               <OrderScreen/>
+                                           </ProtectedRoute>
+                                       }
                                 />
                                 <Route path={ROUTES.ORDER.UPDATE_PAGE.PATH + ROUTES.ORDER.UPDATE_PAGE.PARAMS}
-                                    element={
-                                        <ProtectedRoute auth={auth}>
-                                            <CreateScreen/>
-                                        </ProtectedRoute>
-                                    }
+                                       element={
+                                           <ProtectedRoute auth={auth}>
+                                               <CreateScreen/>
+                                           </ProtectedRoute>
+                                       }
                                 />
                                 <Route path={ROUTES.SETTINGS_PAGE}
+                                       element={
+                                           <ProtectedRoute auth={auth}>
+                                               <SettingsScreen/>
+                                           </ProtectedRoute>
+                                       }
+                                />
+                                <Route
+                                    path="*"
                                     element={
-                                        <ProtectedRoute auth={auth}>
-                                            <SettingsScreen/>
-                                        </ProtectedRoute>
+                                        <Navigate to={
+                                            auth ?
+                                                ROUTES.ORDER.LIST_PAGE :
+                                                ROUTES.MAIN_PAGE
+                                        } replace/>
                                     }
                                 />
                             </Routes>

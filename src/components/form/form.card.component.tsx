@@ -52,14 +52,14 @@ export const FormCard: React.FC<FormCardPropsType> = (props) => {
                            label={'Select date'}
                            name="date"
                 >
-                    <DatePicker suffixIcon={null} format={'MM/DD/YY'} disabledDate={disabledDate}/>
+                    <DatePicker placement={'topLeft'} suffixIcon={null} format={'MM/DD/YY'} disabledDate={disabledDate}/>
                 </Form.Item>
                 <Form.Item rules={[{required: true, message: ''}]}
                            style={{width: '63%'}}
                            label={'Specify time'}
-                           name="time"
+                           name="timeRange"
                 >
-                    <TimePicker.RangePicker format={'HH:MM A'} suffixIcon={null} use12Hours={true}/>
+                    <TimePicker.RangePicker placement={'topLeft'} format={'HH:MM A'} suffixIcon={null} use12Hours={true}/>
                 </Form.Item>
             </Row>
         </>

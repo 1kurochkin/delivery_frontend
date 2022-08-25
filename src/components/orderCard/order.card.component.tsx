@@ -129,7 +129,7 @@ export const OrderCard: React.FC<OrderType> = (props) => {
                 </Row>
                 <Row>
                     <Typography.Paragraph style={{whiteSpace: 'pre-line'}}>
-                        {`${packageType}\n$${packagePrice} will be blocked on your wallet`}
+                        {`${packageType}\n$${packagePrice} will be blocked on your wallet\n Pay type: ${payType}`}
                     </Typography.Paragraph>
                 </Row>
             </Card>
