@@ -208,13 +208,14 @@ export function OrdersPage() {
                 }
                 renderItem={(item) =>
                     // <Skeleton avatar title={false} active>
-                        <OrderCard userRole={userRole}
-                                   onClickCancelButton={() => onClickButtonInOrderCardHandler(item.id, 'Cancel')}
-                                   onClickUpdateButton={() => onClickButtonInOrderCardHandler(item.id, 'Update')}
-                                   onClickSupportButton={() => onClickButtonInOrderCardHandler(item.id, 'Support')}
-                                   onClickCompleteButton={() => onClickButtonInOrderCardHandler(item.id, 'Complete')}
-                                   onClickTakeButton={() => onClickButtonInOrderCardHandler(item.id, 'Take')}
-                                   {...item} type={activeTab}
+                        <OrderCard {...item}
+                            // userRole={userRole}
+                            //        onClickCancelButton={() => onClickButtonInOrderCardHandler(item.id, 'Cancel')}
+                            //        onClickUpdateButton={() => onClickButtonInOrderCardHandler(item.id, 'Update')}
+                            //        onClickSupportButton={() => onClickButtonInOrderCardHandler(item.id, 'Support')}
+                            //        onClickCompleteButton={() => onClickButtonInOrderCardHandler(item.id, 'Complete')}
+                            //        onClickTakeButton={() => onClickButtonInOrderCardHandler(item.id, 'Take')}
+                            //        {...item} type={activeTab}
                         />
                     // </Skeleton>
                 }

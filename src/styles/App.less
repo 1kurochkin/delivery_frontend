@@ -1,0 +1,158 @@
+@import '../../node_modules/antd/dist/antd.less';
+
+@font-face {
+  font-family: "GillroyRegular";
+  src: local("GillroyRegular"),
+  url("../assets/fonts/Gilroy-Regular.ttf") format("truetype");
+}
+@font-face {
+  font-family: "GillroyBold";
+  src: local("GillroyBold"),
+  url("../assets/fonts/Gilroy-Bold.ttf") format("truetype");
+  font-weight: 400;
+}
+//FONTS
+@font-family: 'GillroyRegular', 'GillroyBold';
+// -------- Colors -----------
+
+@mainColor: #807E98;
+@secondColor: #27CB84;
+
+@component-background: #EAEAEA;
+@text-color: black;
+@text-color-secondary : white;
+
+// LINK
+@link-color: #1890ff;
+
+// Timeline
+@timeline-width: 2px;
+@timeline-color: @border-color-split;
+@timeline-dot-border-width: 2px;
+@timeline-dot-color: @primary-color;
+@timeline-dot-bg: @component-background;
+@timeline-item-padding-bottom: 20px;
+
+
+@font-size-base: 14px;
+@border-radius-base: 15px;
+@font-size-lg: 20px;
+@font-size-sm: 12px;
+
+
+// height rules
+@height-base: 50px;
+@height-lg: 62px;
+@height-sm: 25px;
+// Buttons
+@btn-height-base: @height-base;
+@btn-height-lg: @height-lg;
+@btn-height-sm: @height-sm;
+@btn-font-size-lg: @font-size-lg;
+@btn-font-size-sm: @font-size-base;
+
+@btn-primary-color: white;
+@btn-primary-bg: #807E98;
+
+@btn-default-color: white;
+@btn-default-bg: #27CB84;
+.ant-btn {
+  text-align: center;
+  width: 100%;
+}
+.ant-btn-lg {
+  font-family: GillroyBold;
+}
+// Typography
+.ant-typography {
+  font-family: 'GillroyBold';
+}
+div.ant-typography {
+  font-family: 'GillroyRegular';
+}
+
+// Layout
+@layout-body-background: white;
+.ant-layout {
+  padding: 25px 40px 25px 40px;
+}
+
+// Form
+@form-vertical-label-padding: 0 0 5px;
+@form-item-label-height: unset;
+@form-item-margin-bottom: 8px;
+@form-vertical-label-padding: 0px;
+@form-item-label-font-size: 10px;
+@form-item-label-height: unset;
+
+// Input
+@input-placeholder-color: #807E98;
+@input-color: black;
+@input-border-color: transparent;
+
+// LINK
+@link-color: black;
+@link-active-color: black;
+
+// Radio
+@radio-size: 16px;
+@radio-top: 0.2em;
+@radio-border-width: 1px;
+@radio-dot-size: @radio-size - 8px;
+@radio-dot-color: @primary-color;
+@radio-dot-disabled-color: fade(@black, 20%);
+@radio-solid-checked-color: @component-background;
+
+// Radio buttons
+@radio-button-bg: @component-background;
+@radio-button-checked-bg: #DCF9F1;
+@radio-button-color: #807E98;
+@radio-button-active-color: #31CCA2;
+
+// Select
+// ---
+@select-item-selected-color: #31CCA2;
+@select-item-selected-font-weight: 600;
+@select-dropdown-bg: @component-background;
+@select-item-selected-bg: #DCF9F1;
+@select-item-active-bg: #DCF9F1;
+@select-single-item-height-lg: 50px;
+@select-dropdown-height: 50px;
+
+// TimePicker
+// ---
+@picker-basic-cell-active-with-range-color: @mainColor;
+@picker-time-panel-cell-height: 50px;
+@picker-time-panel-column-width: 70px;
+.ant-picker-time-panel-column::after {
+  display: none;
+}
+.ant-picker-footer > .ant-picker-ranges > .ant-picker-ok {
+  width: 100%;
+}
+//@picker-panel-cell-width: 36px;
+//@picker-text-height: 40px;
+//@picker-panel-without-time-cell-height: 66px;
+
+// Outline
+@outline-color: 'transparent'; // No use anymore
+
+.react-code-input > div > input {
+  font-family: GillroyBold;
+}
+
+// Modal
+// --
+@modal-header-bg: white;
+@modal-content-bg: white;
+
+// Drawer
+// ---
+@drawer-header-padding: 0;
+@drawer-body-padding: 0;
+@drawer-bg: white;
+//@drawer-footer-padding-vertical: @modal-footer-padding-vertical;
+//@drawer-footer-padding-horizontal: @modal-footer-padding-horizontal;
+//@drawer-header-close-size: 56px;
+//@drawer-title-font-size: @font-size-lg;
+//@drawer-title-line-height: 22px;

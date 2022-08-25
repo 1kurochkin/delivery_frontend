@@ -3,13 +3,14 @@ import React, {useEffect} from "react";
 import usePlacesAutocomplete, {getLatLng} from "use-places-autocomplete";
 
 type SearchPlacesProps = {
-    onChange: (value: string) => void;
-    onSelect: (value: string) => void;
+    onChange?: (value: string) => void;
+    onSelect?: (value: string) => void;
     value?: string;
+    placeholder?: string;
 }
 
 export const SearchPlaces: React.FC<SearchPlacesProps> = (props) => {
-    const {onChange, onSelect, value} = props;
+    const {onChange = () => null, onSelect = () => null, value, placeholder} = props;
     const {
         value: placesAutocompleteValue,
         suggestions: {data},
@@ -35,13 +36,14 @@ export const SearchPlaces: React.FC<SearchPlacesProps> = (props) => {
             !description.includes('Queens') &&
             !description.includes('Manhattan') &&
             !description.includes('Bronx') &&
-            !description.includes('New York')
+            !description.includes('New York') &&
+            !description.includes('Staten island')
         ) return result;
         else result.push({value: description, label: ''})
         return result;
     }, [])
+
     const onChangeHandler = (value: string) => {
-        console.log('onChangeHandler', value)
         setValue(value, true);
         onChange(value);
     }
@@ -49,6 +51,7 @@ export const SearchPlaces: React.FC<SearchPlacesProps> = (props) => {
     const onSelectHandler = (value: string) => {
         setValue(value, false)
         onSelect(value);
+        onChange(value);
     }
 
     return (
@@ -58,7 +61,7 @@ export const SearchPlaces: React.FC<SearchPlacesProps> = (props) => {
                       onSelect={onSelectHandler}
                       onSearch={onChangeHandler}
                       value={placesAutocompleteValue || value}
-                      placeholder='1299 Ocean ave, Brooklyn'
+                      placeholder={placeholder}
         />
     )
 };

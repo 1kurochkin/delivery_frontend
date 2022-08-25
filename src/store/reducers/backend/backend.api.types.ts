@@ -31,7 +31,7 @@ export enum OrderStatusEnum {
 }
 
 
-export enum OrderWeightEnum {
+export enum PackageWeightEnum {
     Under1 = 'Under 1 lb',
     Under2 = 'Under 2 lb',
     Under5 = 'Under 5 lb',
@@ -116,8 +116,8 @@ export type OrderPointType = {
     address: string;
     floor: number;
     apt: string;
-    timeRangeFrom: Moment;
-    timeRangeTo: Moment;
+    timeRange: Moment;
+    // timeRangeTo: Moment;
     date: Moment;
     orderPointType: OrderPointTypeEnum;
     phone: string;
@@ -160,6 +160,7 @@ export type OrderType = {
     packagePrice: number;
     deliveryPrice: number;
     payType: PayTypeEnum;
+    comment: string;
     createdAt: Date;
     updatedAt: Date;
 }

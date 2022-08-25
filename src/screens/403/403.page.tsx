@@ -9,9 +9,9 @@ export function NotAuthorizedPage() {
             status="403"
             title="403"
             subTitle="Sorry, you are not authorized to access this page."
-            extra={<Button type="primary">
-                <Link to={ROUTES.AUTH.LOGIN_PAGE}>Login</Link>
-            </Button>}
+            // extra={<Button type="primary">
+            //     <Link to={ROUTES.AUTH.LOGIN_PAGE}>Login</Link>
+            // </Button>}
         />
     );
 };

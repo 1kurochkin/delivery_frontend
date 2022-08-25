@@ -33,7 +33,6 @@ function getItem(
 export function CustomSider() {
     const auth = useAppSelector(({app}) => app.auth)
     const userRole = useAppSelector(({settings}) => settings.role)
-
     const navigate = useNavigate();
     const {pathname} = useLocation()
 
@@ -61,7 +60,7 @@ export function CustomSider() {
         ...(!auth ?
                 [
                     getItem('Auth', ROUTES.AUTH.PATH, <DesktopOutlined/>, [
-                        getItem('Login', ROUTES.AUTH.LOGIN_PAGE),
+                        // getItem('Login', ROUTES.AUTH.LOGIN_PAGE),
                         getItem('Signup', ROUTES.AUTH.SIGNUP_PAGE),
                     ]),
                     getItem('Order', ROUTES.ORDER.PATH, <AppstoreOutlined/>, [
@@ -76,8 +75,8 @@ export function CustomSider() {
                         ),
                         getItem('List', ROUTES.ORDER.LIST_PAGE),
                     ]),
-                    getItem('Profile', ROUTES.PROFILE.PATH, <SettingOutlined/>, [
-                        getItem('Settings', ROUTES.PROFILE.SETTINGS_PAGE),
+                    getItem('Profile', ROUTES.SETTINGS_PAGE, <SettingOutlined/>, [
+                        // getItem('Settings', ROUTES.PROFILE.SETTINGS_PAGE),
                         getItem('Logout', 'logout'),
                         getItem('Support', 'support'),
                     ]),
@@ -97,7 +96,7 @@ export function CustomSider() {
             <Col span={24}>
                 <Menu onSelect={onSelectMenuItemHandler}
                       theme={'dark'}
-                      defaultOpenKeys={[ROUTES.AUTH.PATH, ROUTES.ORDER.PATH, ROUTES.PROFILE.PATH]}
+                      defaultOpenKeys={[ROUTES.AUTH.PATH, ROUTES.ORDER.PATH]}
                       selectedKeys={[pathname]}
                       mode="inline"
                       items={items}

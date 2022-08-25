@@ -1,4 +1,4 @@
-import {AutoComplete, Button, Col, Form, Input, Modal, notification} from "antd";
+import {AutoComplete, Button, Col, Form, Input, Modal, notification, Row} from "antd";
 import React, {useEffect, useState} from "react";
 import usePlacesAutocomplete from "use-places-autocomplete";
 import {SelectHandler} from "rc-select/lib/Select";
@@ -59,6 +59,16 @@ export const useModalSupport = () => {
                 confirmLoading={fetchingContactUs}
                 onCancel={onCancelModalHandler}
                 onOk={onFinishFormHandler}
+                footer={
+                    <Row justify={"space-around"}>
+                        <Col span={10}>
+                            <Button style={{backgroundColor: 'red'}} onClick={onCancelModalHandler}>Cancel</Button>
+                        </Col>
+                        <Col span={10}>
+                            <Button onClick={onFinishFormHandler}>Send</Button>
+                        </Col>
+                    </Row>
+                }
             >
                 <Form form={supportForm} name={'supportForm'} wrapperCol={{span: 12}} layout="horizontal">
                     <Col>

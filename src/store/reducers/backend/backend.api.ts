@@ -63,7 +63,15 @@ export const backendApi = createApi({
             query: (phoneNumber) => ({url: `/authorization/exist/${phoneNumber}`})
         }),
         getCode: build.query<boolean, string>({
-            query: (phoneNumber) => ({url: `/authorization/code/${phoneNumber}`})
+            query: (phoneNumber) => ({url: `/authorization/code/${phoneNumber}`}),
+            async onQueryStarted(_, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                } catch (e:any) {
+                    const {error: {error}} = e
+                    notification.error({message: error});
+                }
+            },
         }),
         login: build.mutation<LoginMutationResponseType, LoginMutationType>({
             query: (body) => ({url: '/authorization/login', method: 'POST', body}),
@@ -74,7 +82,10 @@ export const backendApi = createApi({
                         Cookies.set('sid', loginData?.sid)
                         dispatch(setAuth(true))
                     })
-                } catch {}
+                } catch (e:any) {
+                    const {error: {error}} = e
+                    notification.error({message: error});
+                }
             },
         }),
         logout: build.mutation<any, void>({
@@ -167,20 +178,30 @@ export const backendApi = createApi({
         }),
         //----------ORDER-----------//
         countOrderPriceAndDuration: build.mutation<CountOrderPriceAndDurationResponseType, CountOrderPriceAndDurationType>({
-            query: (body) => ({url: '/order/count', method: 'POST', body})
+            query: (body) => ({url: '/order/count', method: 'POST', body}),
+            async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                } catch (e) {
+                    notification.error({message: 'Error count order price!'})
+                }
+            },
         }),
         createOrder: build.mutation<{ result: true, sid: string }, CreateOrderMutationType>({
             query: (body) => ({url: '/order/create', method: 'POST', body}),
             async onQueryStarted(arg, { dispatch, queryFulfilled }) {
                 try {
                     const {data} = await queryFulfilled;
+                    notification.success({message: 'Your order successful created!'});
                     if(data?.sid) {
                         batch(() => {
                             Cookies.set('sid', data?.sid)
                             dispatch(setAuth(true))
                         })
                     }
-                } catch {}
+                } catch (e) {
+                    notification.error({message: 'Error creating order!'})
+                }
             },
         }),
         updateOrder: build.mutation<boolean, UpdateOrderMutationType>({
@@ -195,10 +216,26 @@ export const backendApi = createApi({
         }),
         takeOrder: build.mutation<boolean, string>({
             query: (orderId) => ({url: '/order/take/', method: 'POST', body: {orderId}} ),
+            async onQueryStarted(_, { queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                    notification.success({message: 'Order have took!'});
+                } catch (e) {
+                    notification.error({message: 'Error take order!'})
+                }
+            },
             invalidatesTags: result => ['Order']
         }),
         changeOrderStatus: build.mutation<boolean, { orderId: string, status: OrderStatusEnum }>({
             query: (body, ) => ({url: '/order/status', method: 'POST', body}),
+            async onQueryStarted(_, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                    notification.success({message: 'Order status successful changed!'});
+                } catch (e) {
+                    notification.error({message: 'Error change order status!'})
+                }
+            },
             invalidatesTags: result => ['Order']
         }),
         //------------------------//

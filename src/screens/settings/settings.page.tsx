@@ -95,7 +95,13 @@ export function SettingsPage() {
                     </Col>
                 </Row>
             </Space>
-
+            <form method="POST" action="https://mainnet.demo.btcpayserver.org/apps/2CBLwWjCHE8bV3c3Lb9TPr2NusZN/pos">
+                <input type="hidden" name="email" value="customer@example.com" />
+                <input type="hidden" name="orderId" value="CustomOrderId" />
+                {/*<input type="hidden" name="notificationUrl" value="https://example.com/callbacks" />*/}
+                {/*<input type="hidden" name="redirectUrl" value="https://example.com/thanksyou" />*/}
+                <button type="submit" name="choiceKey" value="working access">Buy now</button>
+            </form>
         </div>
     );
 };
