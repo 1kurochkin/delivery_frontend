@@ -21,6 +21,7 @@ import {CarouselRef} from "antd/lib/carousel";
 import {CarOutlined, MehOutlined} from "@ant-design/icons";
 import {FormCard} from "../components/form/form.card.component";
 import {ButtonBack} from "../components/button/buttonBack.component";
+import {FormChangeInfo} from "rc-field-form/lib/FormContext";
 
 export type InitialOrderStateType = Pick<OrderType, 'deliveryType' | 'weight' | 'deliveryPrice' | 'payType' | 'packageType' | 'packagePrice'>;
 
@@ -143,7 +144,12 @@ export function CreateScreen() {
     //-------------------------//
 
     const onFinishFormHandler = async () => {
-        console.log('onFinishFormHandler')
+        console.log(
+            'onFinishFormHandler',
+            orderForm.getFieldsValue(),
+            pickupForm.getFieldsValue(),
+            deliveryForm.getFieldsValue()
+        )
         try {
             await Promise.all([
                 orderForm.validateFields(),
@@ -162,14 +168,14 @@ export function CreateScreen() {
                 pickupPoint: {
                     orderPointType: OrderPointTypeEnum.Pickup,
                     ...pickupForm.getFieldsValue(),
-                    timeRangeFrom: pickupForm.getFieldValue('time')[0],
-                    timeRangeTo: pickupForm.getFieldValue('time')[1]
+                    timeRangeFrom: pickupForm.getFieldValue('timeRange')[0],
+                    timeRangeTo: pickupForm.getFieldValue('timeRange')[1]
                 },
                 deliveryPoint: {
                     orderPointType: OrderPointTypeEnum.Delivery,
                     ...deliveryForm.getFieldsValue(),
-                    timeRangeFrom: deliveryForm.getFieldValue('time')[0],
-                    timeRangeTo: deliveryForm.getFieldValue('time')[1]
+                    timeRangeFrom: deliveryForm.getFieldValue('timeRange')[0],
+                    timeRangeTo: deliveryForm.getFieldValue('timeRange')[1]
                 },
                 // ...(!IS_AUTH_USER && verificationForm.getFieldsValue())
             }
@@ -179,35 +185,33 @@ export function CreateScreen() {
                 fetchCreateOrder(data).unwrap().then(() => navigate(ROUTES.ORDER.LIST_PAGE))
             }
         } catch (e) {
+            console.log(e)
             notification.error({message: 'Fill all fields please!'})
             return;
         }
     }
 
-    const onFormsValuesChangeHandler = (changedValues: any, values: any) => {
+    const onFormsValuesChangeHandler = (_: string, {changedFields}: FormChangeInfo) => {
+        const [{name}] = changedFields;
+        const changedFieldName = name.toString();
         if (
             (
-                'deliveryType' in changedValues &&
+                (changedFieldName === 'deliveryType' || changedFieldName === 'address') &&
                 isFilledAddress(pickupForm.getFieldValue('address')) &&
                 isFilledAddress(deliveryForm.getFieldValue('address'))
-            )
-            ||
-            (
-                'address' in changedValues &&
-                isFilledAddress(changedValues.address)
             )
         ) {
             if (!fetchingCountOrderPriceAndDuration) {
                 fetchCountOrderPriceAndSetToOrderFormState({
                     origins: pickupForm.getFieldValue('address'),
-                    destinations: [pickupForm.getFieldValue('address')],
+                    destinations: [deliveryForm.getFieldValue('address')],
                     deliveryType: orderForm.getFieldValue('deliveryType'),
                 })
             }
         }
     }
     const isFilledAddress = (value: string) => {
-        return value.includes('USA') && value.length > 10
+        return value?.includes('USA') && value?.length > 10
     }
     // const onClickGetCodeHandler = async () => {
     //     fetchGetCode(verificationForm.getFieldValue('phone'));
@@ -364,15 +368,10 @@ export function CreateScreen() {
     // }
 
     return (
-        <Form.Provider>
-            <Form onValuesChange={onFormsValuesChangeHandler} layout={'horizontal'} style={{width: "100%"}} form={orderForm}>
-                <Row justify={'space-between'} style={{marginBottom: 20}}>
-                    <Col span={4}>
-                        <ButtonBack onClick={() => navigate(-1)}/>
-                    </Col>
-                    <Col offset={1} span={19}>
-                        <Typography.Title level={2} style={{marginBottom: 20, textAlign: 'right'}}>Create order</Typography.Title>
-                    </Col>
+        <Form.Provider onFormChange={onFormsValuesChangeHandler}>
+            <Form layout={'horizontal'} style={{width: "100%"}} form={orderForm}>
+                <Row>
+                    <Typography.Title>Create order</Typography.Title>
                 </Row>
                 <Row style={{marginBottom: 20}} justify={'space-between'}>
                     <Typography.Title style={{marginBottom: 20}} level={3}>Choose a shipping method</Typography.Title>
@@ -416,14 +415,14 @@ export function CreateScreen() {
                 </Row>
                 <Row style={{marginBottom: 50}}>
                     <Typography.Title level={3}>Where to pickup?</Typography.Title>
-                    <Form onValuesChange={onFormsValuesChangeHandler} style={{width: '100%'}} form={pickupForm}>
-                        <FormCard state={null} loadingData={false} onAddressChange={() => null}/>
+                    <Form style={{width: '100%'}} form={pickupForm}>
+                        <FormCard/>
                     </Form>
                 </Row>
                 <Row style={{marginBottom: 30}}>
                     <Typography.Title level={3}>Where to deliver?</Typography.Title>
-                    <Form onValuesChange={onFormsValuesChangeHandler}  style={{width: '100%'}} form={deliveryForm}>
-                        <FormCard state={null} loadingData={false} onAddressChange={() => null}/>
+                    <Form style={{width: '100%'}} form={deliveryForm}>
+                        <FormCard/>
                     </Form>
                 </Row>
                 <Row style={{marginBottom: 40}}>

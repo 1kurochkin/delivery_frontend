@@ -138,13 +138,13 @@ export const backendApi = createApi({
                 } catch (error) {
                     console.log(error, 'Error getUserInfo')
                     const {data: {status = null} = {}} = error as any || {};
-                    if(status === 401) {
+                    // if(status === 401) {
                         batch(() => {
                             Cookies.remove('sid')
                             dispatch(setAuth(false))
                             dispatch(resetSettingsState())
                         })
-                    }
+                    // }
                 }
             },
             // providesTags: () => ['User']

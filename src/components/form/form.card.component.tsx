@@ -4,9 +4,10 @@ import moment, {Moment} from "moment";
 import {SearchPlaces} from "../searchPlaces/search.places.component";
 
 type FormCardPropsType = {
-    state: any;
-    loadingData: boolean;
-    onAddressChange: Function;
+    // state: any;
+    // loadingData: boolean;
+    // onAddressChange: Function;
+    // formRef: any;
 }
 
 export const FormCard: React.FC<FormCardPropsType> = (props) => {
@@ -35,13 +36,13 @@ export const FormCard: React.FC<FormCardPropsType> = (props) => {
                 <SearchPlaces placeholder={'1556 Broadway, New York, 10120, USA'}/>
             </Form.Item>
             <Row justify={'space-between'}>
-                <Form.Item rules={[{required: true, message: ''}]} style={{width: '20%'}} label={'floor'} name="floor">
-                    <InputNumber placeholder={'5'} style={{width: '100%'}}/>
-                </Form.Item>
-                <Form.Item rules={[{required: true, message: ''}]} style={{width: '20%'}} label={'apt'} name="apt">
-                    <Input placeholder={'4H'}/>
-                </Form.Item>
-                <Form.Item rules={[{required: true, message: ''}]} style={{width: '49%'}} label={'Phone number'}
+                {/*<Form.Item rules={[{required: true, message: ''}]} style={{width: '20%'}} label={'floor'} name="floor">*/}
+                {/*    <InputNumber placeholder={'5'} style={{width: '100%'}}/>*/}
+                {/*</Form.Item>*/}
+                {/*<Form.Item rules={[{required: true, message: ''}]} style={{width: '20%'}} label={'apt'} name="apt">*/}
+                {/*    <Input placeholder={'4H'}/>*/}
+                {/*</Form.Item>*/}
+                <Form.Item rules={[{required: true, message: ''}]} style={{width: '100%'}} label={'Phone number'}
                            name="phone">
                     <InputNumber placeholder={'0000000000'} style={{width: '100%'}} prefix={'+'}/>
                 </Form.Item>

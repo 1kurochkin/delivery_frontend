@@ -5,15 +5,11 @@ import {useForm} from "antd/es/form/Form";
 import {useLogoutMutation, useUpdateUserSettingsMutation} from "../store/reducers/backend/backend.api";
 import {Badge, Button, Form, Input, InputNumber, Row, Typography} from "antd";
 import {UserRoleEnum} from "../store/reducers/backend/backend.api.types";
-import {useNavigate} from "react-router-dom";
-import {ROUTES} from "../configs/app.constants";
 
 export function SettingsScreen() {
     const [settingsForm] = useForm()
     const settingsReduxState = useAppSelector(({settings}) => settings)
-    const {modal, setVisible} = useModalSupport()
     const IS_USER_ROLE_CUSTOMER = settingsReduxState.role === UserRoleEnum.Customer
-    const navigate = useNavigate();
     const [
         fetchLogout,
         {isLoading: fetchingLogout}
@@ -40,10 +36,8 @@ export function SettingsScreen() {
     return (
         <>
             {modalSupport}
-            <Row justify={'space-between'} style={{marginBottom: 20}}>
-                <Typography.Title level={1} style={{textAlign: 'center'}}>
-                    Settings
-                </Typography.Title>
+            <Row>
+                <Typography.Title>Settings</Typography.Title>
             </Row>
             <Row>
                 <Typography.Title level={3}>

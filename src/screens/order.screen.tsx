@@ -145,30 +145,29 @@ export function OrderScreen() {
                 )
             })}
             {modalSupport}
-            <Row justify={'space-between'} style={{marginBottom: 30}}>
-                <Col span={4}>
-                    <ButtonBack onClick={() => navigate(-1)}/>
-                </Col>
-                <Col offset={1} span={19}>
-                    <Typography.Title level={2} style={{textAlign: 'center'}}>
+            <Row justify={"space-between"}>
+                <ButtonBack onClick={() => navigate(-1)}/>
+                    <Typography.Title style={{textAlign: 'right'}}>
                         Order #{id}
                     </Typography.Title>
-                    <Typography.Paragraph style={{position: 'absolute', right: 10}}>
-                        Status: {status}
-                    </Typography.Paragraph>
-                </Col>
             </Row>
             <Row>
+                <Typography.Paragraph>
+                    Status: {status}
+                </Typography.Paragraph>
+            </Row>
+            <Row>
+
                 <Timeline>
                     <Timeline.Item>
                         <Typography.Title level={5}>{pickupPoint?.address}</Typography.Title>
-                        <Typography.Paragraph>{`Apt: ${pickupPoint?.apt} Floor: ${pickupPoint?.floor}`}</Typography.Paragraph>
+                        {/*<Typography.Paragraph>{`Apt: ${pickupPoint?.apt} Floor: ${pickupPoint?.floor}`}</Typography.Paragraph>*/}
                         <Typography.Paragraph>{`${moment(pickupPoint?.date).format('MM/DD')} from ${moment(pickupPoint?.timeRangeFrom).format('HH:MM A')} to ${moment(deliveryPoint?.timeRangeTo).format('HH:MM A')}`}</Typography.Paragraph>
                         <Typography.Paragraph>{pickupPoint?.phone}</Typography.Paragraph>
                     </Timeline.Item>
                     <Timeline.Item>
                         <Typography.Title level={5}>{deliveryPoint?.address}</Typography.Title>
-                        <Typography.Paragraph>{`Apt: ${deliveryPoint?.apt} Floor: ${deliveryPoint?.floor}`}</Typography.Paragraph>
+                        {/*<Typography.Paragraph>{`Apt: ${deliveryPoint?.apt} Floor: ${deliveryPoint?.floor}`}</Typography.Paragraph>*/}
                         <Typography.Paragraph>{`${moment(deliveryPoint?.date).format('MM/DD')} from ${moment(deliveryPoint?.timeRangeFrom).format('HH:MM A')} to ${moment(deliveryPoint?.timeRangeTo).format('HH:MM A')}`}</Typography.Paragraph>
                         <Typography.Paragraph>{deliveryPoint?.phone}</Typography.Paragraph>
                     </Timeline.Item>
@@ -196,8 +195,8 @@ export function OrderScreen() {
                 </Col>
             </Row>
             <Row style={{marginBottom: 25}} justify={'space-between'}>
-                <Col span={20}><Typography.Title level={2}>Order price</Typography.Title></Col>
-                <Col span={4}>
+                <Col span={16}><Typography.Title level={2}>Order price</Typography.Title></Col>
+                <Col span={8}>
                     <Typography.Title style={{textAlign: 'right'}} level={2}>
                         ${deliveryPrice}
                     </Typography.Title>

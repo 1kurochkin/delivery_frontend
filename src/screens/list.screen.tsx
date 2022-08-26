@@ -70,7 +70,10 @@ export function ListScreen() {
             status: activeTab,
             skip: currentPage * PAGINATION.TAKE,
             take: PAGINATION.TAKE,
-        });
+        }).unwrap().then(({list}) => {
+            console.log(list, 'LOAD MORE RESPONSE')
+            setDataSource([...dataSource, ...list])
+        })
     }
 
     const onClickOrderCard = (orderId: string) => {
@@ -86,22 +89,20 @@ export function ListScreen() {
     return (
         // <Carousel effect={'fade'} swipe={false} ref={carouselRef} dots={false}>
             <>
-                <Row justify={'space-between'} style={{marginBottom: 30}}>
-                    <Col span={4}>
-                        <ButtonBack onClick={() => navigate(-1)}/>
-                    </Col>
-                    <Col offset={1} span={19}>
-                        <Typography.Title level={2} style={{marginBottom: 20, textAlign: 'right'}}>
-                            List Orders
-                        </Typography.Title>
-                    </Col>
+                <Row>
+                    {/*<Col span={4}>*/}
+                    {/*    <ButtonBack onClick={() => navigate(-1)}/>*/}
+                    {/*</Col>*/}
+                    {/*<Col offset={1} span={19}>*/}
+                        <Typography.Title>Orders list</Typography.Title>
+                    {/*</Col>*/}
                 </Row>
                 {/*{modalSupport}*/}
-                {fetchingGetOrders && <Spin size={'large'}/>}
+                {/*{fetchingGetOrders && <Spin size={'large'}/>}*/}
                 <List
                     style={{height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}
                     split bordered={false}
-                    // loading={false}
+                    loading={fetchingGetOrders}
                     grid={{gutter: 16, column: 1}}
                     dataSource={dataSource}
                     header={
@@ -124,7 +125,7 @@ export function ListScreen() {
                     footer={
                         <Row justify={'center'}>
                             <Col span={12}>
-                                {dataSource.length < getOrdersDataPaginationTotal &&
+                                {dataSource.length < getOrdersDataPaginationTotal && !fetchingGetOrders &&
                                 <Button style={{width: '100%'}} onClick={onClickLoadMoreButtonHandler}>
                                     Loading more
                                 </Button>

@@ -3,14 +3,14 @@ import React, {useEffect} from "react";
 import usePlacesAutocomplete, {getLatLng} from "use-places-autocomplete";
 
 type SearchPlacesProps = {
-    onChange?: (value: string) => void;
-    onSelect?: (value: string) => void;
+    // onChange?: (value: string) => void;
+    // onSelect?: (value: string) => void;
     value?: string;
     placeholder?: string;
 }
 
 export const SearchPlaces: React.FC<SearchPlacesProps> = (props) => {
-    const {onChange = () => null, onSelect = () => null, value, placeholder} = props;
+    const {value, placeholder} = props;
     const {
         value: placesAutocompleteValue,
         suggestions: {data},
@@ -45,17 +45,18 @@ export const SearchPlaces: React.FC<SearchPlacesProps> = (props) => {
 
     const onChangeHandler = (value: string) => {
         setValue(value, true);
-        onChange(value);
+        // onChange(value);
     }
 
     const onSelectHandler = (value: string) => {
         setValue(value, false)
-        onSelect(value);
-        onChange(value);
+        // onSelect(value);
+        // onChange(value);
     }
 
     return (
         <AutoComplete options={preparedData}
+                      {...props}
                       allowClear
                       onClear={() => onChangeHandler('')}
                       onSelect={onSelectHandler}

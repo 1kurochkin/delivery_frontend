@@ -31,7 +31,6 @@ type OrderCardPropsType = {
 }
 
 export const OrderCard: React.FC<OrderType> = (props) => {
-    console.log(props)
     const {
         id,
         deliveryPrice,
