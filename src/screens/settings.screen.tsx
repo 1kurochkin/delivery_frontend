@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {useAppSelector} from "../hooks/useAppSelector";
-import {useModalSupport} from "../components/modal/modal.support.component";
+import {useModalSupport} from "../components/modalSupport.component";
 import {useForm} from "antd/es/form/Form";
 import {useLogoutMutation, useUpdateUserSettingsMutation} from "../store/reducers/backend/backend.api";
 import {Badge, Button, Form, Input, InputNumber, Row, Typography} from "antd";

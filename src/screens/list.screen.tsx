@@ -1,29 +1,15 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {Affix, Button, Carousel, Col, Form, Input, List, notification, Row, Spin, Timeline, Typography} from "antd";
-import {
-    useChangeOrderStatusMutation, useLazyGetOrderQuery,
-    useLazyGetOrdersQuery,
-    useTakeOrderMutation
-} from "../store/reducers/backend/backend.api";
+import React, {useEffect, useState} from 'react';
+import {Button, Col, List, Row, Typography} from "antd";
+import {useLazyGetOrdersQuery} from "../store/reducers/backend/backend.api";
 import {OrderStatusEnum, OrderType, UserRoleEnum} from "../store/reducers/backend/backend.api.types";
 import {PAGINATION, ROUTES} from "../configs/app.constants";
-import {OrderCard} from "../components/orderCard/order.card.component";
+import {OrderCard} from "../components/orderCard.component";
 import {useAppSelector} from "../hooks/useAppSelector";
-import {useModalSupport} from "../components/modal/modal.support.component";
 import {useNavigate} from "react-router-dom";
-import {usePrevious} from "../hooks/usePrevious";
-import {ButtonBack} from "../components/button/buttonBack.component";
-import {CarouselRef} from "antd/lib/carousel";
-import {OrderScreen} from "./order.screen";
-
-
-type ModalStateType = { visible: boolean, type: 'Take' | 'Complete' | 'Cancel' | 'Support' | 'Update' }
 
 export function ListScreen() {
     const userRole = useAppSelector(({settings}) => settings.role);
     const navigate = useNavigate();
-    // const carouselRef = useRef<CarouselRef>(null)
-    // const [currentSlide, setCurrentSlide] = useState(0);
     const [activeTab, setActiveTab] = useState<OrderStatusEnum>(OrderStatusEnum.Available);
     const [dataSource, setDataSource] = useState<OrderType[]>([]);
     const [currentPage, setCurrentPage] = useState(1);

@@ -1,10 +1,11 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, Col, Form, Input, InputNumber, notification, Radio, Row, Select, Typography} from "antd";
 import {useForm} from "antd/es/form/Form";
 import {
     useCountOrderPriceAndDurationMutation,
     useCreateOrderMutation,
-    useLazyGetOrderQuery, useUpdateOrderMutation
+    useLazyGetOrderQuery,
+    useUpdateOrderMutation
 } from "../store/reducers/backend/backend.api";
 import {
     DeliveryTypeEnum,
@@ -17,10 +18,8 @@ import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {ROUTES} from "../configs/app.constants";
 import {useAppSelector} from "../hooks/useAppSelector";
 import moment from "moment";
-import {CarouselRef} from "antd/lib/carousel";
 import {CarOutlined, MehOutlined} from "@ant-design/icons";
-import {FormCard} from "../components/form/form.card.component";
-import {ButtonBack} from "../components/button/buttonBack.component";
+import {FormCard} from "../components/formCard.component";
 import {FormChangeInfo} from "rc-field-form/lib/FormContext";
 
 export type InitialOrderStateType = Pick<OrderType, 'deliveryType' | 'weight' | 'deliveryPrice' | 'payType' | 'packageType' | 'packagePrice'>;

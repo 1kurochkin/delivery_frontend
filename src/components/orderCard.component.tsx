@@ -1,34 +1,7 @@
-import {Affix, Alert, Badge, Button, Card, Col, Collapse, Divider, List, Row, Timeline, Typography} from "antd";
-import Title from "antd/lib/typography/Title";
-import React, {MouseEventHandler, useCallback} from "react";
-import {OrderPointType, OrderStatusEnum, OrderType, UserRoleEnum} from "../../store/reducers/backend/backend.api.types";
+import {Card, Col, List, Row, Timeline, Typography} from "antd";
+import React from "react";
+import {OrderType} from "../store/reducers/backend/backend.api.types";
 import moment from "moment";
-
-type OrderCardPropsType = {
-    courierId: string;
-    type: OrderStatusEnum;
-    userRole: UserRoleEnum | '';
-    loading?: boolean;
-    onClickTakeButton: () => void;
-    onClickCompleteButton: () => void;
-    onClickCancelButton: () => void;
-    onClickSupportButton: () => void;
-    onClickUpdateButton: () => void;
-    id: string,
-    courier: {
-        name: string;
-        phone: string;
-    };
-    pickupPoint: OrderPointType,
-    deliveryPoint: OrderPointType,
-    status: OrderStatusEnum;
-    weight: string,
-    packageType: string,
-    deliveryPrice: number,
-    payType: string,
-    createdAt: Date,
-    updatedAt: Date,
-}
 
 export const OrderCard: React.FC<OrderType> = (props) => {
     const {

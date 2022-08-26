@@ -7,7 +7,7 @@ import {useLazyGetCodeQuery, useLoginMutation} from "../store/reducers/backend/b
 import {ROUTES} from "../configs/app.constants";
 import {UserRoleEnum} from "../store/reducers/backend/backend.api.types";
 import {UserOutlined} from "@ant-design/icons";
-import {ButtonBack} from "../components/button/buttonBack.component";
+import {ButtonBack} from "../components/buttonBack.component";
 import ReactCodeInput from 'react-verification-code-input';
 
 export function LoginScreen() {

@@ -9,7 +9,7 @@ import {useLazyGetUserInfoQuery} from "./store/reducers/backend/backend.api";
 import {Layout} from "antd";
 import {useActions} from "./hooks/useActions";
 import {Content, Footer} from "antd/es/layout/layout";
-import {ProtectedRoute} from "./components/protectedRoute/protected.route.component";
+import {ProtectedRoute} from "./components/protectedRoute.component";
 import {usePrevious} from "./hooks/usePrevious";
 import {PreloaderScreen} from "./screens/preloader.screen";
 import {StartScreen} from "./screens/start.screen";

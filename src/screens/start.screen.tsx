@@ -3,7 +3,7 @@ import {Button, Col, Form, Image, Row, Typography} from "antd";
 import {Link, useNavigate} from "react-router-dom";
 import {ROUTES} from "../configs/app.constants";
 import {UserRoleEnum} from "../store/reducers/backend/backend.api.types";
-import {SearchPlaces} from "../components/searchPlaces/search.places.component";
+import {SearchPlaces} from "../components/searchPlaces.component";
 import courierPic from "../assets/pictures/courier.jpg"
 import {useForm} from "antd/es/form/Form";
 

@@ -1,14 +1,10 @@
 import React from 'react';
-import {Button, Result} from "antd";
-import {Link, useNavigate} from "react-router-dom";
-import {ROUTES} from "../../configs/app.constants";
 import {ArrowLeftOutlined} from "@ant-design/icons";
 
 type ButtonBackType = {
     onClick: React.MouseEventHandler<HTMLDivElement>
 };
 export function ButtonBack({onClick}: ButtonBackType) {
-    const navigation = useNavigate();
     return (
         <div style={{
             width: 'unset',

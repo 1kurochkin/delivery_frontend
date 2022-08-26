@@ -1,16 +1,7 @@
-import {AutoComplete, Button, Col, Form, Input, Modal, notification, Row} from "antd";
+import {Button, Col, Form, Input, Modal, notification, Row} from "antd";
 import React, {useEffect, useState} from "react";
-import usePlacesAutocomplete from "use-places-autocomplete";
-import {SelectHandler} from "rc-select/lib/Select";
-import {FormFinishInfo} from "rc-field-form/lib/FormContext";
-import {UserRoleEnum} from "../../store/reducers/backend/backend.api.types";
-import {useContactUsMutation} from "../../store/reducers/backend/backend.api";
+import {useContactUsMutation} from "../store/reducers/backend/backend.api";
 import {useForm} from "antd/es/form/Form";
-
-type ModalSupportProps = {
-    // onChange: (value: string) => void;
-    // onSelect: (value: string) => void;
-}
 
 export const useModalSupport = () => {
 

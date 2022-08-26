@@ -1,16 +1,9 @@
-import {DatePicker, Form, Input, InputNumber, Row, TimePicker} from "antd";
+import {DatePicker, Form, InputNumber, Row, TimePicker} from "antd";
 import React from "react";
 import moment, {Moment} from "moment";
-import {SearchPlaces} from "../searchPlaces/search.places.component";
+import {SearchPlaces} from "./searchPlaces.component";
 
-type FormCardPropsType = {
-    // state: any;
-    // loadingData: boolean;
-    // onAddressChange: Function;
-    // formRef: any;
-}
-
-export const FormCard: React.FC<FormCardPropsType> = (props) => {
+export const FormCard: React.FC = (props) => {
     // const {formRef, loadingData, state, onAddressChange} = props;
     // const [selected, setSelected] = useState(false)
 

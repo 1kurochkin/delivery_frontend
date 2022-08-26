@@ -7,11 +7,11 @@ import {
 } from "../store/reducers/backend/backend.api";
 import {useAppSelector} from "../hooks/useAppSelector";
 import {useNavigate, useParams} from "react-router-dom";
-import {ButtonBack} from "../components/button/buttonBack.component";
+import {ButtonBack} from "../components/buttonBack.component";
 import {OrderStatusEnum, UserRoleEnum} from "../store/reducers/backend/backend.api.types";
 import {ROUTES} from "../configs/app.constants";
 import {SizeType} from "antd/es/config-provider/SizeContext";
-import {useModalSupport} from "../components/modal/modal.support.component";
+import {useModalSupport} from "../components/modalSupport.component";
 import moment from "moment";
 
 
