@@ -2,11 +2,13 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
 
 type AppSliceStateType = {
-    auth: boolean
+    auth: boolean;
+    loading: boolean;
 }
 
 const initialState: AppSliceStateType = {
-    auth: !!Cookies.get('sid') || false
+    auth: !!Cookies.get('sid'),
+    loading: false,
 }
 
 export const appSlice = createSlice({
@@ -15,6 +17,9 @@ export const appSlice = createSlice({
     reducers: {
         setAuth(state, {payload}: PayloadAction<boolean>) {
             state.auth = payload
+        },
+        setLoading(state, {payload}: PayloadAction<boolean>) {
+            state.loading = payload;
         }
     }
 });

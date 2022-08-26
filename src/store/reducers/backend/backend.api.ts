@@ -27,7 +27,7 @@ import {appSliceActions} from '../app/app.slice'
 import {notification} from "antd";
 
 const {setSettingsField, resetSettingsState} = settingsSliceActions;
-const {setAuth} = appSliceActions;
+const {setAuth, setLoading} = appSliceActions;
 // const {setSettingsField, setAuth} = StoreActions;
 
 // const axiosBaseQuery =
@@ -77,17 +77,21 @@ export const backendApi = createApi({
         login: build.mutation<LoginMutationResponseType, LoginMutationType>({
             query: (body) => ({url: '/authorization/login', method: 'POST', body}),
             async onQueryStarted({data: {role}}, { dispatch, queryFulfilled }) {
+                dispatch(setLoading(true));
                 try {
                     const {data: loginData} = await queryFulfilled;
                     batch(() => {
                         Cookies.set('sid', loginData?.sid)
-                        dispatch(setAuth(true))
+                        dispatch(setAuth(true));
                     })
                 } catch (e:any) {
-                    const {error: {error}} = e
+                    const {error: {error}} = e;
+                    setLoading(false)
                     notification.error({message: error});
                 }
+                dispatch(setLoading(false));
             },
+            invalidatesTags: () => ['User']
         }),
         logout: build.mutation<any, void>({
             query: () => ({url: '/authorization/logout', method: 'POST'}),
@@ -121,6 +125,7 @@ export const backendApi = createApi({
         getUserInfo: build.query<GetCustomerInfoQueryType | GetCourierInfoQueryType, void>({
             query: () => ({url: '/user/info'}),
             async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+                dispatch(setLoading(true));
                 try {
                     const {data: userSetting} = await queryFulfilled;
                     batch(() => {
@@ -146,8 +151,9 @@ export const backendApi = createApi({
                         })
                     // }
                 }
+                dispatch(setLoading(false));
             },
-            // providesTags: () => ['User']
+            providesTags: () => ['User']
         }),
         updateUserSettings: build.mutation<boolean, UpdateCustomerSettingsMutationType | UpdateCourierSettingsMutationType>({
             query: (body) => ({url: '/user/update', method: 'POST', body}),
@@ -171,7 +177,6 @@ export const backendApi = createApi({
                    notification.error({message: 'Error update user info!'})
                 }
             },
-            // invalidatesTags: () => ['User']
         }),
         //----------MAIL-----------//
         contactUs: build.mutation<boolean, ContactUsMutationType>({
@@ -252,6 +257,7 @@ export const {
     useSignupMutation,
     useLogoutMutation,
     //---USER---//
+    useGetUserInfoQuery,
     useLazyGetUserInfoQuery,
     useUpdateUserSettingsMutation,
     //---MAIL---//

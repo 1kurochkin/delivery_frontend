@@ -5,7 +5,7 @@ import './styles/App.css'
 import {Navigate, Route, Routes, useLocation} from 'react-router-dom';
 import {ROUTES} from './configs/app.constants';
 import {useAppSelector} from "./hooks/useAppSelector";
-import {useLazyGetUserInfoQuery} from "./store/reducers/backend/backend.api";
+import {useGetUserInfoQuery, useLazyGetUserInfoQuery} from "./store/reducers/backend/backend.api";
 import {Layout} from "antd";
 import {useActions} from "./hooks/useActions";
 import {Content, Footer} from "antd/es/layout/layout";
@@ -28,28 +28,31 @@ function App() {
     //     libraries: ['places']
     // });
     const auth = useAppSelector(({app}) => app.auth)
+    const loadingApp = useAppSelector(({app}) => app.loading)
     const userRole = useAppSelector(({settings}) => settings.role)
     const prevAuthState = usePrevious(auth)
     const {setAuth, setSettingsField} = useActions()
     const {pathname} = useLocation()
-    const [loadingApp, setLoadingApp] = useState(auth);
+    // const [loadingApp, setLoadingApp] = useState(auth);
 
 
-    const [
-        fetchGetUserInfo,
-        {error: error2, isFetching: fetchingGetUserInfo = true}
-    ] = useLazyGetUserInfoQuery();
-    const {data: {message: errorGetUserInfo = undefined} = {}} = error2 as any || {};
+    // const [
+    //     fetchGetUserInfo,
+    //     {error: error2, isFetching: fetchingGetUserInfo = true}
+    // ] = useLazyGetUserInfoQuery();
+    const {
+        // error: error2,
+        isFetching: fetchingGetUserInfo = true
+    } = useGetUserInfoQuery(undefined, {skip: !auth});
+    // const {data: {message: errorGetUserInfo = undefined} = {}} = error2 as any || {};
 
     // useEffect(() => {Cookies.set('sid', '1e6ed700-e403-42ce-8a36-41d91d0be86e')}, [])
 
-    useEffect(() => {
-        if (!prevAuthState && auth) {
-            fetchGetUserInfo().unwrap().then(() => {
-                setLoadingApp(false);
-            });
-        }
-    }, [auth])
+    // useEffect(() => {
+    //     if (!prevAuthState && auth) {
+    //         fetchGetUserInfo()
+    //     }
+    // }, [auth])
 
     // useEffect(() => {
     //     console.log('useEffect getCourierInfoData, getCustomerInfoData')
