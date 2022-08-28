@@ -12,7 +12,7 @@ import {
     OrderPointTypeEnum,
     OrderType,
     PackageWeightEnum,
-    PayTypeEnum
+    PayTypeEnum, UserRoleEnum
 } from "../store/reducers/backend/backend.api.types";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {ROUTES} from "../configs/app.constants";
@@ -64,7 +64,7 @@ export function CreateScreen() {
 
     useEffect(() => {
         if(IS_UPDATE_ORDER_PAGE) {
-            fetchGetOrder(orderId).unwrap().then((data) => {
+            fetchGetOrder(Number(orderId)).unwrap().then((data) => {
                 const {deliveryPoint, pickupPoint, deliveryPrice, ...restGetOrderData} = data;
                 orderForm.setFieldsValue(restGetOrderData);
                 setInitialStateOrderFormHandler('deliveryPrice', deliveryPrice)
@@ -123,45 +123,19 @@ export function CreateScreen() {
             });
     }
 
-    // let [
-    //     fetchGetCode,
-    //     {error: error5, isFetching: fetchingGetCode, data: IS_HAVE_VERIFICATION_CODE = false}
-    // ] = useLazyGetCodeQuery();
-    // const {data: {message: errorGetCode = undefined} = {}} = error5 as any || {};
-
-    //--------CATCH-ERRORS------//
-    // if (errorCountOrderPriceAndDuration || errorCreateOrder || errorGetOrder || errorUpdateOrder || errorGetCode) {
-    //     console.log(errorCountOrderPriceAndDuration || errorCreateOrder || errorGetOrder || errorUpdateOrder || errorGetCode)
-    //     notification.error({
-    //         message: errorCountOrderPriceAndDuration ||
-    //             errorCreateOrder ||
-    //             errorGetOrder ||
-    //             errorUpdateOrder ||
-    //             errorGetCode
-    //     })
-    // }
-    //-------------------------//
-
     const onFinishFormHandler = async () => {
-        console.log(
-            'onFinishFormHandler',
-            orderForm.getFieldsValue(),
-            pickupForm.getFieldsValue(),
-            deliveryForm.getFieldsValue()
-        )
+        // console.log(
+        //     'onFinishFormHandler',
+        //     orderForm.getFieldsValue(),
+        //     pickupForm.getFieldsValue(),
+        //     deliveryForm.getFieldsValue()
+        // )
         try {
-            await Promise.all([
-                orderForm.validateFields(),
-                pickupForm.validateFields(),
-                deliveryForm.validateFields(),
-                // ...(!IS_AUTH_USER ? [verificationForm.validateFields()] : [])
-            ]);
-            console.log(
-                'HELLO CREATING',
-                orderForm.validateFields(),
-                pickupForm.validateFields(),
-                deliveryForm.validateFields(),
-            )
+            // await Promise.all([
+            //     orderForm.validateFields(),
+            //     pickupForm.validateFields(),
+            //     deliveryForm.validateFields(),
+            // ]);
             const data = {
                 ...orderForm.getFieldsValue(),
                 pickupPoint: {
@@ -176,10 +150,16 @@ export function CreateScreen() {
                     timeRangeFrom: deliveryForm.getFieldValue('timeRange')[0],
                     timeRangeTo: deliveryForm.getFieldValue('timeRange')[1]
                 },
-                // ...(!IS_AUTH_USER && verificationForm.getFieldsValue())
+            }
+            if(!IS_AUTH_USER) {
+                // console.log(data, "DATA")
+                navigate(
+                    ROUTES.AUTH.LOGIN_PAGE.PATH + '/' + UserRoleEnum.Customer,
+                    {state: {orderData: JSON.stringify(data)}}
+                ); return;
             }
             if(IS_UPDATE_ORDER_PAGE) {
-                fetchUpdateOrder({orderId: orderId, update: data})
+                fetchUpdateOrder({orderId: Number(orderId), update: data})
             } else {
                 fetchCreateOrder(data).unwrap().then(() => navigate(ROUTES.ORDER.LIST_PAGE))
             }
@@ -191,6 +171,9 @@ export function CreateScreen() {
     }
 
     const onFormsValuesChangeHandler = (_: string, {changedFields}: FormChangeInfo) => {
+        console.log(_, changedFields)
+        //Выбрасываем из функции при валидации форм, потому что при валидации считается как изменения
+        if(changedFields.length >= 4) return;
         const [{name}] = changedFields;
         const changedFieldName = name.toString();
         if (
@@ -212,126 +195,6 @@ export function CreateScreen() {
     const isFilledAddress = (value: string) => {
         return value?.includes('USA') && value?.length > 10
     }
-    // const onClickGetCodeHandler = async () => {
-    //     fetchGetCode(verificationForm.getFieldValue('phone'));
-    //     notification.success({message: 'We have sent verification code to your phone!'})
-    //     carouselRef?.current?.next()
-    // }
-    // const onFormOrderChangeHandler = (changedValues: any, values: any) => {
-    //     console.log('onFormOrderChangeHandler', changedValues)
-    //     if ('deliveryType' in changedValues || !changedValues) {
-    //         setInitialStateOrderFormHandler('deliveryPrice', 0)
-    //     }
-
-// const onChangeVerificationFormHandler = (changedValues: any, values: any) => {
-//     console.log('onFormOrderChangeHandler', changedValues)
-//     if ('phone' in changedValues || !changedValues) {
-//         setInitialStateOrderFormHandler('deliveryPrice', 0)
-//     }
-// }
-// const onAddressChangeFormCardHandler = () => {
-//     setInitialStateOrderFormHandler('deliveryPrice', 0)
-// }
-
-// const onClickCountPriceButtonHandler = async () => {
-//     try {
-//         const [
-//             {deliveryType},
-//             {address: pickupAddress},
-//             {address: deliveryAddress}
-//         ] = await Promise.all([
-//             orderForm.validateFields(['deliveryType']),
-//             pickupForm.validateFields(['address']),
-//             deliveryForm.validateFields(['address']),
-//         ])
-//         fetchCountOrderPriceAndDuration({
-//             origins: pickupAddress,
-//             destinations: [deliveryAddress],
-//             deliveryType: deliveryType
-//         })
-//     } catch (e) {
-//         notification.error({
-//             message: 'Please fill pickup address and delivery address for count delivery price'
-//         })
-//     }
-// }
-
-// const createOrderButton = useCallback((isUpdateOrderPage: boolean) =>
-//         <Skeleton active={true} loading={fetchingGetOrder}>
-//             {/*<Button*/}
-//             {/*    loading={fetchingCountOrderPriceAndDuration || fetchingCreateOrder || fetchingUpdateOrder}*/}
-//             {/*    style={{width: '100%'}}*/}
-//             {/*    htmlType={'submit'}*/}
-//             {/*    onClick={onFinishFormHandler}*/}
-//             {/*>*/}
-//             {/*    {isUpdateOrderPage ? 'Update' : 'Create'} order*/}
-//             {/*</Button>*/}
-//         </Skeleton>,
-//     [
-//         IS_UPDATE_ORDER_PAGE,
-//         IS_AUTH_USER,
-//         fetchingGetOrder,
-//         fetchingCountOrderPriceAndDuration,
-//         fetchingCreateOrder,
-//         // fetchingUpdateOrder
-//     ]
-// )
-
-// const getFooterView = () => {
-//     if (!initialStateOrderForm.deliveryPrice) {
-//         return (
-//             <Button loading={fetchingCountOrderPriceAndDuration}
-//                     style={{width: '100%'}}
-//                     onClick={onClickCountPriceButtonHandler}
-//             >
-//                 Count delivery price
-//             </Button>
-//         )
-//     } else {
-//         if (!IS_AUTH_USER) {
-//             return (
-//                 <Form style={{maxWidth: '100%'}} layout={"horizontal"} form={verificationForm}>
-//                     <Carousel ref={carouselRef} effect="fade" dots={false}>
-//                         <Row>
-//                             <Col style={{marginBottom: 10}}>
-//                                 <Form.Item style={{marginBottom: 0}} rules={[{required: true, message: ''}]}
-//                                            name={'phone'}>
-//                                     <Input placeholder={'Phone number'}/>
-//                                 </Form.Item>
-//                             </Col>
-//                             <Col>
-//                                 <Button loading={fetchingGetCode} style={{width: '100%'}}
-//                                         onClick={onClickGetCodeHandler}>
-//                                     Get code
-//                                 </Button>
-//                             </Col>
-//                         </Row>
-//                         <Row justify={'space-between'}>
-//                             <Col style={{marginBottom: 10}}>
-//                                 <Button style={{width: '100%'}} onClick={() => carouselRef?.current?.prev()}>
-//                                     Back
-//                                 </Button>
-//                             </Col>
-//                             <Col style={{marginBottom: 10}}>
-//                                 <Form.Item style={{marginBottom: 0}} rules={[{required: true, message: ''}]}
-//                                            name={'code'}>
-//                                     <Input placeholder={'Verification code'}/>
-//                                 </Form.Item>
-//                             </Col>
-//                             <Col>
-//                                 <Form.Item>
-//                                     {createOrderButton(false)}
-//                                 </Form.Item>
-//                             </Col>
-//                         </Row>
-//                     </Carousel>
-//                 </Form>
-//             )
-//         }
-//     }
-//     if (IS_UPDATE_ORDER_PAGE) return createOrderButton(true);
-//     else return createOrderButton(false);
-// }
 
     const shippingMethodViewConfig = [
         {value: DeliveryTypeEnum.Walking, icon: <MehOutlined/>},
@@ -352,19 +215,6 @@ export function CreateScreen() {
         PackageWeightEnum.Under20,
         PackageWeightEnum.More20,
     ];
-
-    // const getActionButtonView = () => {
-    //     if(IS_AUTH_USER) {
-    //         return (
-    //             <Button onClick={onFinishFormHandler}
-    //                     loading={fetchingUpdateOrder || fetchingCreateOrder}
-    //                     size={"large"}
-    //                     htmlType={'submit'}>
-    //                 {IS_UPDATE_ORDER_PAGE ? 'Update order' : 'Create order'}
-    //             </Button>
-    //         )
-    //     }
-    // }
 
     return (
         <Form.Provider onFormChange={onFormsValuesChangeHandler}>
@@ -443,110 +293,14 @@ export function CreateScreen() {
                             loading={fetchingUpdateOrder || fetchingCreateOrder}
                             size={"large"}
                             htmlType={'submit'}>
-                        {IS_UPDATE_ORDER_PAGE ? 'Update order' : 'Create order'}
+                        {
+                            IS_AUTH_USER ?
+                                (IS_UPDATE_ORDER_PAGE ? 'Update order' : 'Create order') :
+                                'Next'
+                        }
                     </Button>
                 </Row>
             </Form>
         </Form.Provider>
-        // <div className={'container'}>
-        //     <Form.Provider>
-        //         <Row gutter={20} justify={'space-between'}>
-        //             <Col span={6}>
-        //                 <Title>{IS_UPDATE_ORDER_PAGE ? 'Update' : 'Create'} order</Title>
-        //             </Col>
-        //             <Col span={14}>
-        //                 <Form onValuesChange={onFormOrderChangeHandler} initialValues={initialStateOrderForm}
-        //                       form={orderForm}>
-        //                     <Col style={{display: 'flex', justifyContent: 'space-between'}}>
-        //                         <Col span={7}>
-        //                             <Skeleton active={true} loading={fetchingGetOrder}>
-        //                                 <Form.Item rules={[{required: true, message: ''}]} name={'deliveryType'}>
-        //                                     <Select>
-        //                                         {deliveryTypeConfigView.map((value) =>
-        //                                             <Select.Option value={value}>{value}</Select.Option>
-        //                                         )}
-        //                                     </Select>
-        //                                 </Form.Item>
-        //                             </Skeleton>
-        //                         </Col>
-        //                         <Col span={7} offset={1}>
-        //                             <Skeleton active={true} loading={fetchingGetOrder}>
-        //                                 <Form.Item rules={[{required: true, message: ''}]} name={'packagePrice'}>
-        //                                     <Input placeholder={'Package cost in $'}/>
-        //                                 </Form.Item>
-        //                             </Skeleton>
-        //                             {/*</Skeleton.Input>*/}
-        //                         </Col>
-        //                         <Col span={7} offset={1}>
-        //                             <Skeleton active={true} loading={fetchingGetOrder}>
-        //                                 <Form.Item rules={[{required: true, message: ''}]} name={'packageType'}>
-        //                                     <Input placeholder={'Type of package'}/>
-        //                                 </Form.Item>
-        //                             </Skeleton>
-        //                         </Col>
-        //                     </Col>
-        //                     <Col style={{display: 'flex', justifyContent: 'space-between'}}>
-        //                         <Col span={12}>
-        //                             <Skeleton active={true} loading={fetchingGetOrder}>
-        //                                 <Form.Item rules={[{required: true, message: ''}]} name={'payType'}>
-        //                                     <Select placeholder={'Way for pay'}>
-        //                                         {payTypeConfigView.map((value) =>
-        //                                             <Select.Option value={value}>{value}</Select.Option>
-        //                                         )}
-        //                                     </Select>
-        //                                 </Form.Item>
-        //                             </Skeleton>
-        //                         </Col>
-        //                         <Col span={12}>
-        //                             <Skeleton active={true} loading={fetchingGetOrder}>
-        //                                 <Form.Item rules={[{required: true, message: ''}]} name={'weight'}>
-        //                                     <Select>
-        //                                         {weightConfigView.map((value) =>
-        //                                             <Select.Option value={value}>{value}</Select.Option>
-        //                                         )}
-        //                                     </Select>
-        //                                 </Form.Item>
-        //                             </Skeleton>
-        //                         </Col>
-        //                     </Col>
-        //                 </Form>
-        //                 <Divider style={{marginTop: 0}}/>
-        //                 <Col>
-        //                     <Alert
-        //                         message={'Each courier pays a deposit to fulfill delivery orders, so in case of loss of cargo,\n' +
-        //                         'we will compensate the cost within three working days in accordance with the regulations.'}
-        //                         type={'warning'}
-        //                     />
-        //                 </Col>
-        //                 <Divider/>
-        //                 {formCardConfigView.map(({type, ref, state}) =>
-        //                     <Col>
-        //                         <FormCard onAddressChange={onAddressChangeFormCardHandler} state={state}
-        //                                   loadingData={fetchingGetOrder} formRef={ref}/>
-        //                     </Col>
-        //                 )}
-        //                 <Divider/>
-        //                 <Row>
-        //                     <Col span={24}>
-        //                         <Skeleton active={true} loading={fetchingGetOrder}>
-        //                             <Row gutter={[0, 20]}>
-        //                                 {
-        //                                     initialStateOrderForm.deliveryPrice ?
-        //                                         <Col span={24}>
-        //                                             <Alert type={'success'}
-        //                                                    message={`The cost of delivery will be: ${initialStateOrderForm.deliveryPrice}$`}/>
-        //                                         </Col> : null
-        //                                 }
-        //                                 {getFooterView()}
-        //                             </Row>
-        //
-        //                         </Skeleton>
-        //                     </Col>
-        //                 </Row>
-        //                 <Divider/>
-        //             </Col>
-        //         </Row>
-        //     </Form.Provider>
-        // </div>
     );
 };

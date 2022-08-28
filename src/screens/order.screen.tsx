@@ -33,7 +33,7 @@ export function OrderScreen() {
 
     useEffect(() => {
         console.log('MOUNT')
-        fetchGetOrder(orderId as string)
+        fetchGetOrder(Number(orderId))
     }, [orderId]);
 
     const [
@@ -41,7 +41,7 @@ export function OrderScreen() {
         {
             isFetching: fetchingGetOrder,
             data: {
-                id = '',
+                id = 0,
                 status = '',
                 pickupPoint = undefined,
                 deliveryPoint = undefined,
@@ -50,9 +50,13 @@ export function OrderScreen() {
                 packageType = '',
                 weight = '',
                 deliveryPrice = '',
+                courier = undefined,
+                customer = undefined,
             } = {}
         }
     ] = useLazyGetOrderQuery();
+    const IS_ACTIVE_STATUS = status === OrderStatusEnum.Active;
+    const customerOrCourierInfo = courier || customer
     const [
         fetchTakeOrder,
         {isLoading: fetchingTakeOrder}
@@ -67,31 +71,38 @@ export function OrderScreen() {
         navigate(ROUTES.ORDER.UPDATE_PAGE.PATH + '/' + orderId)
     }
     const onClickOkCancelModal = () => {
-        fetchChangeOrderStatus({
-            orderId: id,
-            status: OrderStatusEnum.Canceled
-        }).unwrap().then(() => setModalStateHandler('cancel', false))
+        fetchChangeOrderStatus({orderId: id, status: OrderStatusEnum.Canceled})
+            .unwrap()
+            .then(() => setModalStateHandler('cancel', false))
+            .catch(() => setModalStateHandler('cancel', false));
     }
-    const onClickOkTakeModal = () => {
-        fetchTakeOrder(orderId as string).unwrap().then(() => setModalStateHandler('take', false))
+    const onClickOkTakeModal = async () => {
+        fetchTakeOrder(id)
+            .unwrap()
+            .then(() => setModalStateHandler('take', false))
+            .catch(() => setModalStateHandler('take', false));
+
     }
-    const onClickOkCompleteModal = () => {
-        fetchChangeOrderStatus({orderId: id, status: OrderStatusEnum.Completed}).unwrap().then(() => setModalStateHandler('complete', false))
+    const onClickOkCompleteModal = async () => {
+        await fetchChangeOrderStatus({orderId: id, status: OrderStatusEnum.Completed})
+            .unwrap()
+            .then(() => setModalStateHandler('complete', false))
+            .catch(() => setModalStateHandler('complete', false));
     }
 
     const actionButtonViewConfig = [
-        IS_USER_ROLE_CUSTOMER && {size: 'large', onClick: onClickUpdateButton, label: 'Update the order'},
-        IS_USER_ROLE_CUSTOMER && {
+        IS_USER_ROLE_CUSTOMER && !IS_ACTIVE_STATUS && {size: 'large', onClick: onClickUpdateButton, label: 'Update the order'},
+        IS_USER_ROLE_CUSTOMER && !IS_ACTIVE_STATUS && {
             type: 'primary',
             onClick: () => setModalStateHandler('cancel', true),
             label: 'Cancel the order'
         },
-        !IS_USER_ROLE_CUSTOMER && {
+        !IS_USER_ROLE_CUSTOMER && !IS_ACTIVE_STATUS && {
             size: 'large',
             onClick: () => setModalStateHandler('take', true),
             label: 'Take the order'
         },
-        !IS_USER_ROLE_CUSTOMER && {
+        !IS_USER_ROLE_CUSTOMER && IS_ACTIVE_STATUS && {
             size: 'large',
             onClick: () => setModalStateHandler('complete', true),
             label: 'Complete the order'
@@ -147,9 +158,9 @@ export function OrderScreen() {
             {modalSupport}
             <Row justify={"space-between"}>
                 <ButtonBack onClick={() => navigate(-1)}/>
-                    <Typography.Title style={{textAlign: 'right'}}>
-                        Order #{id}
-                    </Typography.Title>
+                <Typography.Title style={{textAlign: 'right'}}>
+                    Order #{id}
+                </Typography.Title>
             </Row>
             <Row>
                 <Typography.Paragraph>
@@ -194,6 +205,20 @@ export function OrderScreen() {
                     <Typography.Paragraph>Wight: {weight}</Typography.Paragraph>
                 </Col>
             </Row>
+            {
+                customerOrCourierInfo &&
+                <Row style={{marginBottom: 25}}>
+                    <Typography.Title level={3}>
+                        {`${IS_USER_ROLE_CUSTOMER ? 'Courier' : 'Customer'} Information`}
+                    </Typography.Title>
+                    <Col span={24}>
+                        <Typography.Paragraph>Name: {customerOrCourierInfo?.name}</Typography.Paragraph>
+                    </Col>
+                    <Col span={24}>
+                        <Typography.Paragraph>Phone: {customerOrCourierInfo?.phone}</Typography.Paragraph>
+                    </Col>
+                </Row>
+            }
             <Row style={{marginBottom: 25}} justify={'space-between'}>
                 <Col span={16}><Typography.Title level={2}>Order price</Typography.Title></Col>
                 <Col span={8}>

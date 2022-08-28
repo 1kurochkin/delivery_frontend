@@ -135,18 +135,20 @@ export type CreateOrderMutationType = {
     payType: PayTypeEnum;
     pickupPoint: OrderPointType
     deliveryPoint: OrderPointType;
-    phone: string;
-    code: string;
 }
 export type UpdateOrderMutationType = {
-    orderId: string;
+    orderId: number;
     update: Partial<CreateOrderMutationType>
 }
 export type OrderType = {
-    id: string;
+    id: number;
     customerId: string;
     courierId: string;
-    courier: {
+    courier?: {
+        name: string;
+        phone: string;
+    },
+    customer?: {
         name: string;
         phone: string;
     }

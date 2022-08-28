@@ -80,16 +80,18 @@ export const backendApi = createApi({
                 dispatch(setLoading(true));
                 try {
                     const {data: loginData} = await queryFulfilled;
-                    batch(() => {
+                    setTimeout(() => {
                         Cookies.set('sid', loginData?.sid)
-                        dispatch(setAuth(true));
-                    })
+                        batch(() => {
+                            dispatch(setAuth(true));
+                            dispatch(setLoading(false));
+                        });
+                    }, 400)
                 } catch (e:any) {
                     const {error: {error}} = e;
-                    setLoading(false)
                     notification.error({message: error});
+                    dispatch(setLoading(false));
                 }
-                dispatch(setLoading(false));
             },
             invalidatesTags: () => ['User']
         }),
@@ -193,22 +195,17 @@ export const backendApi = createApi({
                 }
             },
         }),
-        createOrder: build.mutation<{ result: true, sid: string }, CreateOrderMutationType>({
+        createOrder: build.mutation<boolean, CreateOrderMutationType>({
             query: (body) => ({url: '/order/create', method: 'POST', body}),
             async onQueryStarted(arg, { dispatch, queryFulfilled }) {
                 try {
                     const {data} = await queryFulfilled;
                     notification.success({message: 'Your order successful created!'});
-                    if(data?.sid) {
-                        batch(() => {
-                            Cookies.set('sid', data?.sid)
-                            dispatch(setAuth(true))
-                        })
-                    }
                 } catch (e) {
                     notification.error({message: 'Error creating order!'})
                 }
             },
+            // invalidatesTags: result => ['Order']
         }),
         updateOrder: build.mutation<boolean, UpdateOrderMutationType>({
             query: (body) => ({url: '/order/update', method: 'POST', body})
@@ -217,11 +214,11 @@ export const backendApi = createApi({
             query: (params) => ({url: '/order/list', method: 'GET', params}),
             providesTags: () => ['Order']
         }),
-        getOrder: build.query<GetOrderQueryResponseType, string>({
+        getOrder: build.query<GetOrderQueryResponseType, number>({
             query: (orderId) => ({url: `/order`, method: 'GET', params: {orderId}}),
             providesTags: () => ['Order']
         }),
-        takeOrder: build.mutation<boolean, string>({
+        takeOrder: build.mutation<boolean, number>({
             query: (orderId) => ({url: '/order/take/', method: 'POST', body: {orderId}} ),
             async onQueryStarted(_, { queryFulfilled }) {
                 try {
@@ -233,7 +230,7 @@ export const backendApi = createApi({
             },
             invalidatesTags: result => ['Order']
         }),
-        changeOrderStatus: build.mutation<boolean, { orderId: string, status: OrderStatusEnum }>({
+        changeOrderStatus: build.mutation<boolean, { orderId: number, status: OrderStatusEnum }>({
             query: (body, ) => ({url: '/order/status', method: 'POST', body}),
             async onQueryStarted(_, { dispatch, queryFulfilled }) {
                 try {

@@ -51,7 +51,7 @@ export function StartScreen() {
             </Row>
             <Row style={{marginBottom: 20}}>
                 {orderFormInputsView.map(({label, placeholder, name}) =>
-                    <Form.Item rules={[{required: true, min: 3, message: ''}]}
+                    <Form.Item style={{width: '100%'}} rules={[{required: true, min: 3, message: ''}]}
                                colon={false}
                                label={label}
                                name={name}

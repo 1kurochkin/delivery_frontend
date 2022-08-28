@@ -62,7 +62,7 @@ export function ListScreen() {
         })
     }
 
-    const onClickOrderCard = (orderId: string) => {
+    const onClickOrderCard = (orderId: number) => {
         navigate(ROUTES.ORDER.ORDER_PAGE.PATH + '/' + orderId)
     }
 
