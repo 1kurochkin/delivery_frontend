@@ -21,6 +21,7 @@ import moment from "moment";
 import {CarOutlined, MehOutlined} from "@ant-design/icons";
 import {FormCard} from "../components/formCard.component";
 import {FormChangeInfo} from "rc-field-form/lib/FormContext";
+import {ButtonBack} from "../components/buttonBack.component";
 
 export type InitialOrderStateType = Pick<OrderType, 'deliveryType' | 'weight' | 'deliveryPrice' | 'payType' | 'packageType' | 'packagePrice'>;
 
@@ -30,6 +31,7 @@ export function CreateScreen() {
     const IS_AUTH_USER = useAppSelector(({app}) => app.auth)
     const {state}: any = useLocation();
     const {pickupAddress = undefined, deliveryAddress = undefined} = state || {};
+    const IS_FORM_START_PAGE = pickupAddress && deliveryAddress
     const navigate = useNavigate();
     // const carouselRef = useRef<CarouselRef>(null)
     const [orderForm] = useForm();
@@ -131,11 +133,11 @@ export function CreateScreen() {
         //     deliveryForm.getFieldsValue()
         // )
         try {
-            // await Promise.all([
-            //     orderForm.validateFields(),
-            //     pickupForm.validateFields(),
-            //     deliveryForm.validateFields(),
-            // ]);
+            await Promise.all([
+                orderForm.validateFields(),
+                pickupForm.validateFields(),
+                deliveryForm.validateFields(),
+            ]);
             const data = {
                 ...orderForm.getFieldsValue(),
                 pickupPoint: {
@@ -171,7 +173,6 @@ export function CreateScreen() {
     }
 
     const onFormsValuesChangeHandler = (_: string, {changedFields}: FormChangeInfo) => {
-        console.log(_, changedFields)
         //Выбрасываем из функции при валидации форм, потому что при валидации считается как изменения
         if(changedFields.length >= 4) return;
         const [{name}] = changedFields;
@@ -219,15 +220,16 @@ export function CreateScreen() {
     return (
         <Form.Provider onFormChange={onFormsValuesChangeHandler}>
             <Form layout={'horizontal'} style={{width: "100%"}} form={orderForm}>
-                <Row>
-                    <Typography.Title>Create order</Typography.Title>
+                <Row style={{alignItems: 'center', marginBottom: 20}} justify={'space-between'}>
+                    {IS_FORM_START_PAGE && <ButtonBack onClick={() => navigate(-1)}/>}
+                    <Typography.Title style={{marginBottom: 0}} level={2}>Create order</Typography.Title>
                 </Row>
                 <Row style={{marginBottom: 20}} justify={'space-between'}>
                     <Typography.Title style={{marginBottom: 20}} level={3}>Choose a shipping method</Typography.Title>
                     <Form.Item style={{width: '100%'}} name={'deliveryType'} rules={[{required: true, message: ''}]}>
-                        <Radio.Group style={{width: '100%', textAlign: 'center'}} size="large">
+                        <Radio.Group style={{width: '100%', textAlign: 'center'}}>
                             {shippingMethodViewConfig.map(({value, icon}) =>
-                                <Radio.Button style={{width: '33%'}} value={value}>{icon}</Radio.Button>
+                                <Radio.Button style={{width: '33%'}} value={value}>{value}</Radio.Button>
                             )}
                         </Radio.Group>
                     </Form.Item>
@@ -291,8 +293,7 @@ export function CreateScreen() {
                     {/*{getActionButtonView()}*/}
                     <Button onClick={onFinishFormHandler}
                             loading={fetchingUpdateOrder || fetchingCreateOrder}
-                            size={"large"}
-                            htmlType={'submit'}>
+                            size={"large"}>
                         {
                             IS_AUTH_USER ?
                                 (IS_UPDATE_ORDER_PAGE ? 'Update order' : 'Create order') :

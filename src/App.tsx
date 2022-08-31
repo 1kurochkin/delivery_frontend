@@ -2,11 +2,11 @@ import React, {useEffect, useState} from 'react';
 import './styles/App.css'
 // import './App.less';
 // import 'antd/dist/antd.css';
-import {Navigate, Route, Routes, useLocation} from 'react-router-dom';
+import {Link, Navigate, Route, Routes, useLocation} from 'react-router-dom';
 import {ROUTES} from './configs/app.constants';
 import {useAppSelector} from "./hooks/useAppSelector";
 import {useGetUserInfoQuery, useLazyGetUserInfoQuery} from "./store/reducers/backend/backend.api";
-import {Layout} from "antd";
+import {Button, Layout, Result} from "antd";
 import {useActions} from "./hooks/useActions";
 import {Content, Footer} from "antd/es/layout/layout";
 import {ProtectedRoute} from "./components/protectedRoute.component";
@@ -22,55 +22,20 @@ import {OrderScreen} from "./screens/order.screen";
 
 // 366625
 function App() {
-
-    // const {loadError: errorLoadGoogleMaps} = useLoadScript({
-    //     googleMapsApiKey: appConfig.google.maps.apiKey,
-    //     libraries: ['places']
-    // });
     const auth = useAppSelector(({app}) => app.auth)
     const loadingApp = useAppSelector(({app}) => app.loading)
-    const userRole = useAppSelector(({settings}) => settings.role)
-    const prevAuthState = usePrevious(auth)
-    const {setAuth, setSettingsField} = useActions()
-    const {pathname} = useLocation()
-    // const [loadingApp, setLoadingApp] = useState(auth);
+    const [hideFooter, setHideFooter] = useState(false);
 
+    // useEffect(() => {
+    //     window.addEventListener('resize', (e) => {
+    //         alert('resize')
+    //     })
+    // }, [])
 
-    // const [
-    //     fetchGetUserInfo,
-    //     {error: error2, isFetching: fetchingGetUserInfo = true}
-    // ] = useLazyGetUserInfoQuery();
     const {
         // error: error2,
         isFetching: fetchingGetUserInfo = true
     } = useGetUserInfoQuery(undefined, {skip: !auth});
-    // const {data: {message: errorGetUserInfo = undefined} = {}} = error2 as any || {};
-
-    // useEffect(() => {Cookies.set('sid', '1e6ed700-e403-42ce-8a36-41d91d0be86e')}, [])
-
-    // useEffect(() => {
-    //     if (!prevAuthState && auth) {
-    //         fetchGetUserInfo()
-    //     }
-    // }, [auth])
-
-    // useEffect(() => {
-    //     console.log('useEffect getCourierInfoData, getCustomerInfoData')
-    //     if (getCourierInfoData || getCustomerInfoData) {
-    //         const userData = (getCourierInfoData || getCustomerInfoData)
-    //         console.log(userData)
-    //         for (const field in userData) {
-    //             // @ts-ignore
-    //             setSettingsField({field, value: userData[field]})
-    //         }
-    //     }
-    // }, [getCourierInfoData, getCustomerInfoData])
-
-    //--------CATCH-ERRORS------//
-    // if (errorGetUserInfo) {
-    //     notification.error({message: errorGetUserInfo});
-    // }
-    //-------------------------//
 
     return (
         <Layout style={{minHeight: "100vh"}}>
@@ -79,15 +44,25 @@ function App() {
                 <>
                     <Routes>
                         {
-                            !auth &&
-                            <Route path={ROUTES.AUTH.LOGIN_PAGE.PATH + ROUTES.AUTH.LOGIN_PAGE.PARAMS}
-                                   element={<LoginScreen/>}/>
-                        }
-                        {
-                            !auth &&
-                            <Route path={ROUTES.MAIN_PAGE} element={<StartScreen/>}/>
+                            !auth && <>
+                                <Route path={ROUTES.AUTH.LOGIN_PAGE.PATH + ROUTES.AUTH.LOGIN_PAGE.PARAMS}
+                                       element={<LoginScreen/>}/>
+                                <Route path={ROUTES.MAIN_PAGE} element={<StartScreen/>}/>
+                            </>
                         }
                         <Route path={ROUTES.ORDER.CREATE_PAGE} element={<CreateScreen/>}/>
+                        <Route path={ROUTES.THANK_YOU} element={
+                            <Result
+                                status="success"
+                                title="Successfully!"
+                                subTitle="payment processing will take a few minutes"
+                                extra={
+                                    <Button type={"primary"}>
+                                        <Link to={ROUTES.SETTINGS_PAGE}>OK</Link>
+                                    </Button>
+                                }
+                            />
+                        }/>
                         <Route path={ROUTES.ORDER.LIST_PAGE}
                                element={
                                    <ProtectedRoute auth={auth}>
@@ -130,7 +105,7 @@ function App() {
                 </>
             </Content>
             {
-                auth &&
+                auth && !hideFooter &&
                 <Footer>
                     <BottomNavigation/>
                 </Footer>

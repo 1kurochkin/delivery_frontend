@@ -11,27 +11,50 @@
   url("../assets/fonts/Gilroy-Bold.ttf") format("truetype");
   font-weight: 400;
 }
+.order-card .ant-typography {
+  margin: 0;
+  padding: 0;
+}
+h1,h2,h3,h4,h5,p {
+  margin-top: 0!important;
+}
+
 //FONTS
 @font-family: 'GillroyRegular', 'GillroyBold';
+.font-bold {
+  font-family: GillroyBold;
+}
 // -------- Colors -----------
 
 @mainColor: #807E98;
-@secondColor: #27CB84;
+@second-color: #27CB84;
+@third-color: #DCF9F1;
+@fourth-color: #31CCA2;
+.text-color-second {
+  color: @second-color!important;
+}
+
+// >>> Primary
+@primary-color: @fourth-color;
+//@primary-5: white; // color used to control the text color in many active and hover states, replace tint(@primary-color, 20%)
+//@primary-6: white; // color used to control the text color of active buttons, don't use, use @primary-color
+//@primary-7: white; // color used to control the text color of active buttons, don't use, use @primary-color
+//// Border color
+@border-color-base: white;
 
 @component-background: #EAEAEA;
 @text-color: black;
-@text-color-secondary : white;
+//@text-color-secondary : white;
 
 // LINK
 @link-color: #1890ff;
 
 // Timeline
-@timeline-width: 2px;
-@timeline-color: @border-color-split;
-@timeline-dot-border-width: 2px;
-@timeline-dot-color: @primary-color;
-@timeline-dot-bg: @component-background;
-@timeline-item-padding-bottom: 20px;
+@timeline-width: 1px;
+@timeline-color: @mainColor;
+@timeline-dot-border-width: 1px;
+@timeline-dot-bg: @second-color;
+@timeline-item-padding-bottom: 15px;
 
 
 @font-size-base: 14px;
@@ -108,6 +131,8 @@ div.ant-typography {
 @radio-button-checked-bg: #DCF9F1;
 @radio-button-color: #807E98;
 @radio-button-active-color: #31CCA2;
+@radio-disabled-button-checked-bg: @disabled-active-bg;
+@radio-disabled-button-checked-color: green;
 
 // Select
 // ---
@@ -137,8 +162,14 @@ div.ant-typography {
 // Outline
 @outline-color: 'transparent'; // No use anymore
 
+.react-code-input > div {
+  max-width: 87vw;
+  //font-family: GillroyBold;
+  //maxWidth: 100%!important;
+}
 .react-code-input > div > input {
   font-family: GillroyBold;
+  width: 15%!important;
 }
 
 // Modal
@@ -151,8 +182,8 @@ div.ant-typography {
 @drawer-header-padding: 0;
 @drawer-body-padding: 0;
 @drawer-bg: white;
-//@drawer-footer-padding-vertical: @modal-footer-padding-vertical;
-//@drawer-footer-padding-horizontal: @modal-footer-padding-horizontal;
-//@drawer-header-close-size: 56px;
-//@drawer-title-font-size: @font-size-lg;
-//@drawer-title-line-height: 22px;
+
+//BOTTOM NAV
+//.bottom-nav {
+//  height: 50px!important;
+//}

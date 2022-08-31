@@ -7,7 +7,6 @@ type SettingsSliceStateType = {
     phone: string | undefined;
     name: string | undefined;
     wallet?: {
-        courier_id: string;
         value: number;
     }
 }
@@ -17,6 +16,9 @@ const initialState: SettingsSliceStateType = {
     role: (localStorage.getItem('role') || '') as (UserRoleEnum | ''),
     phone: undefined,
     name: undefined,
+    wallet: {
+        value: 0,
+    }
 }
 
 export const settingsSlice = createSlice({

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigate, useLocation} from "react-router-dom";
 import {OrderedListOutlined, PlusOutlined, SettingOutlined} from "@ant-design/icons";
 import {ROUTES} from "../configs/app.constants";
@@ -56,7 +56,6 @@ export function BottomNavigation() {
             route: ROUTES.SETTINGS_PAGE
         },
     ]
-
     return (
         <>
             <BottomNavigationModule
@@ -67,4 +66,4 @@ export function BottomNavigation() {
             />
         </>
     );
-};
+}

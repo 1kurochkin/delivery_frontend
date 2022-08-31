@@ -4,20 +4,6 @@ import moment, {Moment} from "moment";
 import {SearchPlaces} from "./searchPlaces.component";
 
 export const FormCard: React.FC = (props) => {
-    // const {formRef, loadingData, state, onAddressChange} = props;
-    // const [selected, setSelected] = useState(false)
-
-    // const onSelectSearchPlacesHandler = (value: any) => {
-    //     setSelected(true)
-    //     formRef.setFieldValue('address', value);
-    // }
-    // const onChangeSearchPlacesHandler = (value: any) => {
-    //     console.log('onChangeSearchPlacesHandler', value)
-    //     if (!value) {
-    //         onAddressChange(value)
-    //         setSelected(false)
-    //     }
-    // }
 
     const disabledDate: (current: Moment) => boolean = (current) => {
         return current && current < moment().subtract(1, "days");
@@ -29,12 +15,6 @@ export const FormCard: React.FC = (props) => {
                 <SearchPlaces placeholder={'1556 Broadway, New York, 10120, USA'}/>
             </Form.Item>
             <Row justify={'space-between'}>
-                {/*<Form.Item rules={[{required: true, message: ''}]} style={{width: '20%'}} label={'floor'} name="floor">*/}
-                {/*    <InputNumber placeholder={'5'} style={{width: '100%'}}/>*/}
-                {/*</Form.Item>*/}
-                {/*<Form.Item rules={[{required: true, message: ''}]} style={{width: '20%'}} label={'apt'} name="apt">*/}
-                {/*    <Input placeholder={'4H'}/>*/}
-                {/*</Form.Item>*/}
                 <Form.Item rules={[{required: true, message: ''}]} style={{width: '100%'}} label={'Phone number'}
                            name="phone">
                     <InputNumber placeholder={'0000000000'} style={{width: '100%'}} prefix={'+'}/>
@@ -46,14 +26,14 @@ export const FormCard: React.FC = (props) => {
                            label={'Select date'}
                            name="date"
                 >
-                    <DatePicker placement={'topLeft'} suffixIcon={null} format={'MM/DD/YY'} disabledDate={disabledDate}/>
+                    <DatePicker suffixIcon={null} format={'MM/DD/YY'} disabledDate={disabledDate}/>
                 </Form.Item>
                 <Form.Item rules={[{required: true, message: ''}]}
                            style={{width: '63%'}}
                            label={'Specify time'}
                            name="timeRange"
                 >
-                    <TimePicker.RangePicker placement={'topLeft'} format={'HH:MM A'} suffixIcon={null} use12Hours={true}/>
+                    <TimePicker.RangePicker format={'HH:MM A'} suffixIcon={null} use12Hours={true}/>
                 </Form.Item>
             </Row>
         </>

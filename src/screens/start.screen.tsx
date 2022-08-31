@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Col, Form, Image, Row, Typography} from "antd";
+import {Anchor, Button, Col, Form, Image, Row, Typography} from "antd";
 import {Link, useNavigate} from "react-router-dom";
 import {ROUTES} from "../configs/app.constants";
 import {UserRoleEnum} from "../store/reducers/backend/backend.api.types";
@@ -73,9 +73,15 @@ export function StartScreen() {
                 )}
             </Row>
             <Row justify={'center'}>
-                <Link to={ROUTES.BECOME_COURIER_PAGE}>
+                <Typography.Paragraph>
                     Do you want to become a courier?<br/>Earn up to $200 per day.
-                </Link>
+                    <Link className={'font-bold'} style={{textDecoration: 'underline'}} to={ROUTES.BECOME_COURIER_PAGE}>
+                        {' How it works?'}
+                    </Link>
+                </Typography.Paragraph>
+
+
+
             </Row>
         </Form>
     );

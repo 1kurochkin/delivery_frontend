@@ -11,7 +11,7 @@ export function ButtonBack({onClick}: ButtonBackType) {
             color: 'black',
             backgroundColor: 'white',
             borderRadius: 20,
-            padding: 15,
+            padding: 10,
             boxShadow: "0px 0px 13px -3px rgba(0,0,0,0.46)"
         }}
             onClick={onClick}

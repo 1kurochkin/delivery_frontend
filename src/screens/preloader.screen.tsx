@@ -6,8 +6,8 @@ export function PreloaderScreen() {
     return (
         <div style={{
             height: '100vh',
-            position: "absolute",
-            left:0, top: 0, zIndex: 100,
+            position: "fixed",
+            left:0, top: 0, zIndex: 1000,
             display: "flex",
             justifyContent: 'center',
             alignItems: 'center',

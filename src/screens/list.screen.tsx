@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Col, List, Row, Typography} from "antd";
+import {Affix, Button, Col, List, Row, Typography} from "antd";
 import {useLazyGetOrdersQuery} from "../store/reducers/backend/backend.api";
 import {OrderStatusEnum, OrderType, UserRoleEnum} from "../store/reducers/backend/backend.api.types";
 import {PAGINATION, ROUTES} from "../configs/app.constants";
@@ -47,7 +47,7 @@ export function ListScreen() {
             skip: 0,
             take: PAGINATION.TAKE,
         }).unwrap().then(({list}) => {
-            setDataSource([...dataSource, ...list])
+            setDataSource(list)
         })
     }
     const onClickLoadMoreButtonHandler = () => {
@@ -73,53 +73,55 @@ export function ListScreen() {
         ...(userRole === UserRoleEnum.Customer ? [OrderStatusEnum.Canceled] : [])
     ]
     return (
-        // <Carousel effect={'fade'} swipe={false} ref={carouselRef} dots={false}>
-            <>
-                <Row>
-                    {/*<Col span={4}>*/}
-                    {/*    <ButtonBack onClick={() => navigate(-1)}/>*/}
-                    {/*</Col>*/}
-                    {/*<Col offset={1} span={19}>*/}
-                        <Typography.Title>Orders list</Typography.Title>
-                    {/*</Col>*/}
-                </Row>
-                {/*{modalSupport}*/}
-                {/*{fetchingGetOrders && <Spin size={'large'}/>}*/}
-                <List
-                    style={{height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}
-                    split bordered={false}
-                    loading={fetchingGetOrders}
-                    grid={{gutter: 16, column: 1}}
-                    dataSource={dataSource}
-                    header={
-                        <Row gutter={10} justify={'space-between'}
-                             style={{overflow: 'scroll', display: 'flex', flexWrap: 'nowrap', marginBottom: 20}}>
+        <>
+            <Row>
+                <Typography.Title level={2}>Orders list</Typography.Title>
+            </Row>
+            <List
+                style={{height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}
+                split bordered={false}
+                loading={fetchingGetOrders}
+                grid={{gutter: 16, column: 1}}
+                dataSource={dataSource}
+                header={
+                    <Row justify={'space-between'} style={{
+                        overflow: 'scroll',
+                        display: 'flex',
+                        flexWrap: 'nowrap',
+                        paddingBottom: 20,
+                        // position: 'fixed',
+                        width: '100%',
+                        // paddingRight: '20%'
+                        // marginBottom: 20,
+                    }}>
+                        {/*<Col span={24}>*/}
                             {tabs.map((tabLabel: any, i) =>
-                                <Button style={{width: 'unset', marginLeft: i > 0 ? 10 : 0}}
+                                <Button size={'small'} style={{width: 'unset', marginLeft: i > 0 ? 10 : 0, paddingLeft: 15, paddingRight: 15}}
                                         onClick={() => onClickTabButtonHandler(tabLabel)}
                                         type={activeTab === tabLabel ? 'default' : 'primary'}>
                                     {tabLabel}
                                 </Button>
                             )}
-                        </Row>
-                    }
-                    renderItem={(item) =>
-                        <div onClick={() => onClickOrderCard(item.id)}>
-                            <OrderCard {...item}/>
-                        </div>
-                    }
-                    footer={
-                        <Row justify={'center'}>
-                            <Col span={12}>
-                                {dataSource.length < getOrdersDataPaginationTotal && !fetchingGetOrders &&
-                                <Button style={{width: '100%'}} onClick={onClickLoadMoreButtonHandler}>
-                                    Loading more
-                                </Button>
-                                }
-                            </Col>
-                        </Row>
-                    }
-                />
-            </>
+                        {/*</Col>*/}
+                    </Row>
+                }
+                renderItem={(item) =>
+                    <div onClick={() => onClickOrderCard(item.id)}>
+                        <OrderCard {...item}/>
+                    </div>
+                }
+                footer={
+                    <Row justify={'center'}>
+                        <Col span={12}>
+                            {dataSource.length < getOrdersDataPaginationTotal && !fetchingGetOrders &&
+                            <Button style={{width: '100%'}} onClick={onClickLoadMoreButtonHandler}>
+                                Load more
+                            </Button>
+                            }
+                        </Col>
+                    </Row>
+                }
+            />
+        </>
     );
 };

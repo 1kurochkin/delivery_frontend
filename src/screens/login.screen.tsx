@@ -57,22 +57,30 @@ export function LoginScreen() {
     const sliderViewConfig = [
         {
             title: 'Login',
-            paragraph: `Please enter your phone number so\nwe can verify you.`,
+            paragraph: (
+                <Typography.Paragraph>
+                    Please enter <span className={'font-bold'}>your phone number</span> so we can verify you
+                </Typography.Paragraph>
+            ),
             formItem: {
                 label: 'Enter your phone number',
                 name: 'phone',
                 rules: [{required: true, message: ''}],
-                children: <InputNumber style={{width: '100%'}} prefix={<UserOutlined/>}/>
+                children: <InputNumber autoFocus={true} placeholder={'0000 000 0000'} style={{width: '100%'}} prefix={'+'}/>
             }
         },
         {
             title: 'Verify Code',
-            paragraph: `Please check your  sms inbox, we've\nsent you the code at ${loginForm.getFieldValue('phone')}`,
+            paragraph: (
+                <Typography.Paragraph>
+                    Please check your  sms inbox, we've sent you the code to <span className={'font-bold'}>{loginForm.getFieldValue('phone')}</span>
+                </Typography.Paragraph>
+            ),
             formItem: {
                 label: '',
                 name: 'code',
                 rules: [{required: false, message: ''}],
-                children: <ReactCodeInput autoFocus={true} className={'react-code-input'} fieldWidth={51}/>
+                children: <ReactCodeInput autoFocus={true} className={'react-code-input'}/>
             }
         },
     ]
@@ -98,9 +106,10 @@ export function LoginScreen() {
                             </Typography.Title>
                         </Row>
                         <Row style={{marginBottom: 60}}>
-                            <Typography.Paragraph style={{whiteSpace: 'pre-line'}}>
-                                {paragraph}
-                            </Typography.Paragraph>
+                            {paragraph}
+                            {/*<Typography.Paragraph style={{whiteSpace: 'pre-line'}}>*/}
+                            {/*    {paragraph}*/}
+                            {/*</Typography.Paragraph>*/}
                         </Row>
                         <Row style={{marginBottom: 20}}>
                             <Form.Item rules={formItem.rules}
