@@ -31,7 +31,6 @@ export function BottomNavigation() {
     const {pathname} = useLocation();
     const userRole = useAppSelector(({settings}) => settings.role)
     const IS_USER_ROLE_CUSTOMER = userRole === UserRoleEnum.Customer
-
     const bottomNavItems = [
         {
             title: 'Orders',
@@ -56,12 +55,16 @@ export function BottomNavigation() {
             route: ROUTES.SETTINGS_PAGE
         },
     ]
+    const [selected, setSelected] = useState(bottomNavItems.findIndex(({route}) => route === pathname));
+    useEffect(() => {
+        setSelected(bottomNavItems.findIndex(({route}) => route === pathname))
+    }, [pathname])
     return (
         <>
             <BottomNavigationModule
                 activeBgColor={'#27CB84'}
                 items={bottomNavItems}
-                defaultSelected={bottomNavItems.findIndex(({route}) => route === pathname)}
+                defaultSelected={selected}
                 onItemClick={({route}: any) => navigate(route)}
             />
         </>

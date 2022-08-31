@@ -1,7 +1,23 @@
-import {Card, Col, List, Row, Timeline, Typography} from "antd";
+import {Card, Col, Divider, List, Row, Timeline, Typography} from "antd";
 import React from "react";
 import {OrderType} from "../store/reducers/backend/backend.api.types";
 import moment from "moment";
+import {COLORS} from "../configs/app.constants";
+
+const OrderCardTimelineItem = ({date, timeRangeFrom, timeRangeTo, address}) => {
+    return (
+        <>
+            <Typography.Paragraph style={{marginBottom: 0, fontSize: 10}}>
+                <span className={'font-bold'}>{moment(date).format('MM/DD') + ' '}</span>
+                from <span className={'font-bold'}>{moment(timeRangeFrom).format('HH:MM A') + ' '}</span>
+                to <span className={'font-bold'}>{moment(timeRangeTo).format('HH:MM A')}</span>
+            </Typography.Paragraph>
+            <span className={'font-bold'}>
+                {address}
+            </span>
+        </>
+    )
+}
 
 export const OrderCard: React.FC<OrderType> = (props) => {
     const {
@@ -18,48 +34,44 @@ export const OrderCard: React.FC<OrderType> = (props) => {
     return (
         <List.Item>
             <Card size={'small'} className={'order-card'}>
-                <Row style={{marginBottom: 10, alignItems: "center"}}>
-                    <Typography.Title level={3} style={{textAlign: 'right'}}>#{id}</Typography.Title>
-                    <Typography.Title level={4} style={{marginLeft: 10}}>
+                <Row style={{alignItems: "center"}}>
+                    <Typography.Title>#{id}</Typography.Title>
+                    <Typography.Paragraph style={{marginLeft: 15}}>
                         {packageType}, {weight}
-                    </Typography.Title>
+                    </Typography.Paragraph>
                 </Row>
+                <Divider style={{borderColor: 'black', margin: 0, marginBottom: 25}} dashed={true}/>
                 <Row justify={'center'}>
                     <Timeline>
                         <Timeline.Item>
-                            <Typography.Paragraph style={{marginBottom: 0}}>
-                                {`${moment(pickupPoint.date).format('MM/DD')} from ${moment(pickupPoint.timeRangeFrom).format('HH:MM A')} to ${moment(pickupPoint.timeRangeTo).format('HH:MM A')}`}
-                            </Typography.Paragraph>
-                            <span className={'font-bold'}>
-                                    {pickupPoint.address}
-                                </span>
+                            <OrderCardTimelineItem
+                                date={pickupPoint?.date}
+                                timeRangeFrom={pickupPoint?.timeRangeFrom}
+                                timeRangeTo={pickupPoint?.timeRangeTo}
+                                address={pickupPoint?.address}
+                            />
                         </Timeline.Item>
-                        <Timeline.Item style={{paddingBottom: 0}}>
-                            <Typography.Paragraph style={{marginBottom: 0}}>
-                                {`${moment(deliveryPoint.date).format('MM/DD')} from ${moment(deliveryPoint.timeRangeFrom).format('HH:MM A')} to ${moment(deliveryPoint.timeRangeTo).format('HH:MM A')}`}
-                            </Typography.Paragraph>
-                            <span className={'font-bold'}>
-                                    {deliveryPoint.address}
-                                </span>
+                        <Timeline.Item>
+                            <OrderCardTimelineItem
+                                date={pickupPoint?.date}
+                                timeRangeFrom={pickupPoint?.timeRangeFrom}
+                                timeRangeTo={pickupPoint?.timeRangeTo}
+                                address={pickupPoint?.address}
+                            />
                         </Timeline.Item>
                     </Timeline>
-                    {/*<Typography.Title level={4}>${deliveryPrice}</Typography.Title>*/}
-                    {/*</Col>*/}
                 </Row>
-                <Row style={{alignItems: "center"}}>
-                        <Typography.Title style={{color: '#27CB84'}} level={2}>
-                            ${deliveryPrice}
-                        </Typography.Title>
-                        <Typography.Paragraph style={{marginLeft: 10}}>
-                            Will pay <span className={'font-bold'}>{payType}</span>
-                        </Typography.Paragraph>
-                </Row>
-                <Row style={{alignItems: "center"}}>
-                    <Typography.Title style={{color: 'red'}} level={2}>
-                        ${packagePrice}
+                <Divider style={{borderColor: 'black', margin: 0, marginBottom: 5}} dashed={true}/>
+                <Row justify={'end'}>
+                    <Typography.Title style={{color: '#27CB84'}}>
+                        ${deliveryPrice}
                     </Typography.Title>
-                    <Typography.Paragraph style={{marginLeft: 10}}>
-                        Will hold <span className={'font-bold'}>on your wallet</span>
+                </Row>
+                <Row justify={"space-between"} style={{alignItems: "center"}}>
+                    <span style={{color: COLORS.SUCCESS, textDecoration: 'underline'}} className={'font-bold'}>{'details'}</span>
+                    <Typography.Paragraph>
+                        <span className={'font-bold'}>${packagePrice + " "}</span>
+                        Will hold on your wallet
                     </Typography.Paragraph>
                 </Row>
             </Card>
