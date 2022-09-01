@@ -225,9 +225,8 @@ export function CreateScreen() {
                     {IS_FORM_START_PAGE && <ButtonBack onClick={() => navigate(-1)}/>}
                     <Typography.Title style={{marginBottom: 0}} level={2}>Create order</Typography.Title>
                 </Row>
-                <Row style={{marginBottom: 20}} justify={'space-between'}>
-                    <Typography.Title style={{marginBottom: 20}} level={3}>Choose a shipping method</Typography.Title>
-                    <Form.Item style={{width: '100%'}} name={'deliveryType'} rules={[{required: true, message: ''}]}>
+                <Row>
+                    <Form.Item label={'Choose a shipping method'} style={{width: '100%'}} name={'deliveryType'} rules={[{required: true, message: ''}]}>
                         <Radio.Group style={{width: '100%', textAlign: 'center'}}>
                             {shippingMethodViewConfig.map(({value}) =>
                                 <Radio.Button style={{width: '33%'}} value={value}>{value}</Radio.Button>
@@ -245,8 +244,15 @@ export function CreateScreen() {
                         <Input placeholder={'Flowers'}/>
                     </Form.Item>
                 </Row>
-                <Row style={{marginBottom: 20}}>
-                    <Form.Item style={{width: '100%'}} label={'Payment way'} name={'payType'}
+                <Row justify={'space-between'} style={{marginBottom: 20}}>
+                    <Form.Item label={'Package weight'} rules={[{required: true, message: ''}]} style={{width: '40%'}} name="weight">
+                        <Select>
+                            {packageWeightViewConfig.map((value) =>
+                                <Select.Option value={value}>{value}</Select.Option>
+                            )}
+                        </Select>
+                    </Form.Item>
+                    <Form.Item style={{width: '55%'}} label={'Payment way'} name={'payType'}
                                rules={[{required: true, message: ''}]}>
                         <Select>
                             {payTypeViewConfig.map(({value, label}) =>
@@ -255,16 +261,16 @@ export function CreateScreen() {
                         </Select>
                     </Form.Item>
                 </Row>
-                <Row style={{marginBottom: 20}}>
-                    <Typography.Title level={3}>Parcel weight</Typography.Title>
-                    <Form.Item rules={[{required: true, message: ''}]} style={{width: '100%'}} name="weight">
-                        <Select>
-                            {packageWeightViewConfig.map((value) =>
-                                <Select.Option value={value}>{value}</Select.Option>
-                            )}
-                        </Select>
-                    </Form.Item>
-                </Row>
+                {/*<Row style={{marginBottom: 20}}>*/}
+                {/*    <Typography.Title level={3}>Parcel weight</Typography.Title>*/}
+                {/*    <Form.Item rules={[{required: true, message: ''}]} style={{width: '100%'}} name="weight">*/}
+                {/*        <Select>*/}
+                {/*            {packageWeightViewConfig.map((value) =>*/}
+                {/*                <Select.Option value={value}>{value}</Select.Option>*/}
+                {/*            )}*/}
+                {/*        </Select>*/}
+                {/*    </Form.Item>*/}
+                {/*</Row>*/}
                 <Row style={{marginBottom: 50}}>
                     <Typography.Title level={3}>Where to pickup?</Typography.Title>
                     <Form style={{width: '100%'}} form={pickupForm}>
