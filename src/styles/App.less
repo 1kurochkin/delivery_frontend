@@ -30,12 +30,14 @@ h1,h2,h3,h4,h5,p {
 @second-color: #27CB84;
 @third-color: #DCF9F1;
 @fourth-color: #31CCA2;
-.text-color-second {
-  color: @second-color!important;
-}
+//.text-color-second {
+//  color: @second-color!important;
+//}
 
 // >>> Primary
 @primary-color: @fourth-color;
+@primary-color-hover: white;
+@primary-color-active: white;
 //@primary-5: white; // color used to control the text color in many active and hover states, replace tint(@primary-color, 20%)
 //@primary-6: white; // color used to control the text color of active buttons, don't use, use @primary-color
 //@primary-7: white; // color used to control the text color of active buttons, don't use, use @primary-color
@@ -43,7 +45,17 @@ h1,h2,h3,h4,h5,p {
 @border-color-base: white;
 
 @component-background: #EAEAEA;
-@text-color: black;
+@text-color: @text-color;
+@text-color-secondary: @text-color;
+@text-color-inverse: @white;
+//@icon-color: inherit;
+//@icon-color-hover: fade(@black, 75%);
+@heading-color: @text-color;
+@text-color-dark: fade(@white, 85%);
+@text-color-secondary-dark: fade(@white, 65%);
+@text-selection-bg: @white;
+@text-color: #070245;
+@text-color-secondary: white;
 //@text-color-secondary : white;
 
 // LINK
@@ -69,7 +81,6 @@ h1,h2,h3,h4,h5,p {
 @font-size-lg: 20px;
 @font-size-sm: 12px;
 
-
 // height rules
 @height-base: 50px;
 @height-lg: 62px;
@@ -82,10 +93,18 @@ h1,h2,h3,h4,h5,p {
 @btn-font-size-sm: @font-size-base;
 
 @btn-primary-color: white;
-@btn-primary-bg: #807E98;
-
+@btn-primary-bg: @mainColor;
+//@btn-text-hover-bg: white;
 @btn-default-color: white;
-@btn-default-bg: #27CB84;
+@btn-default-bg: @second-color;
+.ant-btn:hover {
+  background: fade(@second-color, 85%);
+}
+.ant-btn:focus {
+  color: white!important;
+  border-color: transparent!important;
+  //background: unset!important;
+}
 .ant-btn {
   text-align: center;
   width: 100%;
@@ -117,12 +136,12 @@ div.ant-typography {
 
 // Input
 @input-placeholder-color: #807E98;
-@input-color: black;
+@input-color: @text-color;
 @input-border-color: transparent;
 
 // LINK
-@link-color: black;
-@link-active-color: black;
+@link-color: @text-color;
+@link-active-color: @text-color;
 
 // Radio
 @radio-size: 16px;
