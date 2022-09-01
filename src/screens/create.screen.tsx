@@ -22,7 +22,6 @@ import {CarOutlined, MehOutlined} from "@ant-design/icons";
 import {FormCard} from "../components/formCard.component";
 import {FormChangeInfo} from "rc-field-form/lib/FormContext";
 import {ButtonBack} from "../components/buttonBack.component";
-import {ReactComponent as Courier} from '../assets/svgs/courier.svg';
 
 export type InitialOrderStateType = Pick<OrderType, 'deliveryType' | 'weight' | 'deliveryPrice' | 'payType' | 'packageType' | 'packagePrice'>;
 

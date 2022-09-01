@@ -7,6 +7,9 @@ import {useAppSelector} from "../hooks/useAppSelector";
 //@ ts-ignore
 import BottomNavigationModule from 'reactjs-bottom-navigation'
 import 'reactjs-bottom-navigation/dist/index.css'
+import {ReactComponent as Home} from '../assets/svgs/home.svg';
+import {ReactComponent as Package} from '../assets/svgs/package.svg';
+import {ReactComponent as User} from '../assets/svgs/user.svg';
 //
 // type MenuItem = Required<MenuProps>['items'][number];
 //
@@ -34,24 +37,24 @@ export function BottomNavigation() {
     const bottomNavItems = [
         {
             title: 'Orders',
-            icon: <OrderedListOutlined/>,
-            activeIcon: <OrderedListOutlined color={'green'}/>,
+            icon: <Home/>,
+            activeIcon: <Home/>,
             route: ROUTES.ORDER.LIST_PAGE
         },
         ...(
             IS_USER_ROLE_CUSTOMER ?
                 [{
                     title: 'Create',
-                    icon: <PlusOutlined/>,
-                    activeIcon: <PlusOutlined color={'green'}/>,
+                    icon: <Package/>,
+                    activeIcon: <Package/>,
                     route: ROUTES.ORDER.CREATE_PAGE
                 }] :
                 []
         ),
         {
             title: 'Settings',
-            icon: <SettingOutlined/>,
-            activeIcon: <SettingOutlined color={'green'}/>,
+            icon: <User/>,
+            activeIcon: <User/>,
             route: ROUTES.SETTINGS_PAGE
         },
     ]
@@ -62,7 +65,7 @@ export function BottomNavigation() {
     return (
         <>
             <BottomNavigationModule
-                activeBgColor={'#27CB84'}
+                activeBgColor={'black'}
                 items={bottomNavItems}
                 defaultSelected={selected}
                 onItemClick={({route}: any) => navigate(route)}
