@@ -38,5 +38,5 @@ export const COLORS = {
 }
 
 export const PAGINATION = {
-    TAKE: 2,
+    TAKE: 5,
 }
