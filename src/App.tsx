@@ -1,16 +1,12 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import './styles/App.css'
-// import './App.less';
-// import 'antd/dist/antd.css';
-import {Link, Navigate, Route, Routes, useLocation} from 'react-router-dom';
+import {Link, Navigate, Route, Routes} from 'react-router-dom';
 import {ROUTES} from './configs/app.constants';
 import {useAppSelector} from "./hooks/useAppSelector";
-import {useGetUserInfoQuery, useLazyGetUserInfoQuery} from "./store/reducers/backend/backend.api";
+import {useGetUserInfoQuery} from "./store/reducers/backend/backend.api";
 import {Button, Layout, Result} from "antd";
-import {useActions} from "./hooks/useActions";
 import {Content, Footer} from "antd/es/layout/layout";
 import {ProtectedRoute} from "./components/protectedRoute.component";
-import {usePrevious} from "./hooks/usePrevious";
 import {PreloaderScreen} from "./screens/preloader.screen";
 import {StartScreen} from "./screens/start.screen";
 import {CreateScreen} from "./screens/create.screen";
@@ -19,8 +15,19 @@ import {SettingsScreen} from "./screens/settings.screen";
 import {BottomNavigation} from "./components/bottomNavigation.component";
 import {LoginScreen} from "./screens/login.screen";
 import {OrderScreen} from "./screens/order.screen";
+import PWAPrompt from 'react-ios-pwa-prompt'
 
-// 366625
+// window.addEventListener('load', async () => {
+//     if('serviceWorker' in navigator) {
+//         try {
+//             await navigator.serviceWorker.register('./sw.js');
+//             console.log('SERVICE WORKER REGISTERED!')
+//         } catch (e) {
+//             console.log('SERVICE WORKER NOT REGISTERED!', e)
+//         }
+//     }
+// });
+
 function App() {
     const auth = useAppSelector(({app}) => app.auth)
     const loadingApp = useAppSelector(({app}) => app.loading)
@@ -39,6 +46,7 @@ function App() {
 
     return (
         <Layout style={{minHeight: "100vh"}}>
+            <PWAPrompt timesToShow={2} copyBody={'This website has app functionality. Add it to your home screen to use it in fullscreen.'} />
             {loadingApp && <PreloaderScreen/>}
             <Content className={'app_content'}>
                 <>

@@ -53,25 +53,27 @@ export const OrderCard: React.FC<OrderType> = (props) => {
                         </Timeline.Item>
                         <Timeline.Item>
                             <OrderCardTimelineItem
-                                date={pickupPoint?.date}
-                                timeRangeFrom={pickupPoint?.timeRangeFrom}
-                                timeRangeTo={pickupPoint?.timeRangeTo}
-                                address={pickupPoint?.address}
+                                date={deliveryPoint?.date}
+                                timeRangeFrom={deliveryPoint?.timeRangeFrom}
+                                timeRangeTo={deliveryPoint?.timeRangeTo}
+                                address={deliveryPoint?.address}
                             />
                         </Timeline.Item>
                     </Timeline>
                 </Row>
                 <Divider style={{borderColor: 'black', margin: 0, marginBottom: 5}} dashed={true}/>
                 <Row justify={'end'}>
-                    <Typography.Title style={{color: '#27CB84'}}>
-                        ${deliveryPrice}
-                    </Typography.Title>
+                    <Typography.Paragraph>
+                        <span className={'font-bold'}>{payType + " "}</span>
+                        will pay
+                        <span style={{color: '#27CB84', fontSize: 36}} className={'font-bold'}>{" $" + deliveryPrice}</span>
+                    </Typography.Paragraph>
                 </Row>
                 <Row justify={"space-between"} style={{alignItems: "center"}}>
                     <span style={{color: COLORS.SUCCESS, textDecoration: 'underline'}} className={'font-bold'}>{'details'}</span>
                     <Typography.Paragraph>
                         <span className={'font-bold'}>${packagePrice + " "}</span>
-                        Will hold on your wallet
+                        will hold on your wallet
                     </Typography.Paragraph>
                 </Row>
             </Card>

@@ -66,7 +66,7 @@ export function LoginScreen() {
                 label: 'Enter your phone number',
                 name: 'phone',
                 rules: [{required: true, message: ''}],
-                children: <InputNumber autoFocus={true} placeholder={'0000 000 0000'} style={{width: '100%'}} prefix={'+'}/>
+                children: <InputNumber placeholder={'0000 000 0000'} style={{width: '100%'}} prefix={'+'}/>
             }
         },
         {
@@ -80,7 +80,7 @@ export function LoginScreen() {
                 label: '',
                 name: 'code',
                 rules: [{required: false, message: ''}],
-                children: <ReactCodeInput autoFocus={true} className={'react-code-input'}/>
+                children: <ReactCodeInput className={'react-code-input'}/>
             }
         },
     ]
@@ -99,7 +99,7 @@ export function LoginScreen() {
             }
             <Form style={{width: "100%"}} form={loginForm} onFinish={onFinishFormHandler}>
                 <Carousel swipe={false} effect={'fade'} afterChange={setCurrentSlide} ref={carouselRef} dots={false}>
-                    {sliderViewConfig.map(({title, paragraph, formItem}) => <>
+                    {sliderViewConfig.map(({title, paragraph, formItem}, i) => <>
                         <Row>
                             <Typography.Title>
                                 {title}
@@ -118,7 +118,7 @@ export function LoginScreen() {
                                        label={formItem.label}
                                        name={formItem.name}
                             >
-                                {formItem.children}
+                                {React.cloneElement(formItem.children, {autoFocus: currentSlide === i})}
                             </Form.Item>
                         </Row>
                     </>)}

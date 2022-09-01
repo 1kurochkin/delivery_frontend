@@ -40,9 +40,9 @@ export function StartScreen() {
 
     return (
         <Form style={{width: "100%"}} form={orderForm} onFinish={onFinishFormHandler}>
-            <Row justify={'center'}>
-                <Image src={courierPic}/>
-            </Row>
+            {/*<Row justify={'center'}>*/}
+            {/*    <Image src={courierPic}/>*/}
+            {/*</Row>*/}
             <Row style={{marginBottom: 10}}>
                 <Typography.Title>
                     New york<br/>express delivery
@@ -72,16 +72,13 @@ export function StartScreen() {
                     </Col>
                 )}
             </Row>
-            <Row justify={'center'}>
+            <Row style={{marginTop: 50}} justify={'center'}>
                 <Typography.Paragraph>
                     Do you want to become a courier?<br/>Earn up to $200 per day.
                     <Link className={'font-bold'} style={{textDecoration: 'underline'}} to={ROUTES.BECOME_COURIER_PAGE}>
                         {' How it works?'}
                     </Link>
                 </Typography.Paragraph>
-
-
-
             </Row>
         </Form>
     );
