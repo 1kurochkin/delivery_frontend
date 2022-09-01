@@ -1,6 +1,7 @@
-import {AutoComplete} from "antd";
+import {AutoComplete, Input} from "antd";
 import React, {useEffect} from "react";
 import usePlacesAutocomplete, {getLatLng} from "use-places-autocomplete";
+import {ReactComponent as Geo} from '../assets/svgs/geo.svg';
 
 type SearchPlacesProps = {
     // onChange?: (value: string) => void;
@@ -57,12 +58,15 @@ export const SearchPlaces: React.FC<SearchPlacesProps> = (props) => {
     return (
         <AutoComplete options={preparedData}
                       {...props}
+                    // suffixIcon={}
                       allowClear
                       onClear={() => onChangeHandler('')}
                       onSelect={onSelectHandler}
                       onSearch={onChangeHandler}
                       value={placesAutocompleteValue || value}
-                      placeholder={placeholder}
-        />
+                      placeholder={''}
+        >
+            <Input prefix={<Geo/>} placeholder={placeholder} />
+        </AutoComplete>
     )
 };

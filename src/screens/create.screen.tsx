@@ -15,13 +15,14 @@ import {
     PayTypeEnum, UserRoleEnum
 } from "../store/reducers/backend/backend.api.types";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import {ROUTES} from "../configs/app.constants";
+import {COLORS, ROUTES} from "../configs/app.constants";
 import {useAppSelector} from "../hooks/useAppSelector";
 import moment from "moment";
 import {CarOutlined, MehOutlined} from "@ant-design/icons";
 import {FormCard} from "../components/formCard.component";
 import {FormChangeInfo} from "rc-field-form/lib/FormContext";
 import {ButtonBack} from "../components/buttonBack.component";
+import {ReactComponent as Courier} from '../assets/svgs/courier.svg';
 
 export type InitialOrderStateType = Pick<OrderType, 'deliveryType' | 'weight' | 'deliveryPrice' | 'payType' | 'packageType' | 'packagePrice'>;
 
@@ -198,9 +199,9 @@ export function CreateScreen() {
     }
 
     const shippingMethodViewConfig = [
-        {value: DeliveryTypeEnum.Walking, icon: <MehOutlined/>},
-        {value: DeliveryTypeEnum.Car, icon: <CarOutlined/>},
-        {value: DeliveryTypeEnum.Truck, icon: <CarOutlined/>},
+        {value: DeliveryTypeEnum.Walking},
+        {value: DeliveryTypeEnum.Car},
+        {value: DeliveryTypeEnum.Truck},
     ];
     const payTypeViewConfig = [
         {value: PayTypeEnum.SenderCash, label: 'Sender by cash'},
@@ -228,7 +229,7 @@ export function CreateScreen() {
                     <Typography.Title style={{marginBottom: 20}} level={3}>Choose a shipping method</Typography.Title>
                     <Form.Item style={{width: '100%'}} name={'deliveryType'} rules={[{required: true, message: ''}]}>
                         <Radio.Group style={{width: '100%', textAlign: 'center'}}>
-                            {shippingMethodViewConfig.map(({value, icon}) =>
+                            {shippingMethodViewConfig.map(({value}) =>
                                 <Radio.Button style={{width: '33%'}} value={value}>{value}</Radio.Button>
                             )}
                         </Radio.Group>
@@ -284,7 +285,7 @@ export function CreateScreen() {
                 <Row style={{marginBottom: 25}} justify={'space-between'}>
                     <Col span={11}><Typography.Title level={2}>Total</Typography.Title></Col>
                     <Col span={11}>
-                        <Typography.Title style={{textAlign: 'right'}} level={2}>
+                        <Typography.Title style={{textAlign: 'right', color: COLORS.SUCCESS}} level={2}>
                             ${initialStateOrderForm.deliveryPrice}
                         </Typography.Title>
                     </Col>

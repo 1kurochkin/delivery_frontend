@@ -2,6 +2,9 @@ import {DatePicker, Form, InputNumber, Row, TimePicker} from "antd";
 import React from "react";
 import moment, {Moment} from "moment";
 import {SearchPlaces} from "./searchPlaces.component";
+import {ReactComponent as UsFlag} from '../assets/svgs/usFlag.svg';
+import {ReactComponent as Date} from '../assets/svgs/date.svg';
+import {ReactComponent as Time} from '../assets/svgs/time.svg';
 
 export const FormCard: React.FC = (props) => {
 
@@ -17,7 +20,7 @@ export const FormCard: React.FC = (props) => {
             <Row justify={'space-between'}>
                 <Form.Item rules={[{required: true, message: ''}]} style={{width: '100%'}} label={'Phone number'}
                            name="phone">
-                    <InputNumber placeholder={'0000000000'} style={{width: '100%'}} prefix={'+'}/>
+                    <InputNumber placeholder={'0000000000'} style={{width: '100%'}} prefix={<UsFlag/>}/>
                 </Form.Item>
             </Row>
             <Row justify={'space-between'}>
@@ -26,14 +29,14 @@ export const FormCard: React.FC = (props) => {
                            label={'Select date'}
                            name="date"
                 >
-                    <DatePicker suffixIcon={null} format={'MM/DD/YY'} disabledDate={disabledDate}/>
+                    <DatePicker suffixIcon={<Date/>} format={'MM/DD'} disabledDate={disabledDate}/>
                 </Form.Item>
                 <Form.Item rules={[{required: true, message: ''}]}
                            style={{width: '63%'}}
                            label={'Specify time'}
                            name="timeRange"
                 >
-                    <TimePicker.RangePicker format={'HH:MM A'} suffixIcon={null} use12Hours={true}/>
+                    <TimePicker.RangePicker format={'HH:MM A'} suffixIcon={<Time/>} use12Hours={true}/>
                 </Form.Item>
             </Row>
         </>
