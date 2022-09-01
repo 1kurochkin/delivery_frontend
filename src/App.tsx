@@ -48,7 +48,7 @@ function App() {
         <Layout style={{minHeight: "100vh"}}>
             <PWAPrompt timesToShow={2} copyBody={'This website has app functionality. Add it to your home screen to use it in fullscreen.'} />
             {loadingApp && <PreloaderScreen/>}
-            <Content className={'app_content'}>
+            <Content>
                 <>
                     <Routes>
                         {

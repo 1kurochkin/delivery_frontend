@@ -70,7 +70,7 @@ export function ListScreen() {
         OrderStatusEnum.Available,
         OrderStatusEnum.Active,
         OrderStatusEnum.Completed,
-        ...(userRole === UserRoleEnum.Customer ? [OrderStatusEnum.Canceled] : [])
+        OrderStatusEnum.Canceled
     ]
     return (
         <>
@@ -85,7 +85,7 @@ export function ListScreen() {
                 dataSource={dataSource}
                 header={
                     <Row justify={'space-between'} style={{
-                        overflow: 'scroll',
+                        // overflow: 'scroll',
                         display: 'flex',
                         flexWrap: 'nowrap',
                         paddingBottom: 20,
@@ -96,7 +96,7 @@ export function ListScreen() {
                     }}>
                         {/*<Col span={24}>*/}
                             {tabs.map((tabLabel: any, i) =>
-                                <Button size={'small'} style={{width: 'unset', marginLeft: i > 0 ? 10 : 0, paddingLeft: 15, paddingRight: 15}}
+                                <Button size={'small'} style={{width: 'unset'}}
                                         onClick={() => onClickTabButtonHandler(tabLabel)}
                                         type={activeTab === tabLabel ? 'default' : 'primary'}>
                                     {tabLabel}
