@@ -1,6 +1,6 @@
 import React from 'react';
 import {ArrowLeftOutlined} from "@ant-design/icons";
-
+import {ReactComponent as ArrowBack} from '../assets/svgs/arrowBack.svg';
 type ButtonBackType = {
     onClick: React.MouseEventHandler<HTMLDivElement>
 };
@@ -11,12 +11,13 @@ export function ButtonBack({onClick}: ButtonBackType) {
             color: 'black',
             backgroundColor: 'white',
             borderRadius: 20,
-            padding: 10,
+            padding: '17px 14px',
+            display:'flex',
             boxShadow: "0px 0px 13px -3px rgba(0,0,0,0.46)"
         }}
             onClick={onClick}
         >
-            <ArrowLeftOutlined style={{fontSize: 25}}/>
+            <ArrowBack/>
         </div>
     );
 };
