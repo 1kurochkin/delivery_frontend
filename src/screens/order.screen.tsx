@@ -293,7 +293,7 @@ const TimeLineOrderScreenItem = ({address, date, timeRangeFrom, timeRangeTo, pho
                     {`from ${moment(timeRangeFrom).format('HH:MM A')} to ${moment(timeRangeTo).format('HH:MM A')}`}
                 </Typography.Paragraph>
             </Row>
-            <a className={'font-bold'} style={{textDecoration: 'underline'}} href={`tel:${phone}`}>Phone: +{phone}</a>
+            {phone && <a className={'font-bold'} style={{textDecoration: 'underline'}} href={`tel:${phone}`}>Phone: +{phone}</a>}
         </>
     )
 }
