@@ -2,6 +2,7 @@ import {Card, Col, Divider, List, Row, Timeline, Typography} from "antd";
 import React from "react";
 import {OrderType} from "../store/reducers/backend/backend.api.types";
 import moment from "moment";
+import {ReactComponent as Details} from '../assets/svgs/details.svg';
 import {COLORS} from "../configs/app.constants";
 
 const OrderCardTimelineItem = ({date, timeRangeFrom, timeRangeTo, address}) => {
@@ -62,19 +63,25 @@ export const OrderCard: React.FC<OrderType> = (props) => {
                     </Timeline>
                 </Row>
                 <Divider style={{borderColor: 'black', margin: 0, marginBottom: 5}} dashed={true}/>
-                <Row justify={'end'}>
-                    <Typography.Paragraph>
-                        <span className={'font-bold'}>{payType + " "}</span>
-                        will pay
-                        <span style={{color: '#27CB84', fontSize: 36}} className={'font-bold'}>{" $" + deliveryPrice}</span>
-                    </Typography.Paragraph>
+                <Row className={'font-bold'} style={{color: '#27CB84', fontSize: 36}} justify={'space-between'}>
+                    <span>Profit</span>
+                    <span>{" $" + deliveryPrice}</span>
                 </Row>
-                <Row justify={"space-between"} style={{alignItems: "center"}}>
-                    <span style={{color: COLORS.SUCCESS, textDecoration: 'underline'}} className={'font-bold'}>{'details'}</span>
-                    <Typography.Paragraph>
-                        <span className={'font-bold'}>${packagePrice + " "}</span>
-                        will hold on your wallet
-                    </Typography.Paragraph>
+                <Row justify={"space-between"} style={{alignItems: 'end'}}>
+                    <span className={'font-bold'} style={{display: 'flex', alignItems: "center"}}>
+                        <Details style={{marginRight: 5}}/> details
+                    </span>
+                    <Col>
+                        <Typography.Paragraph>
+                            <span className={'font-bold'}>${packagePrice + " "}</span>
+                            will hold on your wallet
+                        </Typography.Paragraph>
+                        <Typography.Paragraph>
+                            will pay
+                            <span className={'font-bold'}>{" " + payType}</span>
+                        </Typography.Paragraph>
+                    </Col>
+
                 </Row>
             </Card>
         </List.Item>
