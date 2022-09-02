@@ -5,6 +5,7 @@ import {useForm} from "antd/es/form/Form";
 import {useLogoutMutation, useUpdateUserSettingsMutation} from "../store/reducers/backend/backend.api";
 import {Badge, Button, Form, Input, InputNumber, Row, Typography} from "antd";
 import {UserRoleEnum} from "../store/reducers/backend/backend.api.types";
+import {VALIDATION_CONFIG} from "../configs/validation.config";
 
 export function SettingsScreen() {
     const [settingsForm] = useForm()
@@ -47,16 +48,16 @@ export function SettingsScreen() {
             </Row>
             <Row>
                 <Form style={{width: '100%'}} form={settingsForm} onFinish={onFinishFormHandler}>
-                    <Form.Item style={{width: '100%'}} colon={false} label={'Your are'} name={'role'}>
+                    <Form.Item colon={false} label={'Your are'} name={'role'}>
                         <Input disabled/>
                     </Form.Item>
-                    <Form.Item style={{width: '100%'}} colon={false} label={'Your name'} name={'name'}>
-                        <Input placeholder={'Pablo Escobar'}/>
+                    <Form.Item rules={VALIDATION_CONFIG.name} colon={false} label={'Your name'} name={'name'}>
+                        <Input placeholder={'Michael'}/>
                     </Form.Item>
-                    <Form.Item style={{width: '100%', marginBottom: 20}} colon={false} label={'Your phone'} name={'phone'}>
-                        <InputNumber style={{width: '100%'}} prefix={'+'} placeholder={'000000'}/>
+                    <Form.Item rules={VALIDATION_CONFIG.phone} style={{marginBottom: 20}} colon={false} label={'Your phone'} name={'phone'}>
+                        <InputNumber prefix={'+'} placeholder={'000000'}/>
                     </Form.Item>
-                    <Form.Item style={{width: '100%'}}>
+                    <Form.Item>
                         <Button size={'large'} loading={fetchingUpdateUserSettings} htmlType={'submit'}>Save</Button>
                     </Form.Item>
                 </Form>

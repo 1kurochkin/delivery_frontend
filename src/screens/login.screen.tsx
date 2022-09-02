@@ -9,6 +9,7 @@ import {OrderType, UserRoleEnum} from "../store/reducers/backend/backend.api.typ
 import {UserOutlined} from "@ant-design/icons";
 import {ButtonBack} from "../components/buttonBack.component";
 import ReactCodeInput from 'react-verification-code-input';
+import {VALIDATION_CONFIG} from "../configs/validation.config";
 
 export function LoginScreen() {
 
@@ -65,7 +66,7 @@ export function LoginScreen() {
             formItem: {
                 label: 'Enter your phone number',
                 name: 'phone',
-                rules: [{required: true, message: ''}],
+                rules: VALIDATION_CONFIG.phone,
                 children: <InputNumber placeholder={'0000 000 0000'} style={{width: '100%'}} prefix={'+'}/>
             }
         },
@@ -80,7 +81,7 @@ export function LoginScreen() {
             formItem: {
                 label: '',
                 name: 'code',
-                rules: [{required: false, message: ''}],
+                rules: VALIDATION_CONFIG.code,
                 children: <ReactCodeInput className={'react-code-input'}/>
             }
         },

@@ -6,6 +6,7 @@ import {UserRoleEnum} from "../store/reducers/backend/backend.api.types";
 import {SearchPlaces} from "../components/searchPlaces.component";
 import courierPic from "../assets/pictures/courier.jpg"
 import {useForm} from "antd/es/form/Form";
+import {VALIDATION_CONFIG} from "../configs/validation.config";
 
 export function StartScreen() {
 
@@ -51,7 +52,7 @@ export function StartScreen() {
             </Row>
             <Row style={{marginBottom: 20}}>
                 {orderFormInputsView.map(({label, placeholder, name}) =>
-                    <Form.Item style={{width: '100%'}} rules={[{required: true, min: 3, message: ''}]}
+                    <Form.Item style={{width: '100%'}} rules={VALIDATION_CONFIG.address}
                                colon={false}
                                label={label}
                                name={name}

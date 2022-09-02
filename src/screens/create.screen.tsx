@@ -22,6 +22,7 @@ import {CarOutlined, MehOutlined} from "@ant-design/icons";
 import {FormCard} from "../components/formCard.component";
 import {FormChangeInfo} from "rc-field-form/lib/FormContext";
 import {ButtonBack} from "../components/buttonBack.component";
+import {VALIDATION_CONFIG} from "../configs/validation.config";
 
 export type InitialOrderStateType = Pick<OrderType, 'deliveryType' | 'weight' | 'deliveryPrice' | 'payType' | 'packageType' | 'packagePrice'>;
 
@@ -225,7 +226,12 @@ export function CreateScreen() {
                     <Typography.Title style={{marginBottom: 0}} level={2}>Create order</Typography.Title>
                 </Row>
                 <Row>
-                    <Form.Item label={'Choose a shipping method'} style={{width: '100%'}} name={'deliveryType'} rules={[{required: true, message: ''}]}>
+                    <Form.Item
+                        label={'Choose a shipping method'}
+                        style={{width: '100%'}}
+                        name={'deliveryType'}
+                        rules={VALIDATION_CONFIG.deliveryType}
+                    >
                         <Radio.Group style={{width: '100%', textAlign: 'center'}}>
                             {shippingMethodViewConfig.map(({value}) =>
                                 <Radio.Button style={{width: '33%'}} value={value}>{value}</Radio.Button>
@@ -234,25 +240,38 @@ export function CreateScreen() {
                     </Form.Item>
                 </Row>
                 <Row justify={'space-between'}>
-                    <Form.Item label={'Package price'} style={{width: '40%'}} name={'packagePrice'}
-                               rules={[{required: true, message: ''}]}>
+                    <Form.Item label={'Package price'}
+                               style={{width: '40%'}}
+                               name={'packagePrice'}
+                               rules={VALIDATION_CONFIG.packagePrice}
+                    >
                         <InputNumber style={{width: '100%'}} placeholder={'10'} prefix={'$'}/>
                     </Form.Item>
-                    <Form.Item label={'Package type'} style={{width: '55%'}} name={'packageType'}
-                               rules={[{required: true, message: ''}]}>
-                        <Input placeholder={'Flowers'}/>
+                    <Form.Item label={'Package type'}
+                               style={{width: '55%'}}
+                               name={'packageType'}
+                               rules={VALIDATION_CONFIG.packageType}
+                    >
+                        <Input placeholder={'What kind of package?'}/>
                     </Form.Item>
                 </Row>
                 <Row justify={'space-between'} style={{marginBottom: 20}}>
-                    <Form.Item label={'Package weight'} rules={[{required: true, message: ''}]} style={{width: '40%'}} name="weight">
+                    <Form.Item label={'Package weight'}
+                               rules={VALIDATION_CONFIG.weight}
+                               style={{width: '40%'}}
+                               name="weight"
+                    >
                         <Select>
                             {packageWeightViewConfig.map((value) =>
                                 <Select.Option value={value}>{value}</Select.Option>
                             )}
                         </Select>
                     </Form.Item>
-                    <Form.Item style={{width: '55%'}} label={'Payment way'} name={'payType'}
-                               rules={[{required: true, message: ''}]}>
+                    <Form.Item style={{width: '55%'}}
+                               label={'Payment way'}
+                               name={'payType'}
+                               rules={VALIDATION_CONFIG.payType}
+                    >
                         <Select>
                             {payTypeViewConfig.map(({value, label}) =>
                                 <Select.Option value={value}>{label}</Select.Option>
@@ -260,16 +279,6 @@ export function CreateScreen() {
                         </Select>
                     </Form.Item>
                 </Row>
-                {/*<Row style={{marginBottom: 20}}>*/}
-                {/*    <Typography.Title level={3}>Parcel weight</Typography.Title>*/}
-                {/*    <Form.Item rules={[{required: true, message: ''}]} style={{width: '100%'}} name="weight">*/}
-                {/*        <Select>*/}
-                {/*            {packageWeightViewConfig.map((value) =>*/}
-                {/*                <Select.Option value={value}>{value}</Select.Option>*/}
-                {/*            )}*/}
-                {/*        </Select>*/}
-                {/*    </Form.Item>*/}
-                {/*</Row>*/}
                 <Row style={{marginBottom: 50}}>
                     <Typography.Title level={3}>Where to pickup?</Typography.Title>
                     <Form style={{width: '100%'}} form={pickupForm}>
@@ -296,7 +305,6 @@ export function CreateScreen() {
                     </Col>
                 </Row>
                 <Row>
-                    {/*{getActionButtonView()}*/}
                     <Button onClick={onFinishFormHandler}
                             loading={fetchingUpdateOrder || fetchingCreateOrder}
                             size={"large"}>

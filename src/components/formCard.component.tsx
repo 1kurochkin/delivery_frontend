@@ -5,6 +5,7 @@ import {SearchPlaces} from "./searchPlaces.component";
 import {ReactComponent as UsFlag} from '../assets/svgs/usFlag.svg';
 import {ReactComponent as Date} from '../assets/svgs/date.svg';
 import {ReactComponent as Time} from '../assets/svgs/time.svg';
+import {VALIDATION_CONFIG} from "../configs/validation.config";
 
 export const FormCard: React.FC = (props) => {
 
@@ -13,25 +14,31 @@ export const FormCard: React.FC = (props) => {
     };
 
     return (<>
-            <Form.Item label={'Specify the address where to deliver the parcel'} rules={[{required: true, message: ''}]}
-                       style={{width: '100%'}} name="address">
+            <Form.Item label={'Specify the address where to deliver the parcel'}
+                       rules={VALIDATION_CONFIG.address}
+                       style={{width: '100%'}}
+                       name="address"
+            >
                 <SearchPlaces placeholder={'1556 Broadway, New York, 10120, USA'}/>
             </Form.Item>
             <Row justify={'space-between'}>
-                <Form.Item rules={[{required: true, message: ''}]} style={{width: '100%'}} label={'Phone number'}
-                           name="phone">
+                <Form.Item rules={VALIDATION_CONFIG.phone}
+                           style={{width: '100%'}}
+                           label={'Phone number'}
+                           name="phone"
+                >
                     <InputNumber placeholder={'0000000000'} style={{width: '100%'}} prefix={<UsFlag/>}/>
                 </Form.Item>
             </Row>
             <Row justify={'space-between'}>
-                <Form.Item rules={[{required: true, message: ''}]}
+                <Form.Item rules={VALIDATION_CONFIG.date}
                            style={{width: '33%'}}
                            label={'Select date'}
                            name="date"
                 >
                     <DatePicker suffixIcon={<Date/>} format={'MM/DD'} disabledDate={disabledDate}/>
                 </Form.Item>
-                <Form.Item rules={[{required: true, message: ''}]}
+                <Form.Item rules={VALIDATION_CONFIG.timeRange}
                            style={{width: '63%'}}
                            label={'Specify time'}
                            name="timeRange"
