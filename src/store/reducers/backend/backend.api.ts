@@ -80,13 +80,13 @@ export const backendApi = createApi({
                 dispatch(setLoading(true));
                 try {
                     const {data: loginData} = await queryFulfilled;
+                    Cookies.set('sid', loginData?.sid)
                     setTimeout(() => {
-                        Cookies.set('sid', loginData?.sid)
                         batch(() => {
                             dispatch(setAuth(true));
                             dispatch(setLoading(false));
                         });
-                    }, 400)
+                    }, 500)
                 } catch (e:any) {
                     const {error: {error}} = e;
                     notification.error({message: error});
@@ -101,8 +101,8 @@ export const backendApi = createApi({
                 try {
                     await queryFulfilled;
                     notification.success({message: 'You successful logout!'});
+                    Cookies.remove('sid')
                     batch(() => {
-                        Cookies.remove('sid')
                         dispatch(setAuth(false))
                         dispatch(resetSettingsState())
                     })

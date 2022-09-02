@@ -95,7 +95,7 @@ export function SettingsScreen() {
                     </>
 
             }
-            <Row style={{marginTop: 60, marginBottom: 30}}>
+            <Row style={{marginTop: 30, marginBottom: 30}}>
                 <Button size={'large'} loading={fetchingLogout} type={'primary'} onClick={onClickLogoutButton}>
                     Logout
                 </Button>

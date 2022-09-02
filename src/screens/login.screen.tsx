@@ -73,7 +73,8 @@ export function LoginScreen() {
             title: 'Verify Code',
             paragraph: (
                 <Typography.Paragraph>
-                    Please check your  sms inbox, we've sent you the code to <span className={'font-bold'}>{loginForm.getFieldValue('phone')}</span>
+                    Please check your sms inbox, we've sent you the code to <span
+                    className={'font-bold'}>{loginForm.getFieldValue('phone')}</span>
                 </Typography.Paragraph>
             ),
             formItem: {
