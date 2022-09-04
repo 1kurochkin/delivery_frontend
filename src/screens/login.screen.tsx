@@ -1,5 +1,5 @@
 import React, {useRef, useState} from 'react';
-import {Button, Carousel, Form, InputNumber, Row, Typography} from "antd";
+import {Button, Carousel, Form, InputNumber, notification, Row, Typography} from "antd";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {useForm} from "antd/es/form/Form";
 import {CarouselRef} from "antd/lib/carousel";
@@ -36,19 +36,25 @@ export function LoginScreen() {
     // console.log(orderData, "ORDER DATA")
 
 
-    const onFinishFormHandler = ({phone, code}: { phone: string, code: any }) => {
-        if (currentSlide === 0) {
-            fetchGetCode(phone);
-            carouselRef?.current?.goTo(1);
-        }
-        if (currentSlide === 1) {
-            // @ts-ignore
-            fetchLogin({data: {phone, role}, code}).unwrap().then(data => {
-                if (orderData) {
-                    fetchCreateOrder(JSON.parse(orderData))
-                }
-            })
-        }
+    const onFinishFormHandler = async () => {
+        console.log('onFinishFormHandler')
+        const {phone, code} = loginForm.getFieldsValue();
+        try {
+            if (currentSlide === 0) {
+                await loginForm.validateFields(['phone']);
+                fetchGetCode(phone);
+                carouselRef?.current?.goTo(1);
+            }
+            if (currentSlide === 1) {
+                await loginForm.validateFields(['code']);
+                // @ts-ignore
+                fetchLogin({data: {phone, role}, code}).unwrap().then(data => {
+                    if (orderData) {
+                        fetchCreateOrder(JSON.parse(orderData))
+                    }
+                })
+            }
+        } catch {}
     }
 
     const onClickButtonBackHandler = () => {
@@ -99,7 +105,7 @@ export function LoginScreen() {
                     </Typography.Paragraph>
                 </Row>
             }
-            <Form style={{width: "100%"}} form={loginForm} onFinish={onFinishFormHandler}>
+            <Form style={{width: "100%"}} form={loginForm}>
                 <Carousel swipe={false} effect={'fade'} afterChange={setCurrentSlide} ref={carouselRef} dots={false}>
                     {sliderViewConfig.map(({title, paragraph, formItem}, i) => <>
                         <Row>
@@ -109,9 +115,6 @@ export function LoginScreen() {
                         </Row>
                         <Row style={{marginBottom: 60}}>
                             {paragraph}
-                            {/*<Typography.Paragraph style={{whiteSpace: 'pre-line'}}>*/}
-                            {/*    {paragraph}*/}
-                            {/*</Typography.Paragraph>*/}
                         </Row>
                         <Row style={{marginBottom: 20}}>
                             <Form.Item rules={formItem.rules}
@@ -126,7 +129,8 @@ export function LoginScreen() {
                     </>)}
                 </Carousel>
                 <Row>
-                    <Button loading={fetchingGetCode || fetchingLogin} size={"large"} htmlType={'submit'}>Next</Button>
+                    <Button onClick={onFinishFormHandler} loading={fetchingGetCode || fetchingLogin}
+                            size={"large"}>Next</Button>
                 </Row>
             </Form>
         </>

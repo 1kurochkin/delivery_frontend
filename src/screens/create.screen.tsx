@@ -243,6 +243,7 @@ export function CreateScreen() {
                     <Form.Item label={'Package price'}
                                style={{width: '40%'}}
                                name={'packagePrice'}
+                               hasFeedback
                                rules={VALIDATION_CONFIG.packagePrice}
                     >
                         <InputNumber style={{width: '100%'}} placeholder={'10'} prefix={'$'}/>
@@ -250,6 +251,7 @@ export function CreateScreen() {
                     <Form.Item label={'Package type'}
                                style={{width: '55%'}}
                                name={'packageType'}
+                               hasFeedback
                                rules={VALIDATION_CONFIG.packageType}
                     >
                         <Input placeholder={'What kind of package?'}/>
@@ -259,6 +261,7 @@ export function CreateScreen() {
                     <Form.Item label={'Package weight'}
                                rules={VALIDATION_CONFIG.weight}
                                style={{width: '40%'}}
+                               hasFeedback
                                name="weight"
                     >
                         <Select>
@@ -270,6 +273,7 @@ export function CreateScreen() {
                     <Form.Item style={{width: '55%'}}
                                label={'Payment way'}
                                name={'payType'}
+                               hasFeedback
                                rules={VALIDATION_CONFIG.payType}
                     >
                         <Select>

@@ -4,7 +4,6 @@ export default {
         api: '/api',
         prod: {url: 'https://bringa.me'},
         local: {url: 'http://localhost:5000'}
-
     },
     google: {
         maps: {

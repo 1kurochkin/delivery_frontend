@@ -24,11 +24,12 @@ export const VALIDATION_CONFIG = {
     ] as Rule[],
     phone: [
         {required: true, message: ''},
-        {len: 11, message: ''},
+        {pattern: new RegExp('[0-9]{11}'), message: '', transform: value => String(value)},
         {type: "number", message: ''},
     ] as Rule[],
     code: [
         {required: true, message: ''},
-        {type: "number", len: 6, message: ''},
+        {transform: value => String(value)},
+        {type: "string", min:6, max:6, message: ''},
     ] as Rule[],
 }

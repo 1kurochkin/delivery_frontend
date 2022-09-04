@@ -10,7 +10,7 @@ import {VALIDATION_CONFIG} from "../configs/validation.config";
 export function SettingsScreen() {
     const [settingsForm] = useForm()
     const settingsReduxState = useAppSelector(({settings}) => settings)
-    const {id: user_id, wallet: {value: balance = 0} = {}} = settingsReduxState || {};
+    const {id: user_id, phone, wallet: {value: balance = 0} = {}} = settingsReduxState || {};
     const IS_USER_ROLE_CUSTOMER = settingsReduxState.role === UserRoleEnum.Customer
     const [
         fetchLogout,
@@ -55,7 +55,7 @@ export function SettingsScreen() {
                         <Input placeholder={'Michael'}/>
                     </Form.Item>
                     <Form.Item rules={VALIDATION_CONFIG.phone} style={{marginBottom: 20}} colon={false} label={'Your phone'} name={'phone'}>
-                        <InputNumber prefix={'+'} placeholder={'000000'}/>
+                        <InputNumber style={{width: '100%'}} prefix={'+'} placeholder={'000000'}/>
                     </Form.Item>
                     <Form.Item>
                         <Button size={'large'} loading={fetchingUpdateUserSettings} htmlType={'submit'}>Save</Button>
@@ -85,8 +85,11 @@ export function SettingsScreen() {
                         </Row>
                         <Row>
                             <form style={{width: '100%'}} method="POST" action="https://btcpay0.voltageapp.io/apps/2F54NRZLuXEYPSdWJJkaXiNhr7ra/pos">
-                                <input type="hidden" name="courier_id" value={user_id} />
-                                <input type="hidden" name="notificationUrl" value="https://bringa.me/api/btcpay/notification" />
+                                <input type="hidden" name="email" value={'john@doe.com'} />
+                                <input type="hidden" name="orderId" value={'john@doe.com'} />
+                                <input type="hidden" name="phone" value={phone} />
+                                <input type="hidden" name="buyer" value={"{email: 'john@doe.com'}"} />
+                                {/*<input type="hidden" name="notificationUrl" value="https://bringa.me/api/btcpay/notification" />*/}
                                 <input type="hidden" name="redirectUrl" value="https://bringa.me/thankyou" />
                                 <Button size={'large'} htmlType={'submit'}>
                                     Top up balance

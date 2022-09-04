@@ -24,6 +24,8 @@ export const ROUTES = {
     MAIN_PAGE: '/home',
     BECOME_COURIER_PAGE: '/become_courier',
     THANK_YOU: '/thankyou',
+    TERMS_AND_CONDITIONS: '/termsAndConditions',
+    PRIVACY_POLICY: '/privacyPolicy',
     404: '/404',
     403: '/403',
 

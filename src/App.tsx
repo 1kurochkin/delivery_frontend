@@ -16,6 +16,8 @@ import {BottomNavigation} from "./components/bottomNavigation.component";
 import {LoginScreen} from "./screens/login.screen";
 import {OrderScreen} from "./screens/order.screen";
 import PWAPrompt from 'react-ios-pwa-prompt'
+import {PrivacyPolicyScreen} from "./screens/privacyPolicy.screen";
+import {TermsAndConditionsScreen} from "./screens/termsAndConditions.screen";
 
 // window.addEventListener('load', async () => {
 //     if('serviceWorker' in navigator) {
@@ -59,6 +61,8 @@ function App() {
                             </>
                         }
                         <Route path={ROUTES.ORDER.CREATE_PAGE} element={<CreateScreen/>}/>
+                        <Route path={ROUTES.PRIVACY_POLICY} element={<PrivacyPolicyScreen/>}/>
+                        <Route path={ROUTES.TERMS_AND_CONDITIONS} element={<TermsAndConditionsScreen/>}/>
                         <Route path={ROUTES.THANK_YOU} element={
                             <Result
                                 status="success"
