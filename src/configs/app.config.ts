@@ -3,7 +3,7 @@ export default {
     backend: {
         api: '/api',
         prod: {url: 'https://bringa.me'},
-        local: {url: 'http://localhost:5000'}
+        local: {url: 'http://192.168.1.45:5000'}
     },
     google: {
         maps: {

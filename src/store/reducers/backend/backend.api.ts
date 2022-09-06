@@ -208,7 +208,15 @@ export const backendApi = createApi({
             // invalidatesTags: result => ['Order']
         }),
         updateOrder: build.mutation<boolean, UpdateOrderMutationType>({
-            query: (body) => ({url: '/order/update', method: 'POST', body})
+            query: (body) => ({url: '/order/update', method: 'POST', body}),
+            async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+                try {
+                    const {data} = await queryFulfilled;
+                    notification.success({message: 'Your order successful updated!'});
+                } catch (e) {
+                    notification.error({message: 'Error updating order!'})
+                }
+            },
         }),
         getOrders: build.query<GetOrdersQueryResponseType, GetOrdersQueryType>({
             query: (params) => ({url: '/order/list', method: 'GET', params}),
@@ -242,6 +250,18 @@ export const backendApi = createApi({
             },
             invalidatesTags: result => ['Order']
         }),
+        //----------BTC-PAY-----------//
+        createInvoice: build.mutation<{ checkoutLink: string }, { amount: string }>({
+            query: (body) => ({url: '/btcpay/createInvoice', method: 'POST', body}),
+            async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+                try {
+                    const {data} = await queryFulfilled;
+                } catch (e) {
+                    console.log(e)
+                    notification.error({message: 'Error creating invoice!'})
+                }
+            },
+        }),
         //------------------------//
     })
 });
@@ -268,4 +288,6 @@ export const {
     useLazyGetOrderQuery,
     useTakeOrderMutation,
     useChangeOrderStatusMutation,
+    //---BTC_PAY---//
+    useCreateInvoiceMutation,
 } = backendApi;

@@ -10,6 +10,7 @@ import {UserOutlined} from "@ant-design/icons";
 import {ButtonBack} from "../components/buttonBack.component";
 import ReactCodeInput from 'react-verification-code-input';
 import {VALIDATION_CONFIG} from "../configs/validation.config";
+import {ReactComponent as Phone} from '../assets/svgs/phone.svg';
 
 export function LoginScreen() {
 
@@ -20,7 +21,7 @@ export function LoginScreen() {
     const navigate = useNavigate();
     const {userRole: role} = useParams();
     if (role !== UserRoleEnum.Courier && role !== UserRoleEnum.Customer) {
-        navigate(ROUTES.MAIN_PAGE)
+        navigate(ROUTES.START)
     }
     const carouselRef = useRef<CarouselRef>(null)
     const [currentSlide, setCurrentSlide] = useState(0)
@@ -73,14 +74,14 @@ export function LoginScreen() {
                 label: 'Enter your phone number',
                 name: 'phone',
                 rules: VALIDATION_CONFIG.phone,
-                children: <InputNumber placeholder={'0000 000 0000'} style={{width: '100%'}} prefix={'+'}/>
+                children: <InputNumber maxLength={11} autoFocus={false} placeholder={'0000 000 0000'} style={{width: '100%'}} prefix={<Phone/>}/>
             }
         },
         {
-            title: 'Verify Code',
+            title: 'Verify your details',
             paragraph: (
                 <Typography.Paragraph>
-                    Please check your sms inbox, we've sent you the code to <span
+                    Check your text messages. Please find the code we sent you to <span
                     className={'font-bold'}>{loginForm.getFieldValue('phone')}</span>
                 </Typography.Paragraph>
             ),
@@ -88,7 +89,7 @@ export function LoginScreen() {
                 label: '',
                 name: 'code',
                 rules: VALIDATION_CONFIG.code,
-                children: <ReactCodeInput className={'react-code-input'}/>
+                children: <ReactCodeInput autoFocus={false} className={'react-code-input'}/>
             }
         },
     ]
@@ -123,7 +124,7 @@ export function LoginScreen() {
                                        label={formItem.label}
                                        name={formItem.name}
                             >
-                                {React.cloneElement(formItem.children, {autoFocus: currentSlide === i})}
+                                {formItem.children}
                             </Form.Item>
                         </Row>
                     </>)}

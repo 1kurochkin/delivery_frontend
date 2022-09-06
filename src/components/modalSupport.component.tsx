@@ -89,7 +89,7 @@ export const useModalSupport = () => {
                             rules={[{required: true, message: ''}]}
                             wrapperCol={{span: 24}}
                             colon={false}
-                            label={'Text'}
+                            label={'Your Message'}
                             name={'text'}
                         >
                             <Input.TextArea rows={4}/>

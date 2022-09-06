@@ -2,15 +2,27 @@ import React, {useEffect} from 'react';
 import {useAppSelector} from "../hooks/useAppSelector";
 import {useModalSupport} from "../components/modalSupport.component";
 import {useForm} from "antd/es/form/Form";
-import {useLogoutMutation, useUpdateUserSettingsMutation} from "../store/reducers/backend/backend.api";
-import {Badge, Button, Form, Input, InputNumber, Row, Typography} from "antd";
+import {
+    useCreateInvoiceMutation, useLazyGetUserInfoQuery,
+    useLogoutMutation,
+    useUpdateUserSettingsMutation
+} from "../store/reducers/backend/backend.api";
+import {Badge, Button, Col, Form, Input, InputNumber, Row, Typography} from "antd";
 import {UserRoleEnum} from "../store/reducers/backend/backend.api.types";
 import {VALIDATION_CONFIG} from "../configs/validation.config";
+import {ReactComponent as Phone} from '../assets/svgs/phone.svg';
+import {ReactComponent as User} from '../assets/svgs/user.svg';
+import Search from "antd/es/input/Search";
+import {Link, useNavigate, useLocation} from "react-router-dom";
+import {ROUTES} from "../configs/app.constants";
 
 export function SettingsScreen() {
     const [settingsForm] = useForm()
+    const navigate = useNavigate()
+    const {state: locationState}: any = useLocation();
+    const {isFromCheckoutScreen = false} = locationState || {};
     const settingsReduxState = useAppSelector(({settings}) => settings)
-    const {id: user_id, phone, wallet: {value: balance = 0} = {}} = settingsReduxState || {};
+    const {id: user_id, phone, payments = [], wallet: {value: balance = 0} = {}} = settingsReduxState || {};
     const IS_USER_ROLE_CUSTOMER = settingsReduxState.role === UserRoleEnum.Customer
     const [
         fetchLogout,
@@ -20,14 +32,28 @@ export function SettingsScreen() {
         fetchUpdateUserSettings,
         {isLoading: fetchingUpdateUserSettings}
     ] = useUpdateUserSettingsMutation();
+    const [
+        fetchCreateInvoice,
+        {isLoading: fetchingCreateInvoice}
+    ] = useCreateInvoiceMutation();
+    const [
+        fetchGetUserInfo,
+        {isLoading: fetchingGetUserInfo}
+    ] = useLazyGetUserInfoQuery();
     const {modal: modalSupport, setVisible: setVisibleModalSupport} = useModalSupport()
 
     useEffect(() => {
         settingsForm.setFieldsValue(settingsReduxState);
     }, [settingsReduxState])
 
-    const onFinishFormHandler = (values: any) => {
+    const onFinishSettingsFormHandler = (values: any) => {
         fetchUpdateUserSettings(values);
+    }
+
+    const onFinishBalanceFormHandler = (values) => {
+        fetchCreateInvoice(values).unwrap().then((data) => {
+            navigate(ROUTES.CHECKOUT, {state: data})
+        })
     }
 
     const onClickLogoutButton = () => {
@@ -47,15 +73,16 @@ export function SettingsScreen() {
                 </Typography.Title>
             </Row>
             <Row>
-                <Form style={{width: '100%'}} form={settingsForm} onFinish={onFinishFormHandler}>
+                <Form style={{width: '100%'}} form={settingsForm} onFinish={onFinishSettingsFormHandler}>
                     <Form.Item colon={false} label={'Your are'} name={'role'}>
                         <Input disabled/>
                     </Form.Item>
                     <Form.Item rules={VALIDATION_CONFIG.name} colon={false} label={'Your name'} name={'name'}>
-                        <Input placeholder={'Michael'}/>
+                        <Input prefix={<User/>} placeholder={'Michael'}/>
                     </Form.Item>
-                    <Form.Item rules={VALIDATION_CONFIG.phone} style={{marginBottom: 20}} colon={false} label={'Your phone'} name={'phone'}>
-                        <InputNumber style={{width: '100%'}} prefix={'+'} placeholder={'000000'}/>
+                    <Form.Item rules={VALIDATION_CONFIG.phone} style={{marginBottom: 20}} colon={false}
+                               label={'Your phone'} name={'phone'}>
+                        <InputNumber maxLength={11} style={{width: '100%'}} placeholder={'000000'} prefix={<Phone/>}/>
                     </Form.Item>
                     <Form.Item>
                         <Button size={'large'} loading={fetchingUpdateUserSettings} htmlType={'submit'}>Save</Button>
@@ -64,48 +91,95 @@ export function SettingsScreen() {
             </Row>
             {
                 !IS_USER_ROLE_CUSTOMER &&
-                    <>
-                        <Row style={{marginTop: 20}}>
-                            <Badge size="default" color={balance > 0 ? "green": "red"} dot={true} offset={[10, 15]}>
-                                <Typography.Title level={3} style={{marginBottom: 0}}>
-                                    Your wallet
-                                </Typography.Title>
-                            </Badge>
-                            <Typography.Paragraph style={{fontSize: 12}}>
-                                { balance > 0 ? 'Your account is activated, you can start working!' : 'Top up balance for work'}
-                            </Typography.Paragraph>
-                        </Row>
-                        <Row justify={'space-between'} style={{alignItems: 'center', marginTop: 10}}>
-                            <Typography.Paragraph>
-                                Balance
-                            </Typography.Paragraph>
-                            <Typography.Title level={4}>
-                                ${balance}
+                <>
+                    <Row style={{marginTop: 20}}>
+                        <Badge size="default" color={balance > 0 ? "green" : "red"} dot={true} offset={[10, 15]}>
+                            <Typography.Title level={3} style={{marginBottom: 0}}>
+                                Your wallet
                             </Typography.Title>
-                        </Row>
-                        <Row>
-                            <form style={{width: '100%'}} method="POST" action="https://btcpay0.voltageapp.io/apps/2F54NRZLuXEYPSdWJJkaXiNhr7ra/pos">
-                                <input type="hidden" name="email" value={'john@doe.com'} />
-                                <input type="hidden" name="orderId" value={'john@doe.com'} />
-                                <input type="hidden" name="phone" value={phone} />
-                                <input type="hidden" name="buyer" value={"{email: 'john@doe.com'}"} />
-                                {/*<input type="hidden" name="notificationUrl" value="https://bringa.me/api/btcpay/notification" />*/}
-                                <input type="hidden" name="redirectUrl" value="https://bringa.me/thankyou" />
-                                <Button size={'large'} htmlType={'submit'}>
-                                    Top up balance
-                                </Button>
-                            </form>
-                        </Row>
-                    </>
-
+                        </Badge>
+                        <Typography.Paragraph style={{fontSize: 12}}>
+                            {balance > 0 ? 'Your account has been activated. You can start earning!' : 'Top up balance for work'}
+                        </Typography.Paragraph>
+                    </Row>
+                    <Row justify={'space-between'} style={{alignItems: 'center', marginTop: 10}}>
+                        <Typography.Paragraph>
+                            Balance
+                        </Typography.Paragraph>
+                        <Typography.Title level={4}>
+                            ${balance}
+                        </Typography.Title>
+                    </Row>
+                    <Row style={{marginTop: 20}}>
+                        <Form style={{width: '100%'}} onFinish={onFinishBalanceFormHandler}>
+                            <Row style={{alignItems: 'flex-start'}}>
+                                <Form.Item hasFeedback rules={VALIDATION_CONFIG.balance} name={'amount'}
+                                           style={{width: '30%'}}>
+                                    <InputNumber placeholder={'10'} prefix={'$'}/>
+                                </Form.Item>
+                                <Form.Item style={{width: '70%'}}>
+                                    <Button loading={fetchingCreateInvoice} className={'font-bold'} htmlType={'submit'}>
+                                        Top up
+                                    </Button>
+                                </Form.Item>
+                            </Row>
+                        </Form>
+                    </Row>
+                    {
+                        payments.length ?
+                            <>
+                                <Row justify={'space-between'} style={{marginTop: 30}}>
+                                    <Typography.Title level={3}>
+                                        Last transactions
+                                    </Typography.Title>
+                                    <Button loading={fetchingGetUserInfo}
+                                            type={"primary"}
+                                            style={{width: '30%'}}
+                                            onClick={() => fetchGetUserInfo()}
+                                            size={"small"}>
+                                        Update
+                                    </Button>
+                                </Row>
+                                <Row justify={'space-between'}>
+                                    {payments.map(({btcPayId}) =>
+                                        <a className={'font-bold'}
+                                           style={{textDecoration: 'underline', marginBottom: 5}}
+                                           target="_blank"
+                                           href={`https://btcpay0.voltageapp.io/i/${btcPayId}`}
+                                        >
+                                            btcpayserver/{btcPayId}
+                                        </a>
+                                    )}
+                                </Row>
+                            </> : null
+                    }
+                </>
             }
+            <Row style={{marginTop: 30}}>
+                <Typography.Title level={3}>
+                    FAQ
+                </Typography.Title>
+            </Row>
+            <Row justify={'start'}>
+                <Col style={{marginBottom: 5}} span={24}>
+                    <Link className={'font-bold'} style={{textDecoration: 'underline'}} to={ROUTES.COURIER_FAQ}>
+                        {'How it works for a courier?'}
+                    </Link>
+                </Col>
+                <Col span={24}>
+                    <Link className={'font-bold'} style={{textDecoration: 'underline'}} to={ROUTES.CUSTOMER_FAQ}>
+                        {'How it works for a customer?'}
+                    </Link>
+                </Col>
+            </Row>
             <Row style={{marginTop: 30, marginBottom: 30}}>
                 <Button size={'large'} loading={fetchingLogout} type={'primary'} onClick={onClickLogoutButton}>
                     Logout
                 </Button>
             </Row>
             <Row justify={'center'}>
-                <Typography.Paragraph style={{marginBottom: 20, textDecoration: "underline"}} onClick={() => setVisibleModalSupport(true)}>
+                <Typography.Paragraph style={{marginBottom: 20, textDecoration: "underline"}}
+                                      onClick={() => setVisibleModalSupport(true)}>
                     Support
                 </Typography.Paragraph>
             </Row>

@@ -1,10 +1,10 @@
-import React, {useState} from 'react';
+import React from 'react';
 import './styles/App.css'
-import {Link, Navigate, Route, Routes} from 'react-router-dom';
+import {Navigate, Route, Routes, useLocation} from 'react-router-dom';
 import {ROUTES} from './configs/app.constants';
 import {useAppSelector} from "./hooks/useAppSelector";
 import {useGetUserInfoQuery} from "./store/reducers/backend/backend.api";
-import {Button, Layout, Result} from "antd";
+import {Layout} from "antd";
 import {Content, Footer} from "antd/es/layout/layout";
 import {ProtectedRoute} from "./components/protectedRoute.component";
 import {PreloaderScreen} from "./screens/preloader.screen";
@@ -18,111 +18,28 @@ import {OrderScreen} from "./screens/order.screen";
 import PWAPrompt from 'react-ios-pwa-prompt'
 import {PrivacyPolicyScreen} from "./screens/privacyPolicy.screen";
 import {TermsAndConditionsScreen} from "./screens/termsAndConditions.screen";
-
-// window.addEventListener('load', async () => {
-//     if('serviceWorker' in navigator) {
-//         try {
-//             await navigator.serviceWorker.register('./sw.js');
-//             console.log('SERVICE WORKER REGISTERED!')
-//         } catch (e) {
-//             console.log('SERVICE WORKER NOT REGISTERED!', e)
-//         }
-//     }
-// });
+import {CheckoutScreen} from "./screens/checkout.screen";
+import {CustomerFaqScreen} from "./screens/customerFaq.screen";
+import {CourierFaq} from "./screens/courierFaq.screen";
+import AppRoutes from "./routes/routes";
+import {Preloader} from "./components/preloader.component";
 
 function App() {
+    const {pathname} = useLocation();
     const auth = useAppSelector(({app}) => app.auth)
     const loadingApp = useAppSelector(({app}) => app.loading)
-    const [hideFooter, setHideFooter] = useState(false);
-
-    // useEffect(() => {
-    //     window.addEventListener('resize', (e) => {
-    //         alert('resize')
-    //     })
-    // }, [])
-
-    const {
-        // error: error2,
-        isFetching: fetchingGetUserInfo = true
-    } = useGetUserInfoQuery(undefined, {skip: !auth});
+    useGetUserInfoQuery(undefined, {skip: !auth});
 
     return (
         <Layout style={{minHeight: "100vh"}}>
             <PWAPrompt timesToShow={2} copyBody={'This website has app functionality. Add it to your home screen to use it in fullscreen.'} />
-            {loadingApp && <PreloaderScreen/>}
-            <Content>
-                <>
-                    <Routes>
-                        {
-                            !auth && <>
-                                <Route path={ROUTES.AUTH.LOGIN_PAGE.PATH + ROUTES.AUTH.LOGIN_PAGE.PARAMS}
-                                       element={<LoginScreen/>}/>
-                                <Route path={ROUTES.MAIN_PAGE} element={<StartScreen/>}/>
-                            </>
-                        }
-                        <Route path={ROUTES.ORDER.CREATE_PAGE} element={<CreateScreen/>}/>
-                        <Route path={ROUTES.PRIVACY_POLICY} element={<PrivacyPolicyScreen/>}/>
-                        <Route path={ROUTES.TERMS_AND_CONDITIONS} element={<TermsAndConditionsScreen/>}/>
-                        <Route path={ROUTES.THANK_YOU} element={
-                            <Result
-                                status="success"
-                                title="Successfully!"
-                                subTitle="payment processing will take a few minutes"
-                                extra={
-                                    <Button type={"primary"}>
-                                        <Link to={ROUTES.SETTINGS_PAGE}>OK</Link>
-                                    </Button>
-                                }
-                            />
-                        }/>
-                        <Route path={ROUTES.ORDER.LIST_PAGE}
-                               element={
-                                   <ProtectedRoute auth={auth}>
-                                       <ListScreen/>
-                                   </ProtectedRoute>
-                               }
-                        />
-                        <Route path={ROUTES.ORDER.ORDER_PAGE.PATH + ROUTES.ORDER.ORDER_PAGE.PARAMS}
-                               element={
-                                   <ProtectedRoute auth={auth}>
-                                       <OrderScreen/>
-                                   </ProtectedRoute>
-                               }
-                        />
-                        <Route path={ROUTES.ORDER.UPDATE_PAGE.PATH + ROUTES.ORDER.UPDATE_PAGE.PARAMS}
-                               element={
-                                   <ProtectedRoute auth={auth}>
-                                       <CreateScreen/>
-                                   </ProtectedRoute>
-                               }
-                        />
-                        <Route path={ROUTES.SETTINGS_PAGE}
-                               element={
-                                   <ProtectedRoute auth={auth}>
-                                       <SettingsScreen/>
-                                   </ProtectedRoute>
-                               }
-                        />
-                        <Route
-                            path="*"
-                            element={
-                                <Navigate to={
-                                    auth ?
-                                        ROUTES.ORDER.LIST_PAGE :
-                                        ROUTES.MAIN_PAGE
-                                } replace/>
-                            }
-                        />
-                    </Routes>
-                </>
-            </Content>
             {
-                auth && !hideFooter &&
-                <Footer>
-                    <BottomNavigation/>
-                </Footer>
+                loadingApp &&
+                <Preloader type={'fullscreen'} />
             }
-
+            <Content>
+                <AppRoutes isAuth={auth} pathname={pathname}/>
+            </Content>
         </Layout>
     );
 }

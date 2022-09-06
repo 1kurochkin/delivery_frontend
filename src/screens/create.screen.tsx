@@ -12,13 +12,13 @@ import {
     OrderPointTypeEnum,
     OrderType,
     PackageWeightEnum,
-    PayTypeEnum, UserRoleEnum
+    PayTypeEnum,
+    UserRoleEnum
 } from "../store/reducers/backend/backend.api.types";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {COLORS, ROUTES} from "../configs/app.constants";
 import {useAppSelector} from "../hooks/useAppSelector";
 import moment from "moment";
-import {CarOutlined, MehOutlined} from "@ant-design/icons";
 import {FormCard} from "../components/formCard.component";
 import {FormChangeInfo} from "rc-field-form/lib/FormContext";
 import {ButtonBack} from "../components/buttonBack.component";
@@ -44,7 +44,7 @@ export function CreateScreen() {
         weight: PackageWeightEnum.Under1,
         deliveryPrice: 0,
         payType: PayTypeEnum.SenderCash,
-        packagePrice: 5
+        packagePrice: 0
     });
     const setInitialStateOrderFormHandler = (field: keyof typeof initialStateOrderForm, value: any) => {
         setInitialStateOrderForm((prevState) => ({
@@ -66,6 +66,7 @@ export function CreateScreen() {
     });
 
     useEffect(() => {
+        window.scrollTo(0, 0)
         if(IS_UPDATE_ORDER_PAGE) {
             fetchGetOrder(Number(orderId)).unwrap().then((data) => {
                 const {deliveryPoint, pickupPoint, deliveryPrice, ...restGetOrderData} = data;
@@ -157,15 +158,16 @@ export function CreateScreen() {
             if(!IS_AUTH_USER) {
                 // console.log(data, "DATA")
                 navigate(
-                    ROUTES.AUTH.LOGIN_PAGE.PATH + '/' + UserRoleEnum.Customer,
+                    ROUTES.LOGIN.PATH + '/' + UserRoleEnum.Customer,
                     {state: {orderData: JSON.stringify(data)}}
                 ); return;
             }
             if(IS_UPDATE_ORDER_PAGE) {
-                fetchUpdateOrder({orderId: Number(orderId), update: data})
+                await fetchUpdateOrder({orderId: Number(orderId), update: data}).unwrap()
             } else {
-                fetchCreateOrder(data).unwrap().then(() => navigate(ROUTES.ORDER.LIST_PAGE))
+                await fetchCreateOrder(data).unwrap()
             }
+            navigate(ROUTES.LIST_ORDERS)
         } catch (e) {
             console.log(e)
             notification.error({message: 'Fill all fields please!'})
@@ -222,12 +224,14 @@ export function CreateScreen() {
         <Form.Provider onFormChange={onFormsValuesChangeHandler}>
             <Form layout={'horizontal'} style={{width: "100%"}} form={orderForm}>
                 <Row style={{alignItems: 'center', marginBottom: 20}} justify={'space-between'}>
-                    {IS_FORM_START_PAGE && <ButtonBack onClick={() => navigate(-1)}/>}
-                    <Typography.Title style={{marginBottom: 0}} level={2}>Create order</Typography.Title>
+                    {(IS_FORM_START_PAGE || IS_UPDATE_ORDER_PAGE) && <ButtonBack onClick={() => navigate(-1)}/>}
+                    <Typography.Title style={{marginBottom: 0}} level={2}>{
+                        IS_UPDATE_ORDER_PAGE ? `Correct order #${orderId}` : 'Create order'
+                    }</Typography.Title>
                 </Row>
                 <Row>
                     <Form.Item
-                        label={'Choose a shipping method'}
+                        label={'Choose the delivery method'}
                         style={{width: '100%'}}
                         name={'deliveryType'}
                         rules={VALIDATION_CONFIG.deliveryType}
@@ -246,7 +250,7 @@ export function CreateScreen() {
                                hasFeedback
                                rules={VALIDATION_CONFIG.packagePrice}
                     >
-                        <InputNumber style={{width: '100%'}} placeholder={'10'} prefix={'$'}/>
+                        <InputNumber maxLength={11} style={{width: '100%'}} placeholder={'10'} prefix={'$'}/>
                     </Form.Item>
                     <Form.Item label={'Package type'}
                                style={{width: '55%'}}
@@ -284,20 +288,20 @@ export function CreateScreen() {
                     </Form.Item>
                 </Row>
                 <Row style={{marginBottom: 50}}>
-                    <Typography.Title level={3}>Where to pickup?</Typography.Title>
+                    <Typography.Title level={3}>What is the pick-up location?</Typography.Title>
                     <Form style={{width: '100%'}} form={pickupForm}>
                         <FormCard/>
                     </Form>
                 </Row>
                 <Row style={{marginBottom: 30}}>
-                    <Typography.Title level={3}>Where to deliver?</Typography.Title>
+                    <Typography.Title level={3}>What is the delivery location?</Typography.Title>
                     <Form style={{width: '100%'}} form={deliveryForm}>
                         <FormCard/>
                     </Form>
                 </Row>
                 <Row style={{marginBottom: 40}}>
                     <Form.Item style={{width: '100%'}} name="comment">
-                        <Input.TextArea placeholder={'Your comment to the courier'} rows={4}/>
+                        <Input.TextArea placeholder={'Add comments for the courier'} rows={4}/>
                     </Form.Item>
                 </Row>
                 <Row style={{marginBottom: 25}} justify={'space-between'}>
@@ -314,7 +318,7 @@ export function CreateScreen() {
                             size={"large"}>
                         {
                             IS_AUTH_USER ?
-                                (IS_UPDATE_ORDER_PAGE ? 'Update order' : 'Create order') :
+                                (IS_UPDATE_ORDER_PAGE ? 'Correct order' : 'Create order') :
                                 'Next'
                         }
                     </Button>

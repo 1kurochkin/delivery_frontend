@@ -4,8 +4,9 @@ import {UserRoleEnum} from "../backend/backend.api.types";
 type SettingsSliceStateType = {
     id: string | undefined;
     role: UserRoleEnum | '';
-    phone: string | undefined;
+    phone: number | undefined;
     name: string | undefined;
+    payments: Array<{ btcPayId: string }> | undefined;
     wallet?: {
         value: number;
     }
@@ -16,9 +17,10 @@ const initialState: SettingsSliceStateType = {
     role: (localStorage.getItem('role') || '') as (UserRoleEnum | ''),
     phone: undefined,
     name: undefined,
+    payments: undefined,
     wallet: {
         value: 0,
-    }
+    },
 }
 
 export const settingsSlice = createSlice({

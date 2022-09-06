@@ -13,6 +13,7 @@ import {COLORS, ROUTES} from "../configs/app.constants";
 import {SizeType} from "antd/es/config-provider/SizeContext";
 import {useModalSupport} from "../components/modalSupport.component";
 import moment from "moment";
+import {Preloader} from "../components/preloader.component";
 
 
 export function OrderScreen() {
@@ -32,14 +33,14 @@ export function OrderScreen() {
     const {modal: modalSupport, setVisible: setVisibleModalSupport} = useModalSupport()
 
     useEffect(() => {
-        console.log('MOUNT')
+        window.scrollTo(0, 0)
         fetchGetOrder(Number(orderId))
     }, [orderId]);
 
     const [
         fetchGetOrder,
         {
-            isFetching: fetchingGetOrder,
+            isFetching: fetchingGetOrder = true,
             data: {
                 id = 0,
                 status = '',
@@ -71,7 +72,7 @@ export function OrderScreen() {
     ] = useChangeOrderStatusMutation();
 
     const onClickUpdateButton = () => {
-        navigate(ROUTES.ORDER.UPDATE_PAGE.PATH + '/' + orderId)
+        navigate(ROUTES.UPDATE_ORDER.PATH + '/' + orderId)
     }
     const onClickOkCancelModal = () => {
         fetchChangeOrderStatus({orderId: id, status: OrderStatusEnum.Canceled})
@@ -134,18 +135,19 @@ export function OrderScreen() {
     ]
     const textColorByStatus = {
         [OrderStatusEnum.Available]: COLORS.SUCCESS,
-        [OrderStatusEnum.Active]: COLORS.WARNING,
+        [OrderStatusEnum.Active]: COLORS.BLUE,
         [OrderStatusEnum.Canceled]: COLORS.ERROR,
         [OrderStatusEnum.Completed]: COLORS.SECOND,
     }
 
     const packageInformationViewConfig = [
-        {label: 'Pay type:', value: payType},
+        {label: 'Payment type:', value: payType},
         {label: 'Package type:', value: packageType},
         {label: 'Package weight', value: weight},
     ]
     return (
         <>
+            {fetchingGetOrder && <Preloader type={"fullscreen"}/>}
             {modalWindowViewConfig.map((modalConfig) => {
                 if (!modalConfig) return null;
                 const {name, onOk, loading, text} = modalConfig;
@@ -203,7 +205,7 @@ export function OrderScreen() {
                 </Timeline>
                 <Button style={{marginBottom: 10}} type={"primary"}>
                     <a href={`https://www.google.com/maps/dir/${pickupPoint?.address}/${deliveryPoint?.address}`}>
-                        Look path on Google map
+                        Look up the route on Google Maps
                     </a>
                 </Button>
             </Row>
@@ -214,7 +216,7 @@ export function OrderScreen() {
                 comment &&
                 <Row>
                     <Form.Item labelCol={{span: 24}} style={{width: '100%'}} label={'Comment for courier'}>
-                        <Input.TextArea value={comment}/>
+                        <Input.TextArea onChange={() => null} value={comment}/>
                     </Form.Item>
                 </Row>
             }
@@ -222,7 +224,7 @@ export function OrderScreen() {
             <Row style={{marginTop: 30 ,marginBottom: 25}}>
                 <Typography.Title level={3}>Parcel Information</Typography.Title>
                 {packageInformationViewConfig.map(({label, value}) =>
-                    <Typography.Paragraph style={{display: 'block', margin: 0}}>
+                    <Typography.Paragraph style={{display: 'block', width: '100%', margin: 0}}>
                         {label} <span className={'font-bold'}>{value}</span>
                     </Typography.Paragraph>
                 )}
@@ -235,9 +237,9 @@ export function OrderScreen() {
                     </Typography.Title>
                         {
                             customerOrCourierInfo?.name &&
-                            <Typography.Paragraph style={{display: 'block'}}>Name: {customerOrCourierInfo?.name}</Typography.Paragraph>
+                            <Typography.Paragraph style={{display: 'block', width: '100%'}}>Name: {customerOrCourierInfo?.name}</Typography.Paragraph>
                         }
-                        <a style={{display: 'block'}} href={`tel:${customerOrCourierInfo?.phone}`}>
+                        <a style={{display: 'block', width: '100%'}} href={`tel:${customerOrCourierInfo?.phone}`}>
                             Phone: <span className={'font-bold'} style={{textDecoration: 'underline'}}>+{customerOrCourierInfo?.phone}</span>
                         </a>
                 </Row>
@@ -286,12 +288,14 @@ const TimeLineOrderScreenItem = ({address, date, timeRangeFrom, timeRangeTo, pho
         <>
             <Row>
                 <Typography.Title style={{marginBottom: 0}} level={5}>{address}</Typography.Title>
-                <Typography.Paragraph style={{fontSize: 12, marginBottom: 5}}>
-                    {`${moment(date).format('MM/DD')}`}
-                </Typography.Paragraph>
-                <Typography.Paragraph style={{fontSize: 12, marginBottom: 0, marginLeft: 40}}>
-                    {`from ${moment(timeRangeFrom).format('HH:MM A')} to ${moment(timeRangeTo).format('HH:MM A')}`}
-                </Typography.Paragraph>
+                <Row>
+                    <Typography.Paragraph style={{fontSize: 12, marginBottom: 5}}>
+                        {`${moment(date).format('MM/DD')}`}
+                    </Typography.Paragraph>
+                    <Typography.Paragraph style={{fontSize: 12, marginBottom: 0, marginLeft: 40}}>
+                        {`from ${moment(timeRangeFrom).format('HH:MM A')} to ${moment(timeRangeTo).format('HH:MM A')}`}
+                    </Typography.Paragraph>
+                </Row>
             </Row>
             {phone && <a className={'font-bold'} style={{textDecoration: 'underline'}} href={`tel:${phone}`}>Phone: +{phone}</a>}
         </>

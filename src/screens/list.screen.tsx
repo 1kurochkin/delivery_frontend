@@ -6,18 +6,15 @@ import {PAGINATION, ROUTES} from "../configs/app.constants";
 import {OrderCard} from "../components/orderCard.component";
 import {useAppSelector} from "../hooks/useAppSelector";
 import {useNavigate} from "react-router-dom";
+import {Preloader} from "../components/preloader.component";
 
 export function ListScreen() {
     const userRole = useAppSelector(({settings}) => settings.role);
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState<OrderStatusEnum>(OrderStatusEnum.Available);
+    // @ts-ignore
     const [dataSource, setDataSource] = useState<OrderType[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
-    // const [tookOrderId, setTookOrderId] = useState<string>('');
-    // const setCurrentSlideHandler = (slide: number) => {
-    //     setCurrentSlide(slide);
-    //     carouselRef?.current?.goTo(slide);
-    // }
     const [
         fetchGetOrders,
         {
@@ -63,7 +60,7 @@ export function ListScreen() {
     }
 
     const onClickOrderCard = (orderId: number) => {
-        navigate(ROUTES.ORDER.ORDER_PAGE.PATH + '/' + orderId)
+        navigate(ROUTES.ORDER.PATH + '/' + orderId)
     }
 
     const tabs = [
@@ -80,7 +77,7 @@ export function ListScreen() {
             <List
                 style={{height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}
                 split bordered={false}
-                loading={fetchingGetOrders}
+                loading={fetchingGetOrders ? {indicator: <Preloader type={'usual'}/>} : false}
                 grid={{gutter: 16, column: 1}}
                 dataSource={dataSource}
                 header={
@@ -122,6 +119,7 @@ export function ListScreen() {
                     </Row>
                 }
             />
+            {/*{fetchingGetOrders && <Preloader type={'usual'}/>}*/}
         </>
     );
 };

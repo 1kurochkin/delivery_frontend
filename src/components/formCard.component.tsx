@@ -2,9 +2,9 @@ import {DatePicker, Form, InputNumber, Row, TimePicker} from "antd";
 import React from "react";
 import moment, {Moment} from "moment";
 import {SearchPlaces} from "./searchPlaces.component";
-import {ReactComponent as UsFlag} from '../assets/svgs/usFlag.svg';
-import {ReactComponent as Date} from '../assets/svgs/date.svg';
-import {ReactComponent as Time} from '../assets/svgs/time.svg';
+import {ReactComponent as Phone} from '../assets/svgs/phone.svg';
+import {ReactComponent as Calendar} from '../assets/svgs/calendar.svg';
+import {ReactComponent as Clock} from '../assets/svgs/clock.svg';
 import {VALIDATION_CONFIG} from "../configs/validation.config";
 
 export const FormCard: React.FC = (props) => {
@@ -14,7 +14,7 @@ export const FormCard: React.FC = (props) => {
     };
 
     return (<>
-            <Form.Item label={'Specify the address where to deliver the parcel'}
+            <Form.Item label={'Enter the address'}
                        rules={VALIDATION_CONFIG.address}
                        style={{width: '100%'}}
                        hasFeedback
@@ -29,25 +29,25 @@ export const FormCard: React.FC = (props) => {
                            hasFeedback
                            name="phone"
                 >
-                    <InputNumber placeholder={'0000000000'} style={{width: '100%'}} prefix={<UsFlag/>}/>
+                    <InputNumber maxLength={11} placeholder={'0000000000'} style={{width: '100%'}} prefix={<Phone/>}/>
                 </Form.Item>
             </Row>
             <Row justify={'space-between'}>
                 <Form.Item rules={VALIDATION_CONFIG.date}
                            style={{width: '33%'}}
-                           label={'Select date'}
+                           label={'Choose the date'}
                            hasFeedback
                            name="date"
                 >
-                    <DatePicker suffixIcon={<Date/>} format={'MM/DD'} disabledDate={disabledDate}/>
+                    <DatePicker suffixIcon={<Calendar/>} format={'MM/DD'} disabledDate={disabledDate}/>
                 </Form.Item>
                 <Form.Item rules={VALIDATION_CONFIG.timeRange}
                            style={{width: '63%'}}
-                           label={'Specify time'}
+                           label={'Pick the time'}
                            hasFeedback
                            name="timeRange"
                 >
-                    <TimePicker.RangePicker format={'HH:MM A'} suffixIcon={<Time/>} use12Hours={true}/>
+                    <TimePicker.RangePicker format={'HH:MM A'} suffixIcon={<Clock/>} use12Hours={true}/>
                 </Form.Item>
             </Row>
         </>

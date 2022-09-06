@@ -7,9 +7,9 @@ import {useAppSelector} from "../hooks/useAppSelector";
 //@ ts-ignore
 import BottomNavigationModule from 'reactjs-bottom-navigation'
 import 'reactjs-bottom-navigation/dist/index.css'
-import {ReactComponent as Home} from '../assets/svgs/home.svg';
+import {ReactComponent as List} from '../assets/svgs/list.svg';
 import {ReactComponent as Package} from '../assets/svgs/package.svg';
-import {ReactComponent as User} from '../assets/svgs/user.svg';
+import {ReactComponent as Settings} from '../assets/svgs/settings.svg';
 //
 // type MenuItem = Required<MenuProps>['items'][number];
 //
@@ -36,10 +36,10 @@ export function BottomNavigation() {
     const IS_USER_ROLE_CUSTOMER = userRole === UserRoleEnum.Customer
     const bottomNavItems = [
         {
-            title: 'Orders',
-            icon: <Home/>,
-            activeIcon: <Home/>,
-            route: ROUTES.ORDER.LIST_PAGE
+            title: 'List',
+            icon: <List/>,
+            activeIcon: <List/>,
+            route: ROUTES.LIST_ORDERS
         },
         ...(
             IS_USER_ROLE_CUSTOMER ?
@@ -47,15 +47,15 @@ export function BottomNavigation() {
                     title: 'Create',
                     icon: <Package/>,
                     activeIcon: <Package/>,
-                    route: ROUTES.ORDER.CREATE_PAGE
+                    route: ROUTES.CREATE_ORDER
                 }] :
                 []
         ),
         {
             title: 'Settings',
-            icon: <User/>,
-            activeIcon: <User/>,
-            route: ROUTES.SETTINGS_PAGE
+            icon: <Settings/>,
+            activeIcon: <Settings/>,
+            route: ROUTES.SETTINGS
         },
     ]
     const [selected, setSelected] = useState(bottomNavItems.findIndex(({route}) => route === pathname));
