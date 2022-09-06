@@ -12,7 +12,6 @@ import {UserRoleEnum} from "../store/reducers/backend/backend.api.types";
 import {VALIDATION_CONFIG} from "../configs/validation.config";
 import {ReactComponent as Phone} from '../assets/svgs/phone.svg';
 import {ReactComponent as User} from '../assets/svgs/user.svg';
-import Search from "antd/es/input/Search";
 import {Link, useNavigate, useLocation} from "react-router-dom";
 import {ROUTES} from "../configs/app.constants";
 
