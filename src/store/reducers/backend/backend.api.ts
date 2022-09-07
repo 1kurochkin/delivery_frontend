@@ -226,28 +226,20 @@ export const backendApi = createApi({
             query: (orderId) => ({url: `/order`, method: 'GET', params: {orderId}}),
             providesTags: () => ['Order']
         }),
-        takeOrder: build.mutation<boolean, number>({
-            query: (orderId) => ({url: '/order/take/', method: 'POST', body: {orderId}} ),
-            async onQueryStarted(_, { queryFulfilled }) {
-                try {
-                    await queryFulfilled;
-                    notification.success({message: 'Order have took!'});
-                } catch (e) {
-                    notification.error({message: 'Error take order!'})
-                }
-            },
-            invalidatesTags: result => ['Order']
-        }),
+        // takeOrder: build.mutation<boolean, number>({
+        //     query: (orderId) => ({url: '/order/take/', method: 'POST', body: {orderId}} ),
+        //     async onQueryStarted(_, { queryFulfilled }) {
+        //         try {
+        //             await queryFulfilled;
+        //             notification.success({message: 'Order have took!'});
+        //         } catch (e) {
+        //             notification.error({message: 'Error take order!'})
+        //         }
+        //     },
+        //     invalidatesTags: result => ['Order']
+        // }),
         changeOrderStatus: build.mutation<boolean, { orderId: number, status: OrderStatusEnum }>({
             query: (body, ) => ({url: '/order/status', method: 'POST', body}),
-            async onQueryStarted(_, { dispatch, queryFulfilled }) {
-                try {
-                    await queryFulfilled;
-                    notification.success({message: 'Order status successful changed!'});
-                } catch (e) {
-                    notification.error({message: 'Error change order status!'})
-                }
-            },
             invalidatesTags: result => ['Order']
         }),
         //----------BTC-PAY-----------//
@@ -286,7 +278,7 @@ export const {
     useLazyGetOrdersQuery,
     useGetOrdersQuery,
     useLazyGetOrderQuery,
-    useTakeOrderMutation,
+    // useTakeOrderMutation,
     useChangeOrderStatusMutation,
     //---BTC_PAY---//
     useCreateInvoiceMutation,

@@ -1,5 +1,5 @@
 export default {
-    isProd: true,
+    isProd: false,
     backend: {
         api: '/api',
         prod: {url: 'https://bringa.me'},

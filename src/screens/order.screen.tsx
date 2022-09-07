@@ -1,9 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Col, Form, Input, Modal, Row, Timeline, Typography} from "antd";
+import {Button, Col, Form, Input, Modal, notification, Row, Timeline, Typography} from "antd";
 import {
     useChangeOrderStatusMutation,
     useLazyGetOrderQuery,
-    useTakeOrderMutation
 } from "../store/reducers/backend/backend.api";
 import {useAppSelector} from "../hooks/useAppSelector";
 import {Link, useNavigate, useParams} from "react-router-dom";
@@ -62,11 +61,6 @@ export function OrderScreen() {
     const IS_COMPLETE_STATUS = status === OrderStatusEnum.Completed;
     const customerOrCourierInfo = courier || customer
     const [
-        fetchTakeOrder,
-        {isLoading: fetchingTakeOrder}
-    ] = useTakeOrderMutation();
-
-    const [
         fetchChangeOrderStatus,
         {isLoading: fetchingChangeOrderStatus}
     ] = useChangeOrderStatusMutation();
@@ -77,21 +71,39 @@ export function OrderScreen() {
     const onClickOkCancelModal = () => {
         fetchChangeOrderStatus({orderId: id, status: OrderStatusEnum.Canceled})
             .unwrap()
-            .then(() => setModalStateHandler('cancel', false))
-            .catch(() => setModalStateHandler('cancel', false));
+            .then(() => {
+                setModalStateHandler('cancel', false)
+                notification.success({message: 'Order has been canceled!'})
+            })
+            .catch(() => {
+                setModalStateHandler('cancel', false)
+                notification.error({message: 'Error cancel order!'})
+            });
     }
     const onClickOkTakeModal = async () => {
-        fetchTakeOrder(id)
+        fetchChangeOrderStatus({orderId: id, status: OrderStatusEnum.Active})
             .unwrap()
-            .then(() => setModalStateHandler('take', false))
-            .catch(() => setModalStateHandler('take', false));
+            .then(() => {
+                setModalStateHandler('take', false)
+                notification.success({message: 'Order has been took!'})
+            })
+            .catch(() => {
+                setModalStateHandler('take', false)
+                notification.error({message: 'Error take order!'})
+            });
 
     }
     const onClickOkCompleteModal = async () => {
-        await fetchChangeOrderStatus({orderId: id, status: OrderStatusEnum.Completed})
+        fetchChangeOrderStatus({orderId: id, status: OrderStatusEnum.Completed})
             .unwrap()
-            .then(() => setModalStateHandler('complete', false))
-            .catch(() => setModalStateHandler('complete', false));
+            .then(() => {
+                setModalStateHandler('complete', false)
+                notification.success({message: 'Order has been completed!'})
+            })
+            .catch(() => {
+                setModalStateHandler('complete', false)
+                notification.error({message: 'Error complete order!'})
+            });
     }
 
     const actionButtonViewConfig = [
@@ -123,7 +135,7 @@ export function OrderScreen() {
         !IS_USER_ROLE_CUSTOMER && IS_AVAILABLE_STATUS && {
             name: 'take',
             onOk: onClickOkTakeModal,
-            loading: fetchingTakeOrder,
+            loading: fetchingChangeOrderStatus,
             text: 'Are you sure you want to take this order?'
         },
         !IS_USER_ROLE_CUSTOMER && IS_ACTIVE_STATUS && {

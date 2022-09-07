@@ -122,7 +122,31 @@ div.ant-typography {
 
 // Layout
 @layout-body-background: white;
+@media screen and (min-width: 600px) {
+  .ant-layout {
+    background-color: @component-background;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ant-layout-content {
+    background-color: white;
+    width: 390px;
+    height: 95vh;
+    overflow: scroll;
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+    flex: unset;
+    border-radius: @border-radius-base;
+  }
+  .ant-layout-content::-webkit-scrollbar {
+    display: none;  /* Safari and Chrome */
+  }
+}
 .ant-layout {
+  min-height: 100vh;
+}
+.ant-layout-content {
   padding: 25px;
 }
 
@@ -135,6 +159,14 @@ div.ant-typography {
 @form-item-label-height: unset;
 .ant-form-item {
   width: 100%;
+}
+.ant-form-item-label {
+  text-align: left;
+  width: 100%;
+}
+.ant-form-item-control {
+  flex: unset!important;
+  flex-grow: 1!important;
 }
 
 // Input

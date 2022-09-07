@@ -15,6 +15,7 @@ export function ButtonBack({onClick, style}: ButtonBackType) {
             padding: '17px 14px',
             display:'flex',
             boxShadow: "0px 0px 13px -3px rgba(0,0,0,0.46)",
+            cursor: 'pointer',
             ...style
         }}
             onClick={onClick}

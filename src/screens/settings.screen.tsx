@@ -7,13 +7,13 @@ import {
     useLogoutMutation,
     useUpdateUserSettingsMutation
 } from "../store/reducers/backend/backend.api";
-import {Badge, Button, Col, Form, Input, InputNumber, Row, Typography} from "antd";
+import {Badge, Button, Card, Col, Form, Input, InputNumber, Row, Typography} from "antd";
 import {UserRoleEnum} from "../store/reducers/backend/backend.api.types";
 import {VALIDATION_CONFIG} from "../configs/validation.config";
 import {ReactComponent as Phone} from '../assets/svgs/phone.svg';
 import {ReactComponent as User} from '../assets/svgs/user.svg';
 import {Link, useNavigate, useLocation} from "react-router-dom";
-import {ROUTES} from "../configs/app.constants";
+import {COLORS, ROUTES} from "../configs/app.constants";
 
 export function SettingsScreen() {
     const [settingsForm] = useForm()
@@ -21,7 +21,7 @@ export function SettingsScreen() {
     const {state: locationState}: any = useLocation();
     const {isFromCheckoutScreen = false} = locationState || {};
     const settingsReduxState = useAppSelector(({settings}) => settings)
-    const {id: user_id, phone, payments = [], wallet: {value: balance = 0} = {}} = settingsReduxState || {};
+    const {id: user_id, phone, payments = [], wallet: {value: balance = 0, hold = 0} = {}} = settingsReduxState || {};
     const IS_USER_ROLE_CUSTOMER = settingsReduxState.role === UserRoleEnum.Customer
     const [
         fetchLogout,
@@ -67,9 +67,12 @@ export function SettingsScreen() {
                 <Typography.Title level={2}>Settings</Typography.Title>
             </Row>
             <Row>
-                <Typography.Title level={3}>
+                <Typography.Title style={{marginBottom: 0}} level={3}>
                     Your profile
                 </Typography.Title>
+                <Typography.Paragraph style={{fontSize: 12}}>
+                    Your profile information, that you can change
+                </Typography.Paragraph>
             </Row>
             <Row>
                 <Form style={{width: '100%'}} form={settingsForm} onFinish={onFinishSettingsFormHandler}>
@@ -109,6 +112,14 @@ export function SettingsScreen() {
                             ${balance}
                         </Typography.Title>
                     </Row>
+                    <Row justify={'space-between'} style={{alignItems: 'center', marginTop: 10}}>
+                        <Typography.Paragraph>
+                            Hold
+                        </Typography.Paragraph>
+                        <Typography.Title level={4}>
+                            ${hold}
+                        </Typography.Title>
+                    </Row>
                     <Row style={{marginTop: 20}}>
                         <Form style={{width: '100%'}} onFinish={onFinishBalanceFormHandler}>
                             <Row style={{alignItems: 'flex-start'}}>
@@ -128,26 +139,33 @@ export function SettingsScreen() {
                         payments.length ?
                             <>
                                 <Row justify={'space-between'} style={{marginTop: 30}}>
-                                    <Typography.Title level={3}>
-                                        Last transactions
-                                    </Typography.Title>
-                                    <Button loading={fetchingGetUserInfo}
-                                            type={"primary"}
-                                            style={{width: '30%'}}
-                                            onClick={() => fetchGetUserInfo()}
-                                            size={"small"}>
-                                        Update
-                                    </Button>
+                                    <Row style={{width: '100%', alignItems: 'center'}} justify={'space-between'}>
+                                        <Typography.Title style={{marginBottom: 0}} level={3}>
+                                            Last transactions
+                                        </Typography.Title>
+                                        <Button loading={fetchingGetUserInfo}
+                                                type={"primary"}
+                                                style={{width: '30%'}}
+                                                onClick={() => fetchGetUserInfo()}
+                                                size={"small"}>
+                                            Update
+                                        </Button>
+                                    </Row>
+                                    <Typography.Paragraph style={{fontSize: 12}}>
+                                        Last bitcoinpay transactions
+                                    </Typography.Paragraph>
                                 </Row>
                                 <Row justify={'space-between'}>
                                     {payments.map(({btcPayId}) =>
-                                        <a className={'font-bold'}
-                                           style={{textDecoration: 'underline', marginBottom: 5}}
-                                           target="_blank"
-                                           href={`https://btcpay0.voltageapp.io/i/${btcPayId}`}
-                                        >
-                                            btcpayserver/{btcPayId}
-                                        </a>
+                                        <Card style={{width: '100%'}} size={'small'}>
+                                            <a className={'font-bold'}
+                                               style={{textDecoration: 'underline', marginBottom: 5}}
+                                               target="_blank"
+                                               href={`https://btcpay0.voltageapp.io/i/${btcPayId}`}
+                                            >
+                                                btcpayserver/{btcPayId}
+                                            </a>
+                                        </Card>
                                     )}
                                 </Row>
                             </> : null
@@ -155,20 +173,27 @@ export function SettingsScreen() {
                 </>
             }
             <Row style={{marginTop: 30}}>
-                <Typography.Title level={3}>
+                <Typography.Title style={{marginBottom: 0}} level={3}>
                     FAQ
                 </Typography.Title>
+                <Typography.Paragraph style={{fontSize: 12, width: '100%'}}>
+                    Answers to common questions
+                </Typography.Paragraph>
             </Row>
             <Row justify={'start'}>
                 <Col style={{marginBottom: 5}} span={24}>
-                    <Link className={'font-bold'} style={{textDecoration: 'underline'}} to={ROUTES.COURIER_FAQ}>
-                        {'How it works for a courier?'}
-                    </Link>
+                    <Card style={{width: '100%'}} size={'small'}>
+                        <Link style={{textDecoration: 'underline'}} to={ROUTES.COURIER_FAQ}>
+                            {'How it works for a courier?'}
+                        </Link>
+                    </Card>
                 </Col>
                 <Col span={24}>
-                    <Link className={'font-bold'} style={{textDecoration: 'underline'}} to={ROUTES.CUSTOMER_FAQ}>
-                        {'How it works for a customer?'}
-                    </Link>
+                    <Card style={{width: '100%'}} size={'small'}>
+                        <Link style={{textDecoration: 'underline'}} to={ROUTES.CUSTOMER_FAQ}>
+                            {'How it works for a customer?'}
+                        </Link>
+                    </Card>
                 </Col>
             </Row>
             <Row style={{marginTop: 30, marginBottom: 30}}>

@@ -9,6 +9,7 @@ type SettingsSliceStateType = {
     payments: Array<{ btcPayId: string }> | undefined;
     wallet?: {
         value: number;
+        hold: number;
     }
 }
 
@@ -20,6 +21,7 @@ const initialState: SettingsSliceStateType = {
     payments: undefined,
     wallet: {
         value: 0,
+        hold: 0,
     },
 }
 

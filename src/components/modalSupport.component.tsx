@@ -10,29 +10,23 @@ export const useModalSupport = () => {
 
     const [
         fetchContactUs,
-        {error: error3, isLoading: fetchingContactUs, data: contactUsData}
+        {error: error3, isLoading: fetchingContactUs}
     ] = useContactUsMutation();
     const {data: {message: errorContactUs = undefined} = {}} = error3 as any || {};
-    useEffect(() => {
-        if(contactUsData) {
-            setVisible(false);
-            notification.success({message: 'We will contact you within 24 hours'})
-            supportForm.resetFields();
-        }
 
-    }, [contactUsData])
-    //--------CATCH-ERRORS------//
-    useEffect(() => {
-        if (errorContactUs) {
-            notification.error({message: errorContactUs});
-        }
-    }, [errorContactUs])
-    //-------------------------//
     const onFinishFormHandler = async () => {
         try {
             await supportForm.validateFields()
             console.log(supportForm.getFieldsValue())
-            fetchContactUs(supportForm.getFieldsValue());
+            fetchContactUs(supportForm.getFieldsValue())
+                .unwrap()
+                .then(() => {
+                    setVisible(false);
+                    notification.success({message: 'We will contact you within 24 hours'})
+                    supportForm.resetFields();
+                }).catch(() => {
+                notification.error({message: errorContactUs});
+            })
         } catch (e) {
             return;
         }
