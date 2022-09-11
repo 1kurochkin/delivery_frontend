@@ -1,9 +1,10 @@
 export default {
-    isProd: false,
+    isProd: true,
     backend: {
         api: '/api',
         prod: {url: 'https://bringa.me'},
-        local: {url: 'http://192.168.1.45:5000'}
+        dev: {url: 'https://dev.bringa.me'},
+        // local: {url: 'http://192.168.1.45:5000'}
     },
     google: {
         maps: {

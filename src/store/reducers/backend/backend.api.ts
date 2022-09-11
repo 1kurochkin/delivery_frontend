@@ -49,7 +49,7 @@ export const backendApi = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: appConfig.isProd ?
             `${appConfig.backend.prod.url}${appConfig.backend.api}`:
-            `${appConfig.backend.local.url}${appConfig.backend.api}`,
+            `${appConfig.backend.dev.url}${appConfig.backend.api}`,
         prepareHeaders: headers => {
             console.log('prepareHeaders')
             Cookies.get('sid') && headers.set("auth-token", Cookies.get('sid') || '');
