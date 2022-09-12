@@ -1,4 +1,5 @@
 export default {
+    //
     isProd: true,
     backend: {
         api: '/api',
