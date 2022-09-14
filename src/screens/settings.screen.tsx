@@ -42,6 +42,12 @@ export function SettingsScreen() {
     const {modal: modalSupport, setVisible: setVisibleModalSupport} = useModalSupport()
 
     useEffect(() => {
+        if(!IS_USER_ROLE_CUSTOMER) {
+            fetchGetUserInfo()
+        }
+    }, [])
+
+    useEffect(() => {
         settingsForm.setFieldsValue(settingsReduxState);
     }, [settingsReduxState])
 
@@ -79,12 +85,12 @@ export function SettingsScreen() {
                     <Form.Item colon={false} label={'Your are'} name={'role'}>
                         <Input disabled/>
                     </Form.Item>
-                    <Form.Item rules={VALIDATION_CONFIG.name} colon={false} label={'Your name'} name={'name'}>
-                        <Input prefix={<User/>} placeholder={'Michael'}/>
-                    </Form.Item>
-                    <Form.Item rules={VALIDATION_CONFIG.phone} style={{marginBottom: 20}} colon={false}
+                    <Form.Item colon={false}
                                label={'Your phone'} name={'phone'}>
-                        <InputNumber maxLength={11} style={{width: '100%'}} placeholder={'000000'} prefix={<Phone/>}/>
+                        <InputNumber disabled maxLength={11} style={{width: '100%'}} placeholder={'000000'} prefix={<Phone/>}/>
+                    </Form.Item>
+                    <Form.Item style={{marginBottom: 20}} rules={VALIDATION_CONFIG.name} colon={false} label={'Your name'} name={'name'}>
+                        <Input prefix={<User/>} placeholder={'Michael'}/>
                     </Form.Item>
                     <Form.Item>
                         <Button size={'large'} loading={fetchingUpdateUserSettings} htmlType={'submit'}>Save</Button>
@@ -100,6 +106,8 @@ export function SettingsScreen() {
                                 Your wallet
                             </Typography.Title>
                         </Badge>
+                    </Row>
+                    <Row>
                         <Typography.Paragraph style={{fontSize: 12}}>
                             {balance > 0 ? 'Your account has been activated. You can start earning!' : 'Top up balance for work'}
                         </Typography.Paragraph>
@@ -129,7 +137,7 @@ export function SettingsScreen() {
                                 </Form.Item>
                                 <Form.Item style={{width: '70%'}}>
                                     <Button loading={fetchingCreateInvoice} className={'font-bold'} htmlType={'submit'}>
-                                        Top up
+                                        Add money
                                     </Button>
                                 </Form.Item>
                             </Row>
@@ -192,6 +200,30 @@ export function SettingsScreen() {
                     <Card style={{width: '100%'}} size={'small'}>
                         <Link style={{textDecoration: 'underline'}} to={ROUTES.CUSTOMER_FAQ}>
                             {'How it works for a customer?'}
+                        </Link>
+                    </Card>
+                </Col>
+            </Row>
+            <Row style={{marginTop: 30}}>
+                <Typography.Title style={{marginBottom: 0}} level={3}>
+                    Attachments
+                </Typography.Title>
+                <Typography.Paragraph style={{fontSize: 12, width: '100%'}}>
+                    There are legal documents here
+                </Typography.Paragraph>
+            </Row>
+            <Row justify={'start'}>
+                <Col style={{marginBottom: 5}} span={24}>
+                    <Card style={{width: '100%'}} size={'small'}>
+                        <Link style={{textDecoration: 'underline'}} to={ROUTES.PRIVACY_POLICY}>
+                            {'Privacy policy'}
+                        </Link>
+                    </Card>
+                </Col>
+                <Col span={24}>
+                    <Card style={{width: '100%'}} size={'small'}>
+                        <Link style={{textDecoration: 'underline'}} to={ROUTES.TERMS_AND_CONDITIONS}>
+                            {'Terms and confitions'}
                         </Link>
                     </Card>
                 </Col>

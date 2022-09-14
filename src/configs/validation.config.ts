@@ -3,7 +3,8 @@ import {Rule} from "rc-field-form/lib/interface";
 export const VALIDATION_CONFIG = {
     balance: [
         {required: true, message: ''},
-        {type: "number", max: 200, min: 0, message: 'minimum $10'},
+        {pattern: new RegExp(/^\d+$/), message: 'integers only'},
+        {type: "number", min: 0, message: 'minimum $10'},
     ] as Rule[],
     deliveryType: [{required: false, message: ''}],
     timeRange: [{required: false, message: ''}],
@@ -20,11 +21,11 @@ export const VALIDATION_CONFIG = {
     ] as Rule[],
     packageType: [
         {required: true, message: ''},
-        {type: "string", min: 3, max: 10, message: ''},
+        {type: "string", min: 3, max: 20, message: ''},
     ] as Rule[],
     address: [
         {required: true, message: ''},
-        {type: "string", min: 11, max: 50, message: ''}
+        {type: "string", min: 11, message: ''}
     ] as Rule[],
     phone: [
         {required: true, message: ''},

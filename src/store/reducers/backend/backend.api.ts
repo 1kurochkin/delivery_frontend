@@ -47,9 +47,7 @@ const {setAuth, setLoading} = appSliceActions;
 export const backendApi = createApi({
     reducerPath: 'backendApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: appConfig.isProd ?
-            `${appConfig.backend.prod.url}${appConfig.backend.api}`:
-            `${appConfig.backend.dev.url}${appConfig.backend.api}`,
+        baseUrl: `${appConfig.urls[appConfig.isProd ? 'prod' : 'dev']}${appConfig.urls.api}`,
         prepareHeaders: headers => {
             console.log('prepareHeaders')
             Cookies.get('sid') && headers.set("auth-token", Cookies.get('sid') || '');

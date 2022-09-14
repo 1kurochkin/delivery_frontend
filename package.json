@@ -48,7 +48,7 @@
   "scripts": {
     "generate:theme": "lessc --js ./src/styles/App.less ./src/styles/App.css",
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "ts-node src/scripts/sitemapBuilder.scripts.ts && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint --ignore-path .gitignore ."

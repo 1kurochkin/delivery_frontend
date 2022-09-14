@@ -45,6 +45,7 @@ export function OrderScreen() {
                 status = '',
                 pickupPoint = undefined,
                 deliveryPoint = undefined,
+                packagePrice = undefined,
                 comment = undefined,
                 payType = undefined,
                 packageType = undefined,
@@ -87,9 +88,9 @@ export function OrderScreen() {
                 setModalStateHandler('take', false)
                 notification.success({message: 'Order has been took!'})
             })
-            .catch(() => {
+            .catch(({data}) => {
                 setModalStateHandler('take', false)
-                notification.error({message: 'Error take order!'})
+                notification.error({message: data?.error || 'Error take order'})
             });
 
     }
@@ -234,7 +235,7 @@ export function OrderScreen() {
             }
 
             <Row style={{marginTop: 30 ,marginBottom: 25}}>
-                <Typography.Title level={3}>Parcel Information</Typography.Title>
+                <Typography.Title level={3}>Package Information</Typography.Title>
                 {packageInformationViewConfig.map(({label, value}) =>
                     <Typography.Paragraph style={{display: 'block', width: '100%', margin: 0}}>
                         {label} <span className={'font-bold'}>{value}</span>
@@ -256,7 +257,7 @@ export function OrderScreen() {
                         </a>
                 </Row>
             }
-            <Row style={{marginBottom: 25}} justify={'space-between'}>
+            <Row style={{marginBottom: 0}} justify={'space-between'}>
                 <Col span={16}><Typography.Title level={3}>Order price</Typography.Title></Col>
                 <Col span={8}>
                     <Typography.Title className={'text-color-second'} style={{textAlign: 'right'}} level={2}>
@@ -264,7 +265,18 @@ export function OrderScreen() {
                     </Typography.Title>
                 </Col>
             </Row>
-            <Row justify={'center'}>
+            {
+                !IS_USER_ROLE_CUSTOMER &&
+                <Row justify={'space-between'}>
+                    <Col span={16}><Typography.Title level={5}>Will hold on your balance</Typography.Title></Col>
+                    <Col span={8}>
+                        <Typography.Title className={'text-color-second'} style={{textAlign: 'right'}} level={5}>
+                            ${packagePrice}
+                        </Typography.Title>
+                    </Col>
+                </Row>
+            }
+            <Row style={{marginTop: 25}} justify={'center'}>
                 {actionButtonViewConfig.map((btnConfig) => {
                     if (!btnConfig) return null;
                     const {type, size, onClick, label} = btnConfig;

@@ -73,17 +73,31 @@ export function StartScreen() {
                         </Col>
                     )}
                 </Row>
-                {/*<Row style={{textAlign: 'center'}} justify={'center'}>*/}
-                {/*    <Col style={{marginBottom: 5}} span={24}>*/}
-                {/*        <Link className={'font-bold'} style={{textDecoration: 'underline'}} to={ROUTES.COURIER_FAQ}>*/}
-                {/*            {'How it works for a courier?'}*/}
-                {/*        </Link>*/}
-                {/*    </Col>*/}
-                {/*    <Col span={24}>*/}
-                {/*        <Link className={'font-bold'} style={{textDecoration: 'underline'}} to={ROUTES.CUSTOMER_FAQ}>*/}
-                {/*            {'How it works for a customer?'}*/}
-                {/*        </Link>*/}
-                {/*    </Col>*/}
+                {/*<Row>*/}
+                <Row style={{textAlign: 'center'}} justify={'space-around'}>
+                    <Col style={{marginBottom: 5}} span={10}>
+                        <Link style={{textDecoration: 'underline'}} to={ROUTES.COURIER_FAQ}>
+                            {'Courier FAQ'}
+                        </Link>
+                    </Col>
+                    <Col span={10}>
+                        <Link style={{textDecoration: 'underline'}} to={ROUTES.CUSTOMER_FAQ}>
+                            {'Customer FAQ'}
+                        </Link>
+                    </Col>
+                {/*</Row>*/}
+                {/*<Row style={{textAlign: 'center'}} justify={'space-around'}>*/}
+                    <Col span={10}>
+                    <Link style={{textDecoration: 'underline'}} to={ROUTES.PRIVACY_POLICY}>
+                        {'Privacy policy'}
+                    </Link>
+                    </Col>
+                        <Col span={10}>
+                    <Link style={{textDecoration: 'underline'}} to={ROUTES.TERMS_AND_CONDITIONS}>
+                        {'Terms and confitions'}
+                    </Link>
+                        </Col>
+                </Row>
                 {/*</Row>*/}
             </Space>
         </Form>
