@@ -74,7 +74,7 @@ export function LoginScreen() {
                 label: 'Enter your phone number',
                 name: 'phone',
                 rules: VALIDATION_CONFIG.phone,
-                children: <InputNumber maxLength={11} autoFocus={false} placeholder={'0000 000 0000'} style={{width: '100%'}} prefix={<Phone/>}/>
+                children: <InputNumber maxLength={11} autoFocus={false} placeholder={'19088702157'} style={{width: '100%'}} prefix={<Phone/>}/>
             }
         },
         {

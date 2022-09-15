@@ -29,7 +29,7 @@ export const VALIDATION_CONFIG = {
     ] as Rule[],
     phone: [
         {required: true, message: ''},
-        {pattern: new RegExp('[0-9]{11}'), message: ''},
+        {pattern: new RegExp('[0-9]{11}'), message: 'Format as 19088702157'},
     ] as Rule[],
     code: [
         {required: true, message: ''},
