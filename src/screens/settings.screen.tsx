@@ -76,7 +76,7 @@ export function SettingsScreen() {
                 <Typography.Title style={{marginBottom: 0}} level={3}>
                     Your profile
                 </Typography.Title>
-                <Typography.Paragraph style={{fontSize: 12}}>
+                <Typography.Paragraph>
                     Your profile information, that you can change
                 </Typography.Paragraph>
             </Row>
@@ -108,7 +108,7 @@ export function SettingsScreen() {
                         </Badge>
                     </Row>
                     <Row>
-                        <Typography.Paragraph style={{fontSize: 12}}>
+                        <Typography.Paragraph>
                             {balance > 0 ? 'Your account has been activated. You can start earning!' : 'Top up balance for work'}
                         </Typography.Paragraph>
                     </Row>
@@ -184,7 +184,7 @@ export function SettingsScreen() {
                 <Typography.Title style={{marginBottom: 0}} level={3}>
                     FAQ
                 </Typography.Title>
-                <Typography.Paragraph style={{fontSize: 12, width: '100%'}}>
+                <Typography.Paragraph style={{width: '100%'}}>
                     Answers to common questions
                 </Typography.Paragraph>
             </Row>
@@ -208,7 +208,7 @@ export function SettingsScreen() {
                 <Typography.Title style={{marginBottom: 0}} level={3}>
                     Attachments
                 </Typography.Title>
-                <Typography.Paragraph style={{fontSize: 12, width: '100%'}}>
+                <Typography.Paragraph style={{ width: '100%'}}>
                     There are legal documents here
                 </Typography.Paragraph>
             </Row>

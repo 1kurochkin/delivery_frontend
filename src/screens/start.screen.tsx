@@ -23,12 +23,12 @@ export function StartScreen() {
 
     const orderFormInputsView = [
         {
-            label: 'Specify the address from where to pick up the package',
+            label: 'Pick up address',
             placeholder: 'Enter your pickup address',
             name: 'pickupAddress'
         },
         {
-            label: 'Specify the address where to deliver the package',
+            label: 'Deliver address',
             placeholder: 'Enter the destination address',
             name: 'deliveryAddress'
         },
