@@ -217,7 +217,7 @@ export function CreateScreen() {
         PackageWeightEnum.Under10,
         PackageWeightEnum.Under15,
         PackageWeightEnum.Under20,
-        PackageWeightEnum.More20,
+        // PackageWeightEnum.More20,
     ];
 
     return (
