@@ -8,7 +8,7 @@ import {
 } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { CarouselRef } from "antd/lib/carousel";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import 'react-phone-number-input/style.css';
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ReactCodeInput from "react-verification-code-input";
@@ -33,6 +33,11 @@ export function LoginScreen() {
   const [loginForm] = useForm();
   const navigate = useNavigate();
   const { userRole: role } = useParams();
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => window.scrollTo(0, 0), 300) 
+    return () => clearTimeout(timeoutId)
+  }, [])
   
   if (role !== UserRoleEnum.Courier && role !== UserRoleEnum.Customer) {
     navigate(ROUTES.START);
@@ -57,6 +62,7 @@ export function LoginScreen() {
         await loginForm.validateFields(["phone"]);
         //@ts-ignore
         fetchSmsVerificationCode({ data: { phone, role } });
+        setCurrentSlide(1)
         carouselRef?.current?.goTo(1);
       }
       if (currentSlide === 1) {
@@ -90,7 +96,7 @@ export function LoginScreen() {
         label: "Enter your phone number",
         name: "phone",
         rules: VALIDATION_CONFIG.phone,
-        children: (<InputPhoneNumber/>),
+        children: (<InputPhoneNumber autoFocus={true}/>),
       },
     },
     {
@@ -107,8 +113,8 @@ export function LoginScreen() {
         label: "",
         name: "code",
         rules: VALIDATION_CONFIG.code,
-        children: (
-          <ReactCodeInput autoFocus={false} className={"react-code-input"} />
+        children: ( currentSlide === 1 ?
+          <ReactCodeInput autoFocus={true} className={"react-code-input"} /> : <></>
         ),
       },
     },

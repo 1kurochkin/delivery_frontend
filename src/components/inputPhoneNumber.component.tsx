@@ -6,12 +6,12 @@ export function InputPhoneNumber(props) {
 
     return (
         <InputNumber
-        {...props}
         maxLength={11}
-        autoFocus={false}
+        // autoFocus={false}
         placeholder={"Phone number with country code"}
         style={{ width: "100%" }}
         prefix={<Phone />}
+        {...props}
       />
     );
 }
