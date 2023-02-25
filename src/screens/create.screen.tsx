@@ -229,7 +229,7 @@ export function CreateScreen() {
                         IS_UPDATE_ORDER_PAGE ? `Correct order #${orderId}` : 'Create order'
                     }</Typography.Title>
                 </Row>
-                <Row>
+                {/* <Row>
                     <Form.Item
                         label={'Choose the delivery method'}
                         style={{width: '100%'}}
@@ -242,7 +242,7 @@ export function CreateScreen() {
                             )}
                         </Radio.Group>
                     </Form.Item>
-                </Row>
+                </Row> */}
                 <Row justify={'space-between'}>
                     <Form.Item label={'Package price'}
                                style={{width: '40%'}}
@@ -298,11 +298,6 @@ export function CreateScreen() {
                     <Form style={{width: '100%'}} form={deliveryForm}>
                         <FormCard pointType={OrderPointTypeEnum.Delivery}/>
                     </Form>
-                </Row>
-                <Row style={{marginBottom: 40}}>
-                    <Form.Item style={{width: '100%'}} name="comment">
-                        <Input.TextArea placeholder={'Add comments for the courier'} rows={4}/>
-                    </Form.Item>
                 </Row>
                 <Row style={{marginBottom: 25}} justify={'space-between'}>
                     <Col span={11}><Typography.Title level={2}>Total</Typography.Title></Col>
