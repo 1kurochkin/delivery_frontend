@@ -344,9 +344,9 @@ export function CreateScreen() {
             />
           </Form.Item>
         </Row>
-        <Row style={{ marginBottom: 50 }}>
+        <Row style={{ marginBottom: 20 }}>
           <Typography.Title level={3}>
-            What is the pick-up location?
+            Pick-up location 👇
           </Typography.Title>
           <Form style={{ width: "100%" }} form={pickupForm}>
             <FormCard pointType={OrderPointTypeEnum.Pickup} />
@@ -354,7 +354,7 @@ export function CreateScreen() {
         </Row>
         <Row style={{ marginBottom: 30 }}>
           <Typography.Title level={3}>
-            What is the delivery location?
+            Delivery location 👇
           </Typography.Title>
           <Form style={{ width: "100%" }} form={deliveryForm}>
             <FormCard pointType={OrderPointTypeEnum.Delivery} />

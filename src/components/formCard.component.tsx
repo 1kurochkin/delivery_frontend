@@ -36,6 +36,7 @@ export const FormCard: React.FC<{
       </Form.Item>
       <Row justify={"space-between"}>
         <Form.Item
+          validateTrigger={'onBlur'}
           rules={phoneFieldRule()}
           style={{ width: "100%" }}
           label={"Phone number"}
