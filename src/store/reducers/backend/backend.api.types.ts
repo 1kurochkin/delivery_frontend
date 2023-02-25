@@ -17,10 +17,11 @@ export enum OrderPointTypeEnum {
 }
 
 export enum PayTypeEnum {
-    SenderCash = 'Sender by cash',
-    RecipientCash = 'Recipient by cash',
+    SenderCash = 'Cash on Pick up',
+    RecipientCash = 'Cash on Delivery',
     ByBankApps = 'By bank apps',
-}
+  }
+  
 
 export enum OrderStatusEnum {
     Available = 'Available',
