@@ -290,13 +290,13 @@ export function CreateScreen() {
                 <Row style={{marginBottom: 50}}>
                     <Typography.Title level={3}>What is the pick-up location?</Typography.Title>
                     <Form style={{width: '100%'}} form={pickupForm}>
-                        <FormCard/>
+                        <FormCard pointType={OrderPointTypeEnum.Pickup} />
                     </Form>
                 </Row>
                 <Row style={{marginBottom: 30}}>
                     <Typography.Title level={3}>What is the delivery location?</Typography.Title>
                     <Form style={{width: '100%'}} form={deliveryForm}>
-                        <FormCard/>
+                        <FormCard pointType={OrderPointTypeEnum.Delivery}/>
                     </Form>
                 </Row>
                 <Row style={{marginBottom: 40}}>
