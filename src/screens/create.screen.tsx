@@ -239,9 +239,9 @@ export function CreateScreen() {
     { value: DeliveryTypeEnum.Truck },
   ];
   const payTypeViewConfig = [
-    { value: PayTypeEnum.SenderCash, label: "Sender by cash" },
-    { value: PayTypeEnum.RecipientCash, label: "Recipient by cash" },
-    { value: PayTypeEnum.ByBankApps, label: "By bank apps" },
+    { value: PayTypeEnum.SenderCash},
+    { value: PayTypeEnum.RecipientCash },
+    { value: PayTypeEnum.ByBankApps},
   ];
   const packageWeightViewConfig = [
     PackageWeightEnum.Under1,
@@ -330,8 +330,8 @@ export function CreateScreen() {
             rules={VALIDATION_CONFIG.payType}
           >
             <Select>
-              {payTypeViewConfig.map(({ value, label }) => (
-                <Select.Option value={value}>{label}</Select.Option>
+              {payTypeViewConfig.map(({ value }) => (
+                <Select.Option value={value}>{value}</Select.Option>
               ))}
             </Select>
           </Form.Item>
