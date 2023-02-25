@@ -1,17 +1,20 @@
-import React from 'react';
-import {Anchor, Button, Col, Form, Image, Row, Space, Typography} from "antd";
-import {Link, useNavigate} from "react-router-dom";
-import {ROUTES} from "../configs/app.constants";
-import {UserRoleEnum} from "../store/reducers/backend/backend.api.types";
-import {SearchPlaces} from "../components/searchPlaces.component";
-import courierPic from "../assets/pictures/courier.jpg"
-import {useForm} from "antd/es/form/Form";
-import {VALIDATION_CONFIG} from "../configs/validation.config";
+import { Button, Col, Form, Row, Space, Typography } from "antd";
+import { useForm } from "antd/es/form/Form";
+import { useEffect } from 'react';
+import { Link, useNavigate } from "react-router-dom";
+import { SearchPlaces } from "../components/searchPlaces.component";
+import { ROUTES } from "../configs/app.constants";
+import { VALIDATION_CONFIG } from "../configs/validation.config";
+import { UserRoleEnum } from "../store/reducers/backend/backend.api.types";
 
 export function StartScreen() {
 
     const [orderForm] = useForm();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [])
 
     const onFinishFormHandler = (values: any) => {
         const {pickupAddress, deliveryAddress} = values;
