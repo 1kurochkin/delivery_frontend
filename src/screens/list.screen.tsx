@@ -1,12 +1,12 @@
-import React, {useEffect, useState} from 'react';
-import {Affix, Button, Col, List, Row, Typography} from "antd";
-import {useLazyGetOrdersQuery} from "../store/reducers/backend/backend.api";
-import {OrderStatusEnum, OrderType, UserRoleEnum} from "../store/reducers/backend/backend.api.types";
-import {PAGINATION, ROUTES} from "../configs/app.constants";
-import {OrderCard} from "../components/orderCard.component";
-import {useAppSelector} from "../hooks/useAppSelector";
-import {useNavigate} from "react-router-dom";
-import {Preloader} from "../components/preloader.component";
+import { Button, Col, List, Row, Typography } from "antd";
+import { useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
+import { OrderCard } from "../components/orderCard.component";
+import { Preloader } from "../components/preloader.component";
+import { PAGINATION, ROUTES } from "../configs/app.constants";
+import { useAppSelector } from "../hooks/useAppSelector";
+import { useLazyGetOrdersQuery } from "../store/reducers/backend/backend.api";
+import { OrderStatusEnum, OrderType, UserRoleEnum } from "../store/reducers/backend/backend.api.types";
 
 export function ListScreen() {
     const userRole = useAppSelector(({settings}) => settings.role);
@@ -104,7 +104,7 @@ export function ListScreen() {
                 }
                 renderItem={(item) =>
                     <div onClick={() => onClickOrderCard(item.id)}>
-                        <OrderCard {...item}/>
+                        <OrderCard userRole={userRole as UserRoleEnum} {...item}/>
                     </div>
                 }
                 footer={

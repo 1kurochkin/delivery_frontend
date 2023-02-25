@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url>
+  <loc>https://bringa.me/login</loc>
+  <loc>https://bringa.me/order/create</loc>
+  <loc>https://bringa.me/order/update</loc>
+  <loc>https://bringa.me/order/list</loc>
+  <loc>https://bringa.me/order</loc>
+  <loc>https://bringa.me/settings</loc>
+  <loc>https://bringa.me/</loc>
+  <loc>https://bringa.me/courierFaq</loc>
+  <loc>https://bringa.me/customerFaq</loc>
+  <loc>https://bringa.me/termsAndConditions</loc>
+  <loc>https://bringa.me/privacyPolicy</loc>
+  <loc>https://bringa.me/checkout</loc>
+  <lastmod>2023-02-23T01:45:20.318Z</lastmod>
+</url>
+</urlset>

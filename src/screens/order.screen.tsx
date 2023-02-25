@@ -313,10 +313,10 @@ const TimeLineOrderScreenItem = ({address, date, timeRangeFrom, timeRangeTo, pho
             <Row>
                 <Typography.Title style={{marginBottom: 0}} level={5}>{address}</Typography.Title>
                 <Row>
-                    <Typography.Paragraph style={{fontSize: 12, marginBottom: 5}}>
+                    <Typography.Paragraph style={{ marginBottom: 5}}>
                         {`${moment(date).format('MM/DD')}`}
                     </Typography.Paragraph>
-                    <Typography.Paragraph style={{fontSize: 12, marginBottom: 0, marginLeft: 40}}>
+                    <Typography.Paragraph style={{marginBottom: 0, marginLeft: 40}}>
                         {`from ${moment(timeRangeFrom).format('HH:MM A')} to ${moment(timeRangeTo).format('HH:MM A')}`}
                     </Typography.Paragraph>
                 </Row>

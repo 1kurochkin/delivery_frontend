@@ -7,7 +7,7 @@ const path = require('path');
 const routes = Object.values(ROUTES).map((route) => {
     // console.log(appConfig.urls.prod)
  // @ts-ignore
-    return `  <loc>${appConfig.urls.prod}${typeof route === 'object' ? route?.PATH : route}</loc>\r`
+    return `  <loc>${appConfig.api.url}${typeof route === 'object' ? route?.PATH : route}</loc>\r`
 });
 const newSitemapXml = [
     '<?xml version="1.0" encoding="UTF-8"?>\r',

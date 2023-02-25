@@ -1,14 +1,11 @@
-import React from 'react';
-import './styles/App.css'
-import {useLocation} from 'react-router-dom';
-import {useAppSelector} from "./hooks/useAppSelector";
-import {useGetUserInfoQuery} from "./store/reducers/backend/backend.api";
-import {Layout} from "antd";
-import {Content} from "antd/es/layout/layout";
-import PWAPrompt from 'react-ios-pwa-prompt'
+import { Layout } from "antd";
+import { Content } from "antd/es/layout/layout";
+import { useLocation } from 'react-router-dom';
+import { Preloader } from "./components/preloader.component";
+import { useAppSelector } from "./hooks/useAppSelector";
 import AppRoutes from "./routes/routes";
-import {Preloader} from "./components/preloader.component";
-import {isMobile} from 'react-device-detect';
+import { useGetUserInfoQuery } from "./store/reducers/backend/backend.api";
+import './styles/App.css';
 
 function App() {
     const {pathname} = useLocation();
@@ -18,7 +15,7 @@ function App() {
 
     return (
         <Layout>
-            <PWAPrompt timesToShow={2} copyBody={'This website has app functionality. Add it to your home screen to use it in fullscreen.'} />
+            {/* <PWAPrompt timesToShow={2} copyBody={'This website has app functionality. Add it to your home screen to use it in fullscreen.'} /> */}
             {
                 loadingApp &&
                 <Preloader type={'fullscreen'} />

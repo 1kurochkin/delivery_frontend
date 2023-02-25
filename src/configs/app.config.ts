@@ -1,11 +1,16 @@
 export default {
     //
     isProd: true,
-    urls: {
-        prod: 'https://bringa.me',
-        dev: 'https://dev.bringa.me',
-        api: '/api'
+    api: {
+        url: Number(process.env.REACT_APP_IS_PROD) ? "https://bringa.me" : "http://localhost:5000",
+        api: "/api"
     },
+    // urls: {
+    //     prod: 'https://bringa.me',
+    //     // dev: 'https://dev.bringa.me',
+    //     dev: 'https://localhost:5000',
+    //     api: '/api'
+    // },
     // backend: {
     //     api: '/api',
     //     prod: {url: 'https://bringa.me'},
