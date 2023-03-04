@@ -18,11 +18,11 @@ import {COLORS, ROUTES} from "../configs/app.constants";
 export function SettingsScreen() {
     const [settingsForm] = useForm()
     const navigate = useNavigate()
-    const {state: locationState}: any = useLocation();
-    const {isFromCheckoutScreen = false} = locationState || {};
+    // const {state: locationState}: any = useLocation();
+    // const {isFromCheckoutScreen = false} = locationState || {};
     const settingsReduxState = useAppSelector(({settings}) => settings)
-    const {id: user_id, phone, payments = [], wallet: {value: balance = 0, hold = 0} = {}} = settingsReduxState || {};
-    const IS_USER_ROLE_CUSTOMER = settingsReduxState.role === UserRoleEnum.Customer
+    // const {id: user_id, phone, payments = [], wallet: {value: balance = 0, hold = 0} = {}} = settingsReduxState || {};
+    // const IS_USER_ROLE_CUSTOMER = settingsReduxState.role === UserRoleEnum.Customer
     const [
         fetchLogout,
         {isLoading: fetchingLogout}
@@ -41,11 +41,11 @@ export function SettingsScreen() {
     ] = useLazyGetUserInfoQuery();
     const {modal: modalSupport, setVisible: setVisibleModalSupport} = useModalSupport()
 
-    useEffect(() => {
-        if(!IS_USER_ROLE_CUSTOMER) {
-            fetchGetUserInfo()
-        }
-    }, [])
+    // useEffect(() => {
+    //     if(!IS_USER_ROLE_CUSTOMER) {
+    //         fetchGetUserInfo()
+    //     }
+    // }, [])
 
     useEffect(() => {
         settingsForm.setFieldsValue(settingsReduxState);
@@ -72,14 +72,14 @@ export function SettingsScreen() {
             <Row>
                 <Typography.Title level={2}>Settings</Typography.Title>
             </Row>
-            <Row>
+            {/* <Row>
                 <Typography.Title style={{marginBottom: 0}} level={3}>
-                    Your profile
+                    profile
                 </Typography.Title>
                 <Typography.Paragraph>
                     Your profile information, that you can change
                 </Typography.Paragraph>
-            </Row>
+            </Row> */}
             <Row>
                 <Form style={{width: '100%'}} form={settingsForm} onFinish={onFinishSettingsFormHandler}>
                     <Form.Item colon={false} label={'Your are'} name={'role'}>
@@ -97,7 +97,7 @@ export function SettingsScreen() {
                     </Form.Item>
                 </Form>
             </Row>
-            {
+            {/* {
                 !IS_USER_ROLE_CUSTOMER &&
                 <>
                     <Row style={{marginTop: 20}}>
@@ -179,8 +179,8 @@ export function SettingsScreen() {
                             </> : null
                     }
                 </>
-            }
-            <Row style={{marginTop: 30}}>
+            } */}
+            {/* <Row style={{marginTop: 30}}>
                 <Typography.Title style={{marginBottom: 0}} level={3}>
                     FAQ
                 </Typography.Title>
@@ -203,16 +203,16 @@ export function SettingsScreen() {
                         </Link>
                     </Card>
                 </Col>
-            </Row>
-            <Row style={{marginTop: 30}}>
+            </Row> */}
+            {/* <Row style={{marginTop: 30}}>
                 <Typography.Title style={{marginBottom: 0}} level={3}>
                     Attachments
                 </Typography.Title>
                 <Typography.Paragraph style={{ width: '100%'}}>
                     There are legal documents here
                 </Typography.Paragraph>
-            </Row>
-            <Row justify={'start'}>
+            </Row> */}
+            {/* <Row justify={'start'}>
                 <Col style={{marginBottom: 5}} span={24}>
                     <Card style={{width: '100%'}} size={'small'}>
                         <Link style={{textDecoration: 'underline'}} to={ROUTES.PRIVACY_POLICY}>
@@ -227,8 +227,8 @@ export function SettingsScreen() {
                         </Link>
                     </Card>
                 </Col>
-            </Row>
-            <Row style={{marginTop: 30, marginBottom: 30}}>
+            </Row> */}
+            <Row style={{marginTop: 60, marginBottom: 30}}>
                 <Button size={'large'} loading={fetchingLogout} type={'primary'} onClick={onClickLogoutButton}>
                     Logout
                 </Button>

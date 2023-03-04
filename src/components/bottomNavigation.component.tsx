@@ -65,7 +65,6 @@ export function BottomNavigation() {
     return (
         <>
             <BottomNavigationModule
-                activeBgColor={'black'}
                 items={bottomNavItems}
                 defaultSelected={selected}
                 onItemClick={({route}: any) => navigate(route)}
