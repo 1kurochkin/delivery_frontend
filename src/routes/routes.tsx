@@ -15,20 +15,15 @@ import {OrderScreen} from "../screens/order.screen";
 import {SettingsScreen} from "../screens/settings.screen";
 import {BottomNavigation} from "../components/bottomNavigation.component";
 import {Footer} from "antd/es/layout/layout";
+import { UserRoleEnum } from '../store/reducers/backend/backend.api.types';
 
 function AppRoutes({isAuth, pathname = ''}) {
-    console.log(
-        pathname === ROUTES.LIST_ORDERS ||
-        pathname.includes(ROUTES.UPDATE_ORDER.PATH) ||
-        pathname === ROUTES.CREATE_ORDER ||
-        pathname === ROUTES.SETTINGS
-    )
     return (
         <>
             <RouterDomRoutes>
                 {
                     !isAuth && <>
-                        <Route path={ROUTES.START} element={<StartScreen/>}/>
+                        {/* <Route path={ROUTES.START} element={<StartScreen/>}/> */}
                         <Route path={ROUTES.LOGIN.PATH + ROUTES.LOGIN.PARAMS}
                                element={<LoginScreen/>}/>
                     </>
@@ -78,7 +73,7 @@ function AppRoutes({isAuth, pathname = ''}) {
                            <Navigate to={
                                isAuth ?
                                    ROUTES.LIST_ORDERS :
-                                   ROUTES.START
+                                   ROUTES.LOGIN.PATH + '/' + UserRoleEnum.Customer
                            } replace/>
                        }
                 />

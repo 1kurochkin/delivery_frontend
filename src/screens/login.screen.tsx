@@ -1,37 +1,27 @@
 import {
   Button,
   Carousel,
+  Col,
   Form,
-  InputNumber,
   Row,
   Typography
 } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { CarouselRef } from "antd/lib/carousel";
-import { useEffect, useRef, useState } from "react";
-import 'react-phone-number-input/style.css';
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import ReactCodeInput from "react-verification-code-input";
-import { ReactComponent as Phone } from "../assets/svgs/phone.svg";
-import { ButtonBack } from "../components/buttonBack.component";
+import { InputPhoneNumber } from "../components/inputPhoneNumber.component";
 import { ROUTES } from "../configs/app.constants";
 import { VALIDATION_CONFIG } from "../configs/validation.config";
 import {
-  useCreateOrderMutation,
   useLoginMutation,
-  useSmsVerificationCodeMutation,
+  useSmsVerificationCodeMutation
 } from "../store/reducers/backend/backend.api";
-import {
-  UserRoleEnum
-} from "../store/reducers/backend/backend.api.types";
-import { InputPhoneNumber } from "../components/inputPhoneNumber.component";
-import React from "react";
+import { ButtonBack } from "../components/buttonBack.component";
 
 export function LoginScreen() {
-  const { state } = useLocation();
-  const { orderData = undefined } = (state || {}) as any;
   const [loginForm] = useForm();
-  const navigate = useNavigate();
   const { userRole: role } = useParams();
 
   useEffect(() => {
@@ -39,9 +29,6 @@ export function LoginScreen() {
     return () => clearTimeout(timeoutId)
   }, [])
   
-  if (role !== UserRoleEnum.Courier && role !== UserRoleEnum.Customer) {
-    navigate(ROUTES.START);
-  }
   const carouselRef = useRef<CarouselRef>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   //----REQUESTS----//
@@ -49,10 +36,6 @@ export function LoginScreen() {
   const [fetchSmsVerificationCode, { isLoading: fetchingGetCode }] =
     useSmsVerificationCodeMutation();
   const [fetchLogin, { isLoading: fetchingLogin }] = useLoginMutation();
-  const [fetchCreateOrder, { isLoading: fetchingCreateOrder }] =
-    useCreateOrderMutation();
-
-  // console.log(orderData, "ORDER DATA")
 
   const onFinishFormHandler = async () => {
     console.log("onFinishFormHandler");
@@ -69,27 +52,22 @@ export function LoginScreen() {
         await loginForm.validateFields(["code"]);
         // @ts-ignore
         fetchLogin({ data: { phone, role }, code })
-          .unwrap()
-          .then((data) => {
-            if (orderData) {
-              fetchCreateOrder(JSON.parse(orderData));
-            }
-          });
       }
     } catch {}
   };
 
   const onClickButtonBackHandler = () => {
-    if (currentSlide === 0) navigate(-1);
-    if (currentSlide === 1) carouselRef?.current?.prev();
+    if (currentSlide === 1) {
+      setCurrentSlide(0)
+      carouselRef?.current?.prev();
+    }
   };
   const sliderViewConfig = [
     {
       title: "Login",
       paragraph: (
         <Typography.Paragraph>
-          Please enter <span className={"font-bold"}>your phone number</span> so
-          we can verify you
+          Please enter <span className={"font-bold"}>your phone number</span> for login
         </Typography.Paragraph>
       ),
       formItem: {
@@ -100,12 +78,12 @@ export function LoginScreen() {
       },
     },
     {
-      title: "Verify your details",
+      title: "Verify",
       paragraph: (
         <Typography.Paragraph>
           Check your text messages. Please find the code we sent you to{" "}
           <span className={"font-bold"}>
-            {loginForm.getFieldValue("phone")}
+            {'+' + loginForm.getFieldValue("phone")}
           </span>
         </Typography.Paragraph>
       ),
@@ -121,18 +99,12 @@ export function LoginScreen() {
   ];
   return (
     <>
-      <Row style={{ marginBottom: 40 }}>
+      {<Row style={{ marginBottom: 40, visibility: currentSlide === 1 ? 'visible' : 'hidden' }}>
         <ButtonBack onClick={onClickButtonBackHandler} />
-      </Row>
-      {orderData && (
-        <Row>
-          <Typography.Paragraph style={{ whiteSpace: "pre-line" }}>
-            For create the order you should be authorized
-          </Typography.Paragraph>
-        </Row>
-      )}
+      </Row>}
       <Form style={{ width: "100%" }} form={loginForm}>
         <Carousel
+        style={{marginBottom: 30}}
           swipe={false}
           effect={"fade"}
           afterChange={setCurrentSlide}
@@ -144,7 +116,7 @@ export function LoginScreen() {
               <Row>
                 <Typography.Title>{title}</Typography.Title>
               </Row>
-              <Row style={{ marginBottom: 60 }}>{paragraph}</Row>
+              <Row style={{ marginBottom: 30 }}>{paragraph}</Row>
               <Row style={{ marginBottom: 20 }}>
                 <Form.Item
                   validateTrigger={'onBlur'}
@@ -160,7 +132,7 @@ export function LoginScreen() {
             </>
           ))}
         </Carousel>
-        <Row>
+        <Row style={{textAlign: 'center'}}>
           <Button
             onClick={onFinishFormHandler}
             loading={fetchingGetCode || fetchingLogin}
@@ -168,12 +140,16 @@ export function LoginScreen() {
           >
             Next
           </Button>
+          {/* {currentSlide !== 1 && <Col span={24} style={{marginTop: 25}}>
+            <Link
+              style={{ textDecoration: "underline" }}
+              to={ROUTES.CUSTOMER_FAQ}
+            >
+              {"Customer FAQ"}
+            </Link>
+          </Col>} */}
         </Row>
       </Form>
     </>
   );
-}
-
-function useSmsVerificationCode(): [any, { isFetching: any }] {
-  throw new Error("Function not implemented.");
 }
