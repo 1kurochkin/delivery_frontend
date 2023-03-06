@@ -1,19 +1,18 @@
-import React, {useEffect} from 'react';
-import {useAppSelector} from "../hooks/useAppSelector";
-import {useModalSupport} from "../components/modalSupport.component";
-import {useForm} from "antd/es/form/Form";
+import { Button, Form, Input, InputNumber, Row, Typography } from "antd";
+import { useForm } from "antd/es/form/Form";
+import { useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
+import { ReactComponent as Phone } from '../assets/svgs/phone.svg';
+import { ReactComponent as User } from '../assets/svgs/user.svg';
+import { useModalSupport } from "../components/modalSupport.component";
+import { ROUTES } from "../configs/app.constants";
+import { VALIDATION_CONFIG } from "../configs/validation.config";
+import { useAppSelector } from "../hooks/useAppSelector";
 import {
     useCreateInvoiceMutation, useLazyGetUserInfoQuery,
     useLogoutMutation,
     useUpdateUserSettingsMutation
 } from "../store/reducers/backend/backend.api";
-import {Badge, Button, Card, Col, Form, Input, InputNumber, Row, Typography} from "antd";
-import {UserRoleEnum} from "../store/reducers/backend/backend.api.types";
-import {VALIDATION_CONFIG} from "../configs/validation.config";
-import {ReactComponent as Phone} from '../assets/svgs/phone.svg';
-import {ReactComponent as User} from '../assets/svgs/user.svg';
-import {Link, useNavigate, useLocation} from "react-router-dom";
-import {COLORS, ROUTES} from "../configs/app.constants";
 
 export function SettingsScreen() {
     const [settingsForm] = useForm()

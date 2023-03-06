@@ -49,6 +49,7 @@ export function CreateScreen() {
   const { orderId } = useParams();
   const IS_UPDATE_ORDER_PAGE = !!orderId;
   const IS_AUTH_USER = useAppSelector(({ app }) => app.auth);
+  const pickupPhoneNumber = useAppSelector(({ settings }) => settings.phone);
   const { state }: any = useLocation();
   const { pickupAddress = undefined, deliveryAddress = undefined } =
     state || {};
@@ -79,7 +80,7 @@ export function CreateScreen() {
     address: pickupAddress,
     orderPointType: OrderPointTypeEnum.Pickup,
     date: moment(),
-    timeRange: [moment(), moment().add(2, "hours")],
+    timeRange: [moment(), moment().add(5, "hours")],
   });
   const [initialStateDeliveryForm] = useState({
     ...initialStatePickupForm,
@@ -89,7 +90,7 @@ export function CreateScreen() {
   });
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    const timeoutID = setTimeout(() => window.scrollTo(0, 0), 1000)
     if (IS_UPDATE_ORDER_PAGE) {
       fetchGetOrder(Number(orderId))
         .unwrap()
@@ -119,9 +120,11 @@ export function CreateScreen() {
             ],
           });
         });
-    } else {
+    } else {   
+      console.log(pickupPhoneNumber, 'pickupPhoneNumber');
+      
       orderForm.setFieldsValue(initialStateOrderForm);
-      pickupForm.setFieldsValue(initialStatePickupForm);
+      pickupForm.setFieldsValue({...initialStatePickupForm, phone: pickupPhoneNumber});
       deliveryForm.setFieldsValue(initialStateDeliveryForm);
     }
     if (pickupAddress && deliveryAddress) {
@@ -131,6 +134,7 @@ export function CreateScreen() {
         deliveryType: DeliveryTypeEnum.Walking,
       });
     }
+    return () => clearTimeout(timeoutID)
   }, []);
 
   const [fetchGetOrder, { isFetching: fetchingGetOrder = false }] =
@@ -157,20 +161,20 @@ export function CreateScreen() {
   };
 
   const onFinishFormHandler = async () => {
-    // console.log(
-    //     'onFinishFormHandler',
-    //     orderForm.getFieldsValue(),
-    //     pickupForm.getFieldsValue(),
-    //     deliveryForm.getFieldsValue()
-    // )
     try {
       await Promise.all([
         orderForm.validateFields(),
         pickupForm.validateFields(),
         deliveryForm.validateFields(),
       ]);
-      const data = {
-        ...orderForm.getFieldsValue(),
+      console.log(orderForm.getFieldsValue(), 'orderForm.getFieldsValue()');
+      
+      const data = {  
+        deliveryType: DeliveryTypeEnum.Walking,
+        weight: PackageWeightEnum.Under1,
+        payType: PayTypeEnum.SenderCash,
+        packagePrice: 0,
+        packageType: '',
         pickupPoint: {
           orderPointType: OrderPointTypeEnum.Pickup,
           ...pickupForm.getFieldsValue(),
@@ -233,25 +237,25 @@ export function CreateScreen() {
     return value?.includes("USA") && value?.length > 10;
   };
 
-  const shippingMethodViewConfig = [
-    { value: DeliveryTypeEnum.Walking },
-    { value: DeliveryTypeEnum.Car },
-    { value: DeliveryTypeEnum.Truck },
-  ];
-  const payTypeViewConfig = [
-    { value: PayTypeEnum.SenderCash},
-    { value: PayTypeEnum.RecipientCash },
-    { value: PayTypeEnum.ByBankApps},
-  ];
-  const packageWeightViewConfig = [
-    PackageWeightEnum.Under1,
-    PackageWeightEnum.Under2,
-    PackageWeightEnum.Under5,
-    PackageWeightEnum.Under10,
-    PackageWeightEnum.Under15,
-    PackageWeightEnum.Under20,
-    // PackageWeightEnum.More20,
-  ];
+  // const shippingMethodViewConfig = [
+  //   { value: DeliveryTypeEnum.Walking },
+  //   { value: DeliveryTypeEnum.Car },
+  //   { value: DeliveryTypeEnum.Truck },
+  // ];
+  // const payTypeViewConfig = [
+  //   { value: PayTypeEnum.SenderCash },
+  //   { value: PayTypeEnum.RecipientCash },
+  //   { value: PayTypeEnum.ByBankApps },
+  // ];
+  // const packageWeightViewConfig = [
+  //   PackageWeightEnum.Under1,
+  //   PackageWeightEnum.Under2,
+  //   PackageWeightEnum.Under5,
+  //   PackageWeightEnum.Under10,
+  //   PackageWeightEnum.Under15,
+  //   PackageWeightEnum.Under20,
+  //   // PackageWeightEnum.More20,
+  // ];
 
   return (
     <Form.Provider onFormChange={onFormsValuesChangeHandler}>
@@ -283,7 +287,7 @@ export function CreateScreen() {
                         </Radio.Group>
                     </Form.Item>
                 </Row> */}
-        <Row justify={"space-between"}>
+        {/* <Row justify={"space-between"}>
           <Form.Item
             label={"Package price"}
             style={{ width: "40%" }}
@@ -335,30 +339,30 @@ export function CreateScreen() {
               ))}
             </Select>
           </Form.Item>
+        </Row> */}
+        <Row style={{ marginBottom: 20 }}>
+          <Typography.Title level={3}>Pick-up location👇</Typography.Title>
+          <Form style={{ width: "100%" }} form={pickupForm}>
+            <FormCard pointType={OrderPointTypeEnum.Pickup} />
+          </Form>
         </Row>
         <Row style={{ marginBottom: 10 }}>
-          <Form.Item style={{ width: "100%" }} label={"Comment for the Courier"} name="comment">
+          <Typography.Title level={3}>Delivery location👇</Typography.Title>
+          <Form style={{ width: "100%" }} form={deliveryForm}>
+            <FormCard pointType={OrderPointTypeEnum.Delivery} />
+          </Form>
+        </Row>
+        <Row style={{ marginBottom: 25 }}>
+          <Form.Item
+            style={{ width: "100%" }}
+            label={"Comment for the Courier"}
+            name="comment"
+          >
             <Input.TextArea
               placeholder={"Add comments for the courier"}
               rows={4}
             />
           </Form.Item>
-        </Row>
-        <Row style={{ marginBottom: 20 }}>
-          <Typography.Title level={3}>
-            Pick-up location👇
-          </Typography.Title>
-          <Form style={{ width: "100%" }} form={pickupForm}>
-            <FormCard pointType={OrderPointTypeEnum.Pickup} />
-          </Form>
-        </Row>
-        <Row style={{ marginBottom: 30 }}>
-          <Typography.Title level={3}>
-            Delivery location👇
-          </Typography.Title>
-          <Form style={{ width: "100%" }} form={deliveryForm}>
-            <FormCard pointType={OrderPointTypeEnum.Delivery} />
-          </Form>
         </Row>
         <Row style={{ marginBottom: 25 }} justify={"space-between"}>
           <Col span={11}>

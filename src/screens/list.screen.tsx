@@ -75,7 +75,7 @@ export function ListScreen() {
                 <Typography.Title level={2}>Orders list</Typography.Title>
             </Row>
             <List
-                style={{height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}
+                style={{height: '100%', display: 'flex', flexDirection: 'column'}}
                 split bordered={false}
                 loading={fetchingGetOrders ? {indicator: <Preloader type={'usual'}/>} : false}
                 grid={{gutter: 16, column: 1}}

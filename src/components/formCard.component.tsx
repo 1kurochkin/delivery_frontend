@@ -15,14 +15,6 @@ export const FormCard: React.FC<{
     return current && current < moment().subtract(1, "days");
   };
 
-  const phoneFieldRule = () => {
-    const [one, two] = VALIDATION_CONFIG.phone;    
-    return [
-      pointType === OrderPointTypeEnum.Delivery ? { ...one, required: false } : one,
-      two,
-    ];
-  };
-
   return (
     <>
       <Form.Item
@@ -37,7 +29,7 @@ export const FormCard: React.FC<{
       <Row justify={"space-between"}>
         <Form.Item
           validateTrigger={'onBlur'}
-          rules={phoneFieldRule()}
+          rules={VALIDATION_CONFIG.phone}
           style={{ width: "100%" }}
           label={"Phone number"}
           hasFeedback

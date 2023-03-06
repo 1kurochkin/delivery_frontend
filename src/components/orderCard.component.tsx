@@ -17,7 +17,9 @@ const OrderCardTimelineItem = ({
 }) => {
   return (
     <>
-      <Typography.Paragraph style={{ marginBottom: 0, fontSize: 14, color: COLORS.SECOND }}>
+      <Typography.Paragraph
+        style={{ marginBottom: 0, fontSize: 14, color: COLORS.SECOND }}
+      >
         <span className={"font-bold"}>
           {moment(date).format("MM/DD") + " "}
         </span>
@@ -52,13 +54,29 @@ export const OrderCard: React.FC<IOrderCardProps> = (props) => {
   } = props;
 
   return (
-    <List.Item>
+    <List.Item style={{ marginTop: 10 }}>
       <Card size={"small"} className={"order-card"}>
-        <Row style={{ alignItems: "center" }}>
-          <Typography.Title>#{id}</Typography.Title>
-          <Typography.Paragraph style={{ marginLeft: 15 }}>
+        <Row style={{ alignItems: "center" }} justify={"space-between"}>
+          <Typography.Title level={2}>#{id}</Typography.Title>
+          <Col style={{ textAlign: "right", color: COLORS.MAIN }}>
+            <Typography.Title level={2}>
+              {"$" + deliveryPrice}
+            </Typography.Title>
+          </Col>
+          {/* <span
+            className={"font-bold"}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              fontSize: "20px",
+              cursor: "pointer",
+            }}
+          >
+            details <Details style={{ marginLeft: 5 }} />
+          </span> */}
+          {/* <Typography.Paragraph style={{ marginLeft: 15 }}>
             {packageType}, {weight}
-          </Typography.Paragraph>
+          </Typography.Paragraph> */}
         </Row>
         <Divider
           style={{ borderColor: "black", margin: 0, marginBottom: 25 }}
@@ -84,11 +102,11 @@ export const OrderCard: React.FC<IOrderCardProps> = (props) => {
             </Timeline.Item>
           </Timeline>
         </Row>
-        <Divider
+        {/* <Divider
           style={{ borderColor: "black", margin: 0, marginBottom: 5 }}
           dashed={true}
-        />
-        {userRole === UserRoleEnum.Courier && (
+        /> */}
+        {/* {userRole === UserRoleEnum.Courier && (
           <Row
             className={"font-bold"}
             style={{ color: "#27CB84", fontSize: 36 }}
@@ -97,37 +115,15 @@ export const OrderCard: React.FC<IOrderCardProps> = (props) => {
             <span>Profit</span>
             <span>{" $" + deliveryPrice}</span>
           </Row>
-        )}
+        )} */}
 
-        <Row justify={"space-between"} style={{ alignItems: "center" }}>
-          <span
-            className={"font-bold"}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              fontSize: "20px",
-              cursor: "pointer",
-            }}
-          >
-            <Details style={{ marginRight: 5 }} /> details
-          </span>
-          <Col style={{textAlign: 'right', color: COLORS.MAIN }}>
-            {
-            userRole === UserRoleEnum.Customer ? 
-           <Typography.Paragraph className={"font-bold"} style={{color: COLORS.MAIN, fontWeight: 'bold'}}>
-            {"$" + deliveryPrice + " " + payType}
-            </Typography.Paragraph>
-            : 
-            <Typography.Paragraph>
-            <span className={"font-bold"}>${packagePrice + " "}</span>
-            will hold on your wallet
-          </Typography.Paragraph>
-            }
-            {/* <Typography.Paragraph>
-              <span className={"font-bold"}>{" " + payTypeViewConfig[payType]}</span>
-            </Typography.Paragraph> */}
+        {/* <Row justify={"center"}>
+          <Col style={{ textAlign: "right", color: COLORS.MAIN }}>
+            <Typography.Title level={3}>
+              {"Price $" + deliveryPrice}
+            </Typography.Title>
           </Col>
-        </Row>
+        </Row> */}
       </Card>
     </List.Item>
   );
