@@ -252,7 +252,7 @@ export function OrderScreen() {
           </Timeline.Item>
         </Timeline>
       </Row>
-      {comment && (
+      {comment && (<>
         <Row style={{marginBottom: 20}}>
           <Form.Item
             labelCol={{ span: 24 }}
@@ -262,11 +262,12 @@ export function OrderScreen() {
             <Input.TextArea onChange={() => null} value={comment} />
           </Form.Item>
         </Row>
-      )}
-            <Divider
+        <Divider
           style={{ borderColor: "black", margin: 0, marginBottom: 20 }}
           dashed={true}
         />
+      </>)}
+ 
            {customerOrCourierInfo && (<>
         <Row style={{ marginBottom: 25 }}>
           <Typography.Title level={3}>
