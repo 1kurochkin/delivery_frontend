@@ -1,19 +1,28 @@
-import React, { useEffect, useState } from "react";
 import {
   Button,
+  Calendar,
   Col,
+  DatePicker,
+  Divider,
   Form,
   Input,
-  InputNumber,
-  notification,
-  Radio,
   Row,
-  Select,
+  Space,
+  TimePicker,
   Typography,
+  notification,
 } from "antd";
 import { useForm } from "antd/es/form/Form";
+import moment from "moment";
+import { FormChangeInfo } from "rc-field-form/lib/FormContext";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { FormCard } from "../components/formCard.component";
+import { ReactComponent as Clock } from "../assets/svgs/clock.svg";
+import { COLORS } from "../configs/app.constants";
+import { useAppSelector } from "../hooks/useAppSelector";
 import {
-  useCountOrderPriceAndDurationMutation,
+  useLazyGetCountOrderPriceAndDurationQuery,
   useCreateOrderMutation,
   useLazyGetOrderQuery,
   useUpdateOrderMutation,
@@ -24,16 +33,18 @@ import {
   OrderType,
   PackageWeightEnum,
   PayTypeEnum,
-  UserRoleEnum,
 } from "../store/reducers/backend/backend.api.types";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { COLORS, ROUTES } from "../configs/app.constants";
-import { useAppSelector } from "../hooks/useAppSelector";
-import moment from "moment";
-import { FormCard } from "../components/formCard.component";
-import { FormChangeInfo } from "rc-field-form/lib/FormContext";
-import { ButtonBack } from "../components/buttonBack.component";
+import {
+  MinusCircleOutlined,
+  MinusOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
+import { SearchPlaces } from "../components/searchPlaces.component";
 import { VALIDATION_CONFIG } from "../configs/validation.config";
+import { InputPhoneNumber } from "../components/inputPhoneNumber.component";
+import { ButtonBack } from "../components/buttonBack.component";
+import { Preloader } from "../components/preloader.component";
+// import moment from "moment";
 
 export type InitialOrderStateType = Pick<
   OrderType,
@@ -50,91 +61,35 @@ export function CreateScreen() {
   const IS_UPDATE_ORDER_PAGE = !!orderId;
   const IS_AUTH_USER = useAppSelector(({ app }) => app.auth);
   const pickupPhoneNumber = useAppSelector(({ settings }) => settings.phone);
-  const { state }: any = useLocation();
-  const { pickupAddress = undefined, deliveryAddress = undefined } =
-    state || {};
-  const IS_FORM_START_PAGE = pickupAddress && deliveryAddress;
+  // const { state }: any = useLocation();
+  // const { pickupAddress = undefined, deliveryAddress = undefined } =
+  //   state || {};
+  // const IS_FORM_START_PAGE = pickupAddress && deliveryAddress;
   const navigate = useNavigate();
+
   // const carouselRef = useRef<CarouselRef>(null)
+  const [orderPrice, setOrderPriceState] = useState(0);
   const [orderForm] = useForm();
-  const [pickupForm] = useForm();
-  const [deliveryForm] = useForm();
-  // const [verificationForm] = useForm();
-  const [initialStateOrderForm, setInitialStateOrderForm] = useState({
-    deliveryType: DeliveryTypeEnum.Walking,
-    weight: PackageWeightEnum.Under1,
-    deliveryPrice: 0,
-    payType: PayTypeEnum.SenderCash,
-    packagePrice: 0,
-  });
-  const setInitialStateOrderFormHandler = (
-    field: keyof typeof initialStateOrderForm,
-    value: any
-  ) => {
-    setInitialStateOrderForm((prevState) => ({
-      ...prevState,
-      [field]: value,
-    }));
-  };
-  const [initialStatePickupForm] = useState({
-    address: pickupAddress,
-    orderPointType: OrderPointTypeEnum.Pickup,
-    date: moment(),
-    timeRange: [moment(), moment().add(5, "hours")],
-  });
-  const [initialStateDeliveryForm] = useState({
-    ...initialStatePickupForm,
-    address: deliveryAddress,
-    orderPointType: OrderPointTypeEnum.Delivery,
-    timeRange: [moment().add(3, "hours"), moment().add(5, "hours")],
-  });
+
 
   useEffect(() => {
-    const timeoutID = setTimeout(() => window.scrollTo(0, 0), 1000)
     if (IS_UPDATE_ORDER_PAGE) {
       fetchGetOrder(Number(orderId))
         .unwrap()
         .then((data) => {
-          const {
-            deliveryPoint,
-            pickupPoint,
-            deliveryPrice,
-            ...restGetOrderData
-          } = data;
-          orderForm.setFieldsValue(restGetOrderData);
-          setInitialStateOrderFormHandler("deliveryPrice", deliveryPrice);
-          pickupForm.setFieldsValue({
-            ...pickupPoint,
-            date: moment(pickupPoint.date),
+          console.log(data, "DATA");
+          const {comment, deliveryPrice, points} = data;
+          setOrderPriceState(deliveryPrice);
+          orderForm.setFieldsValue({comment, points: points.map(point => ({
+            ...point,
+            date: moment(point.date),
             timeRange: [
-              moment(pickupPoint.timeRangeFrom),
-              moment(pickupPoint.timeRangeTo),
+              moment(point.timeRangeFrom),
+              moment(point.timeRangeTo),
             ],
-          });
-          deliveryForm.setFieldsValue({
-            ...deliveryPoint,
-            date: moment(deliveryPoint.date),
-            timeRange: [
-              moment(deliveryPoint.timeRangeFrom),
-              moment(deliveryPoint.timeRangeTo),
-            ],
-          });
+          }))});
         });
-    } else {   
-      console.log(pickupPhoneNumber, 'pickupPhoneNumber');
-      
-      orderForm.setFieldsValue(initialStateOrderForm);
-      pickupForm.setFieldsValue({...initialStatePickupForm, phone: pickupPhoneNumber});
-      deliveryForm.setFieldsValue(initialStateDeliveryForm);
     }
-    if (pickupAddress && deliveryAddress) {
-      fetchCountOrderPriceAndSetToOrderFormState({
-        origins: pickupAddress,
-        destinations: [deliveryAddress],
-        deliveryType: DeliveryTypeEnum.Walking,
-      });
-    }
-    return () => clearTimeout(timeoutID)
   }, []);
 
   const [fetchGetOrder, { isFetching: fetchingGetOrder = false }] =
@@ -142,59 +97,28 @@ export function CreateScreen() {
   const [
     fetchCountOrderPriceAndDuration,
     { isLoading: fetchingCountOrderPriceAndDuration },
-  ] = useCountOrderPriceAndDurationMutation();
+  ] = useLazyGetCountOrderPriceAndDurationQuery();
   const [fetchCreateOrder, { isLoading: fetchingCreateOrder }] =
     useCreateOrderMutation();
   const [fetchUpdateOrder, { isLoading: fetchingUpdateOrder }] =
     useUpdateOrderMutation();
 
-  const fetchCountOrderPriceAndSetToOrderFormState = (data: {
-    origins: string;
-    destinations: string[];
-    deliveryType: DeliveryTypeEnum;
-  }) => {
-    fetchCountOrderPriceAndDuration(data)
-      .unwrap()
-      .then(({ price }) => {
-        setInitialStateOrderFormHandler("deliveryPrice", price);
-      });
-  };
-
-  const onFinishFormHandler = async () => {
+  const onFinishFormHandler = async ({ comment, points }) => {
     try {
-      await Promise.all([
-        orderForm.validateFields(),
-        pickupForm.validateFields(),
-        deliveryForm.validateFields(),
-      ]);
-      console.log(orderForm.getFieldsValue(), 'orderForm.getFieldsValue()');
-      
-      const data = {  
+      const data = {
         deliveryType: DeliveryTypeEnum.Walking,
         weight: PackageWeightEnum.Under1,
         payType: PayTypeEnum.SenderCash,
         packagePrice: 0,
-        packageType: '',
-        pickupPoint: {
-          orderPointType: OrderPointTypeEnum.Pickup,
-          ...pickupForm.getFieldsValue(),
-          timeRangeFrom: pickupForm.getFieldValue("timeRange")[0],
-          timeRangeTo: pickupForm.getFieldValue("timeRange")[1],
-        },
-        deliveryPoint: {
-          orderPointType: OrderPointTypeEnum.Delivery,
-          ...deliveryForm.getFieldsValue(),
-          timeRangeFrom: deliveryForm.getFieldValue("timeRange")[0],
-          timeRangeTo: deliveryForm.getFieldValue("timeRange")[1],
-        },
+        packageType: "",
+        comment,
+        points: points.map((point) => ({
+          ...point,
+          timeRangeFrom: point.timeRange[0],
+          timeRangeTo: point.timeRange[1],
+        })),
       };
-      if (!IS_AUTH_USER) {
-        // console.log(data, "DATA")
-        navigate(ROUTES.LOGIN.PATH + "/" + UserRoleEnum.Customer, {
-          state: { orderData: JSON.stringify(data) },
-        });
-        return;
-      }
+    
       if (IS_UPDATE_ORDER_PAGE) {
         await fetchUpdateOrder({
           orderId: Number(orderId),
@@ -203,7 +127,7 @@ export function CreateScreen() {
       } else {
         await fetchCreateOrder(data).unwrap();
       }
-      navigate(ROUTES.LIST_ORDERS);
+      // navigate(ROUTES.LIST_ORDERS);
     } catch (e) {
       console.log(e);
       notification.error({ message: "Fill all fields please!" });
@@ -211,177 +135,204 @@ export function CreateScreen() {
     }
   };
 
-  const onFormsValuesChangeHandler = (
-    _: string,
-    { changedFields }: FormChangeInfo
-  ) => {
-    //Выбрасываем из функции при валидации форм, потому что при валидации считается как изменения
-    if (changedFields.length >= 4) return;
-    const [{ name }] = changedFields;
-    const changedFieldName = name.toString();
-    if (
-      (changedFieldName === "deliveryType" || changedFieldName === "address") &&
-      isFilledAddress(pickupForm.getFieldValue("address")) &&
-      isFilledAddress(deliveryForm.getFieldValue("address"))
-    ) {
-      if (!fetchingCountOrderPriceAndDuration) {
-        fetchCountOrderPriceAndSetToOrderFormState({
-          origins: pickupForm.getFieldValue("address"),
-          destinations: [deliveryForm.getFieldValue("address")],
-          deliveryType: orderForm.getFieldValue("deliveryType"),
-        });
-      }
-    }
-  };
   const isFilledAddress = (value: string) => {
     return value?.includes("USA") && value?.length > 10;
   };
+  const onFormsValuesChangeHandler = (changedFields: any) => {
+    const [{ errors, name, value }] = changedFields;
+    console.log(name, errors);
+    
+    if (!name.includes("address") || errors.length) return;
+    console.log(value);
+    
+    if (isFilledAddress(value)) {
+      const { points } = orderForm.getFieldsValue();
+      const isUnFilled = points.find((point) => !isFilledAddress(point.address));
+      console.log(points.find((point) => !isFilledAddress(point.address)), "CHECK")
+      if (!isUnFilled) {
+        onFetchCountOrderPriceAndDuration()
+      }
+    
+    }
+  };
 
-  // const shippingMethodViewConfig = [
-  //   { value: DeliveryTypeEnum.Walking },
-  //   { value: DeliveryTypeEnum.Car },
-  //   { value: DeliveryTypeEnum.Truck },
-  // ];
-  // const payTypeViewConfig = [
-  //   { value: PayTypeEnum.SenderCash },
-  //   { value: PayTypeEnum.RecipientCash },
-  //   { value: PayTypeEnum.ByBankApps },
-  // ];
-  // const packageWeightViewConfig = [
-  //   PackageWeightEnum.Under1,
-  //   PackageWeightEnum.Under2,
-  //   PackageWeightEnum.Under5,
-  //   PackageWeightEnum.Under10,
-  //   PackageWeightEnum.Under15,
-  //   PackageWeightEnum.Under20,
-  //   // PackageWeightEnum.More20,
-  // ];
+  const onFetchCountOrderPriceAndDuration = () => {
+    const { points } = orderForm.getFieldsValue();
+    const [pickupPoint, ...deliveryPoints] = points.map(point => point.address)
+    if (!fetchingCountOrderPriceAndDuration) {
+      fetchCountOrderPriceAndDuration({
+        origins: pickupPoint,
+        destinations: deliveryPoints,
+      })
+        .unwrap()
+        .then(({ price }) => {
+          setOrderPriceState(price);
+        });
+    }
+  }
 
   return (
-    <Form.Provider onFormChange={onFormsValuesChangeHandler}>
-      <Form layout={"horizontal"} style={{ width: "100%" }} form={orderForm}>
-        <Row
-          style={{ alignItems: "center", marginBottom: 20 }}
-          justify={"space-between"}
+    <>
+       {IS_UPDATE_ORDER_PAGE && fetchingGetOrder && <Preloader type={"fullscreen"} />}
+      <Row
+        style={{ alignItems: "center", marginBottom: 20 }}
+        justify={"space-between"}
+      >
+        {IS_UPDATE_ORDER_PAGE && <ButtonBack onClick={() => navigate(-1)} />}
+        <Typography.Title style={{ marginBottom: 0 }} level={2}>
+          {IS_UPDATE_ORDER_PAGE ? `Correct #${orderId}` : "Create"}
+        </Typography.Title>
+      </Row>
+      <Form
+        form={orderForm}
+        name="order"
+        onFinish={onFinishFormHandler}
+        onFieldsChange={onFormsValuesChangeHandler}
+        onFinishFailed={() =>
+          notification.error({ message: "Fill all fields please!" })
+        }
+        autoComplete="off"
+      >
+        <Form.List
+          name="points"
+          initialValue={[
+            { address: "", phone: pickupPhoneNumber },
+            { address: "" },
+          ]}
         >
-          {(IS_FORM_START_PAGE || IS_UPDATE_ORDER_PAGE) && (
-            <ButtonBack onClick={() => navigate(-1)} />
-          )}
-          <Typography.Title style={{ marginBottom: 0 }} level={2}>
-            {IS_UPDATE_ORDER_PAGE
-              ? `Correct order #${orderId}`
-              : "Create order"}
-          </Typography.Title>
-        </Row>
-        {/* <Row>
+          {(fields, { add, remove }) => (
+            <>
+              {fields.map(({ key, name, ...restField }) => (
+                <Row key={key} style={{ marginBottom: 10 }}>
+                  <Row
+                    style={{
+                      width: "100%",
+                      alignItems: "center",
+                      marginBottom: 10,
+                    }}
+                    justify={"space-between"}
+                  >
                     <Form.Item
-                        label={'Choose the delivery method'}
-                        style={{width: '100%'}}
-                        name={'deliveryType'}
-                        rules={VALIDATION_CONFIG.deliveryType}
+                      style={{ display: "none" }}
+                      {...restField}
+                      name={[name, "orderPointType"]}
+                      initialValue={name === 0 ? "Pickup" : "Delivery"}
+                    ></Form.Item>
+                    <Typography.Title style={{ margin: 0 }} level={4}>
+                      {name === 0 ? "Pickup" : "Delivery"} location
+                    </Typography.Title>
+                    {/* </Col> */}
+                    {name > 1 && (
+                      <Col span={5}>
+                        <Button
+                          onClick={() => {remove(name); onFetchCountOrderPriceAndDuration()}}
+                          icon={<MinusOutlined />}
+                        />
+                      </Col>
+                    )}
+                  </Row>
+                  <Form.Item
+                    label={"Enter the address"}
+                    rules={VALIDATION_CONFIG.address}
+                    style={{ width: "100%" }}
+                    hasFeedback
+                    {...restField}
+                    name={[name, "address"]}
+                  >
+                    <SearchPlaces
+                      placeholder={"1556 Broadway, New York, 10120, USA"}
+                    />
+                  </Form.Item>
+                  <Row style={{ width: "100%" }} justify={"space-between"}>
+                    <Form.Item
+                      validateTrigger={"onBlur"}
+                      rules={VALIDATION_CONFIG.phone}
+                      style={{ width: "100%" }}
+                      label={"Phone number"}
+                      hasFeedback
+                      {...restField}
+                      name={[name, "phone"]}
+                      // name="phone"
                     >
-                        <Radio.Group style={{width: '100%', textAlign: 'center'}}>
-                            {shippingMethodViewConfig.map(({value}) =>
-                                <Radio.Button style={{width: '33%'}} value={value}>{value}</Radio.Button>
-                            )}
-                        </Radio.Group>
+                      <InputPhoneNumber />
                     </Form.Item>
-                </Row> */}
-        {/* <Row justify={"space-between"}>
-          <Form.Item
-            label={"Package price"}
-            style={{ width: "40%" }}
-            name={"packagePrice"}
-            hasFeedback
-            rules={VALIDATION_CONFIG.packagePrice}
-          >
-            <InputNumber
-              maxLength={11}
-              style={{ width: "100%" }}
-              placeholder={"10"}
-              prefix={"$"}
-            />
-          </Form.Item>
-          <Form.Item
-            label={"Package type"}
-            style={{ width: "55%" }}
-            name={"packageType"}
-            hasFeedback
-            rules={VALIDATION_CONFIG.packageType}
-          >
-            <Input placeholder={"What kind of package?"} />
-          </Form.Item>
-        </Row>
-        <Row justify={"space-between"} style={{ marginBottom: 10 }}>
-          <Form.Item
-            label={"Package weight"}
-            rules={VALIDATION_CONFIG.weight}
-            style={{ width: "40%" }}
-            hasFeedback
-            name="weight"
-          >
-            <Select>
-              {packageWeightViewConfig.map((value) => (
-                <Select.Option value={value}>{value}</Select.Option>
+                  </Row>
+                  <Row justify={"space-between"}>
+                    <Form.Item
+                      rules={VALIDATION_CONFIG.date}
+                      style={{ width: "35%" }}
+                      label={"Date"}
+                      hasFeedback
+                      {...restField}
+                      name={[name, "date"]}
+                      initialValue={moment()}
+                      // name="date"
+                    >
+                      <DatePicker
+                        // defaultValue={moment()}
+                        format={"MM/DD"}
+                        disabledDate={(cur) => cur && cur < moment().subtract(1, "days")}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      rules={VALIDATION_CONFIG.timeRange}
+                      style={{ width: "63%" }}
+                      label={"Pick the time"}
+                      hasFeedback
+                      {...restField}
+                      name={[name, "timeRange"]}
+                      initialValue={[moment(), moment().add(5, "hours")]}
+                    >
+                      <TimePicker.RangePicker
+                        format={"HH A"}
+                        use12Hours={true}
+                      />
+                    </Form.Item>
+                  </Row>
+                </Row>
               ))}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            style={{ width: "55%" }}
-            label={"Payment way"}
-            name={"payType"}
-            hasFeedback
-            rules={VALIDATION_CONFIG.payType}
-          >
-            <Select>
-              {payTypeViewConfig.map(({ value }) => (
-                <Select.Option value={value}>{value}</Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-        </Row> */}
-        <Row style={{ marginBottom: 20 }}>
-          <Typography.Title level={3}>Pick-up location👇</Typography.Title>
-          <Form style={{ width: "100%" }} form={pickupForm}>
-            <FormCard pointType={OrderPointTypeEnum.Pickup} />
-          </Form>
-        </Row>
-        <Row style={{ marginBottom: 10 }}>
-          <Typography.Title level={3}>Delivery location👇</Typography.Title>
-          <Form style={{ width: "100%" }} form={deliveryForm}>
-            <FormCard pointType={OrderPointTypeEnum.Delivery} />
-          </Form>
-        </Row>
+
+              {fields.length <= 10 && (
+                <Form.Item style={{ marginBottom: 20 }}>
+                  <Button onClick={() => add()} block icon={<PlusOutlined />}>
+                    Add location
+                  </Button>
+                </Form.Item>
+              )}
+            </>
+          )}
+        </Form.List>
         <Row style={{ marginBottom: 25 }}>
-          <Form.Item
-            style={{ width: "100%" }}
-            label={"Comment for the Courier"}
-            name="comment"
-          >
+          <Typography.Title level={4}>Comment for the Courier</Typography.Title>
+          <Form.Item style={{ width: "100%" }} name="comment">
             <Input.TextArea
               placeholder={"Add comments for the courier"}
               rows={4}
             />
           </Form.Item>
         </Row>
-        <Row style={{ marginBottom: 25 }} justify={"space-between"}>
+        <Divider style={{ borderColor: "black" }} dashed={true} />
+        <Row justify={"space-between"}>
           <Col span={11}>
-            <Typography.Title level={2}>Total</Typography.Title>
+            <Typography.Title style={{ margin: 0 }} level={2}>
+              Total
+            </Typography.Title>
           </Col>
           <Col span={11}>
             <Typography.Title
-              style={{ textAlign: "right", color: COLORS.SUCCESS }}
+              style={{ textAlign: "right", color: COLORS.SUCCESS, margin: 0 }}
               level={2}
             >
-              ${initialStateOrderForm.deliveryPrice}
+              ${orderPrice}
             </Typography.Title>
           </Col>
         </Row>
+        <Divider style={{ borderColor: "black" }} dashed={true} />
         <Row>
           <Button
-            onClick={onFinishFormHandler}
-            loading={fetchingUpdateOrder || fetchingCreateOrder}
+            loading={fetchingUpdateOrder || fetchingCreateOrder || fetchingCountOrderPriceAndDuration}
             size={"large"}
+            htmlType="submit"
           >
             {IS_AUTH_USER
               ? IS_UPDATE_ORDER_PAGE
@@ -391,6 +342,6 @@ export function CreateScreen() {
           </Button>
         </Row>
       </Form>
-    </Form.Provider>
+    </>
   );
 }

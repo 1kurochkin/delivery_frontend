@@ -1,20 +1,17 @@
-import React from 'react';
-import {Navigate, Route, Routes as RouterDomRoutes} from 'react-router-dom';
-import {ROUTES} from '../configs/app.constants';
-import {LoginScreen} from "../screens/login.screen";
-import {StartScreen} from "../screens/start.screen";
-import {CreateScreen} from "../screens/create.screen";
-import {PrivacyPolicyScreen} from "../screens/privacyPolicy.screen";
-import {TermsAndConditionsScreen} from "../screens/termsAndConditions.screen";
-import {CheckoutScreen} from "../screens/checkout.screen";
-import {CourierFaq} from "../screens/courierFaq.screen";
-import {CustomerFaqScreen} from "../screens/customerFaq.screen";
-import {ProtectedRoute} from "../components/protectedRoute.component";
-import {ListScreen} from "../screens/list.screen";
-import {OrderScreen} from "../screens/order.screen";
-import {SettingsScreen} from "../screens/settings.screen";
-import {BottomNavigation} from "../components/bottomNavigation.component";
-import {Footer} from "antd/es/layout/layout";
+import { Footer } from "antd/es/layout/layout";
+import { Navigate, Route, Routes as RouterDomRoutes } from 'react-router-dom';
+import { BottomNavigation } from "../components/bottomNavigation.component";
+import { ProtectedRoute } from "../components/protectedRoute.component";
+import { ROUTES } from '../configs/app.constants';
+import { CourierFaq } from "../screens/courierFaq.screen";
+import { CreateScreen } from "../screens/create.screen";
+import { CustomerFaqScreen } from "../screens/customerFaq.screen";
+import { ListScreen } from "../screens/list.screen";
+import { LoginScreen } from "../screens/login.screen";
+import { OrderScreen } from "../screens/order.screen";
+import { PrivacyPolicyScreen } from "../screens/privacyPolicy.screen";
+import { SettingsScreen } from "../screens/settings.screen";
+import { TermsAndConditionsScreen } from "../screens/termsAndConditions.screen";
 import { UserRoleEnum } from '../store/reducers/backend/backend.api.types';
 
 function AppRoutes({isAuth, pathname = ''}) {
@@ -33,13 +30,13 @@ function AppRoutes({isAuth, pathname = ''}) {
                 <Route path={ROUTES.TERMS_AND_CONDITIONS} element={<TermsAndConditionsScreen/>}/>
                 <Route path={ROUTES.COURIER_FAQ} element={<CourierFaq/>}/>
                 <Route path={ROUTES.CUSTOMER_FAQ} element={<CustomerFaqScreen/>}/>
-                <Route path={ROUTES.CHECKOUT}
+                {/* <Route path={ROUTES.CHECKOUT}
                        element={
                            <ProtectedRoute auth={isAuth}>
                                <CheckoutScreen/>
                            </ProtectedRoute>
                        }
-                />
+                /> */}
                 <Route path={ROUTES.LIST_ORDERS}
                        element={
                            <ProtectedRoute auth={isAuth}>

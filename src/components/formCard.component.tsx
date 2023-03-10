@@ -47,6 +47,7 @@ export const FormCard: React.FC<{
           name="date"
         >
           <DatePicker
+          
             suffixIcon={<Calendar />}
             format={"MM/DD"}
             disabledDate={disabledDate}

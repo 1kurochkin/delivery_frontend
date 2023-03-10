@@ -105,7 +105,6 @@ export type ContactUsMutationType = {
 export type CountOrderPriceAndDurationType = {
     origins: string;
     destinations: string[];
-    deliveryType: DeliveryTypeEnum;
 }
 export type CountOrderPriceAndDurationResponseType = {
     price: number;
@@ -134,8 +133,7 @@ export type CreateOrderMutationType = {
     packageType: string;
     packagePrice: number;
     payType: PayTypeEnum;
-    pickupPoint: OrderPointType
-    deliveryPoint: OrderPointType;
+    points: Array<OrderPointType>;
 }
 export type UpdateOrderMutationType = {
     orderId: number;
@@ -152,9 +150,8 @@ export type OrderType = {
     customer?: {
         name: string;
         phone: string;
-    }
-    pickupPoint: OrderPointType
-    deliveryPoint: OrderPointType;
+    },
+    points: Array<OrderPointType>;
     duration: number;
     deliveryType: DeliveryTypeEnum;
     status: OrderStatusEnum;

@@ -47,8 +47,7 @@ export const OrderCard: React.FC<IOrderCardProps> = (props) => {
     packagePrice,
     packageType,
     payType,
-    pickupPoint,
-    deliveryPoint,
+    points,
     weight,
     userRole,
   } = props;
@@ -59,9 +58,7 @@ export const OrderCard: React.FC<IOrderCardProps> = (props) => {
         <Row style={{ alignItems: "center" }} justify={"space-between"}>
           <Typography.Title level={2}>#{id}</Typography.Title>
           <Col style={{ textAlign: "right", color: COLORS.MAIN }}>
-            <Typography.Title level={2}>
-              {"$" + deliveryPrice}
-            </Typography.Title>
+            <Typography.Title level={2}>{"$" + deliveryPrice}</Typography.Title>
           </Col>
           {/* <span
             className={"font-bold"}
@@ -84,22 +81,16 @@ export const OrderCard: React.FC<IOrderCardProps> = (props) => {
         />
         <Row justify={"center"}>
           <Timeline>
-            <Timeline.Item>
-              <OrderCardTimelineItem
-                date={pickupPoint?.date}
-                timeRangeFrom={pickupPoint?.timeRangeFrom}
-                timeRangeTo={pickupPoint?.timeRangeTo}
-                address={pickupPoint?.address}
-              />
-            </Timeline.Item>
-            <Timeline.Item>
-              <OrderCardTimelineItem
-                date={deliveryPoint?.date}
-                timeRangeFrom={deliveryPoint?.timeRangeFrom}
-                timeRangeTo={deliveryPoint?.timeRangeTo}
-                address={deliveryPoint?.address}
-              />
-            </Timeline.Item>
+            {points.map((point) => (
+              <Timeline.Item>
+                <OrderCardTimelineItem
+                  date={point?.date}
+                  timeRangeFrom={point?.timeRangeFrom}
+                  timeRangeTo={point?.timeRangeTo}
+                  address={point?.address}
+                />
+              </Timeline.Item>
+            ))}
           </Timeline>
         </Row>
         {/* <Divider

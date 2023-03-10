@@ -198,11 +198,11 @@ export const backendApi = createApi({
       query: (body) => ({ url: "/mail/contact", method: "POST", body }),
     }),
     //----------ORDER-----------//
-    countOrderPriceAndDuration: build.mutation<
+    getCountOrderPriceAndDuration: build.query<
       CountOrderPriceAndDurationResponseType,
       CountOrderPriceAndDurationType
     >({
-      query: (body) => ({ url: "/order/count", method: "POST", body }),
+      query: (params) => ({ url: "/order/count", method: "GET", params }),
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           await queryFulfilled;
@@ -302,7 +302,7 @@ export const {
   //---MAIL---//
   useContactUsMutation,
   //---ORDER---//
-  useCountOrderPriceAndDurationMutation,
+  useLazyGetCountOrderPriceAndDurationQuery,
   useCreateOrderMutation,
   useUpdateOrderMutation,
   useLazyGetOrdersQuery,
