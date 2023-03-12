@@ -124,10 +124,12 @@ export function CreateScreen() {
           orderId: Number(orderId),
           update: data,
         }).unwrap();
+        navigate(ROUTES.LIST_ORDERS + `/${orderId}`);
       } else {
         await fetchCreateOrder(data).unwrap();
+        navigate(ROUTES.LIST_ORDERS);
       }
-      navigate(ROUTES.LIST_ORDERS);
+      
     } catch (e) {
       console.log(e);
       notification.error({ message: "Fill all fields please!" });
