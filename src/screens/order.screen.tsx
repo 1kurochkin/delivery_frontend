@@ -340,13 +340,15 @@ export function OrderScreen() {
         </Row>
       )}
       <Row style={{ marginTop: 25 }} justify={"center"}>
-        {/* <Button style={{ marginBottom: 10 }} type={"primary"} size="large">
+        <Button style={{ marginBottom: 10 }} type={"primary"} size="large">
           <a
-            href={`https://www.google.com/maps/dir/${pickupPoint?.address}/${deliveryPoint?.address}`}
+          rel="noopener noreferrer"
+          target="_blank"
+            href={`https://www.google.com/maps/dir/${points.map(({address}) => address).join('/')}`}
           >
             Open Google Maps
           </a>
-        </Button> */}
+        </Button>
         {actionButtonViewConfig.map((btnConfig) => {
           if (!btnConfig) return null;
           const { type, size, onClick, label } = btnConfig;
