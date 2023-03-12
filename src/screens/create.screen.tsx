@@ -19,7 +19,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FormCard } from "../components/formCard.component";
 import { ReactComponent as Clock } from "../assets/svgs/clock.svg";
-import { COLORS } from "../configs/app.constants";
+import { COLORS, ROUTES } from "../configs/app.constants";
 import { useAppSelector } from "../hooks/useAppSelector";
 import {
   useLazyGetCountOrderPriceAndDurationQuery,
@@ -127,7 +127,7 @@ export function CreateScreen() {
       } else {
         await fetchCreateOrder(data).unwrap();
       }
-      // navigate(ROUTES.LIST_ORDERS);
+      navigate(ROUTES.LIST_ORDERS);
     } catch (e) {
       console.log(e);
       notification.error({ message: "Fill all fields please!" });
