@@ -1,49 +1,42 @@
 import {
+  MinusOutlined,
+  PlusOutlined
+} from "@ant-design/icons";
+import {
   Button,
-  Calendar,
   Col,
   DatePicker,
   Divider,
   Form,
   Input,
   Row,
-  Space,
   TimePicker,
   Typography,
-  notification,
+  notification
 } from "antd";
 import { useForm } from "antd/es/form/Form";
 import moment from "moment";
-import { FormChangeInfo } from "rc-field-form/lib/FormContext";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { FormCard } from "../components/formCard.component";
-import { ReactComponent as Clock } from "../assets/svgs/clock.svg";
+import { ButtonBack } from "../components/buttonBack.component";
+import { InputPhoneNumber } from "../components/inputPhoneNumber.component";
+import { Preloader } from "../components/preloader.component";
+import { SearchPlaces } from "../components/searchPlaces.component";
 import { COLORS, ROUTES } from "../configs/app.constants";
+import { VALIDATION_CONFIG } from "../configs/validation.config";
 import { useAppSelector } from "../hooks/useAppSelector";
 import {
-  useLazyGetCountOrderPriceAndDurationQuery,
+  useCountOrderPriceAndDurationMutation,
   useCreateOrderMutation,
   useLazyGetOrderQuery,
   useUpdateOrderMutation,
 } from "../store/reducers/backend/backend.api";
 import {
   DeliveryTypeEnum,
-  OrderPointTypeEnum,
   OrderType,
   PackageWeightEnum,
-  PayTypeEnum,
+  PayTypeEnum
 } from "../store/reducers/backend/backend.api.types";
-import {
-  MinusCircleOutlined,
-  MinusOutlined,
-  PlusOutlined,
-} from "@ant-design/icons";
-import { SearchPlaces } from "../components/searchPlaces.component";
-import { VALIDATION_CONFIG } from "../configs/validation.config";
-import { InputPhoneNumber } from "../components/inputPhoneNumber.component";
-import { ButtonBack } from "../components/buttonBack.component";
-import { Preloader } from "../components/preloader.component";
 // import moment from "moment";
 
 export type InitialOrderStateType = Pick<
@@ -97,7 +90,7 @@ export function CreateScreen() {
   const [
     fetchCountOrderPriceAndDuration,
     { isLoading: fetchingCountOrderPriceAndDuration },
-  ] = useLazyGetCountOrderPriceAndDurationQuery();
+  ] = useCountOrderPriceAndDurationMutation();
   const [fetchCreateOrder, { isLoading: fetchingCreateOrder }] =
     useCreateOrderMutation();
   const [fetchUpdateOrder, { isLoading: fetchingUpdateOrder }] =
@@ -142,16 +135,13 @@ export function CreateScreen() {
   };
   const onFormsValuesChangeHandler = (changedFields: any) => {
     const [{ errors, name, value }] = changedFields;
-    console.log(name, errors);
     
     if (!name.includes("address") || errors.length) return;
-    console.log(value);
-    
     if (isFilledAddress(value)) {
       const { points } = orderForm.getFieldsValue();
       const isUnFilled = points.find((point) => !isFilledAddress(point.address));
-      console.log(points.find((point) => !isFilledAddress(point.address)), "CHECK")
       if (!isUnFilled) {
+        console.log("GET PRICE")
         onFetchCountOrderPriceAndDuration()
       }
     
