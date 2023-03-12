@@ -123,9 +123,8 @@ export function CreateScreen() {
         navigate(ROUTES.LIST_ORDERS);
       }
       
-    } catch (e) {
-      console.log(e);
-      notification.error({ message: "Fill all fields please!" });
+    } catch ({data: {message = ""} = {}}:any) {
+      notification.error({ message: message as string });
       return;
     }
   };
@@ -135,8 +134,9 @@ export function CreateScreen() {
   };
   const onFormsValuesChangeHandler = (changedFields: any) => {
     const [{ errors, name, value }] = changedFields;
+    console.log(changedFields);
     
-    if (!name.includes("address") || errors.length) return;
+    if (changedFields.length > 1 || !name.includes("address") || errors.length) return;
     if (isFilledAddress(value)) {
       const { points } = orderForm.getFieldsValue();
       const isUnFilled = points.find((point) => !isFilledAddress(point.address));

@@ -68,6 +68,7 @@ export function OrderScreen() {
         deliveryPrice = undefined,
         courier = undefined,
         customer = undefined,
+        updatedAt = 1,
       } = {},
     },
   ] = useLazyGetOrderQuery();
@@ -75,6 +76,12 @@ export function OrderScreen() {
   const IS_ACTIVE_STATUS = status === OrderStatusEnum.Active;
   const IS_CANCEL_STATUS = status === OrderStatusEnum.Canceled;
   const IS_COMPLETE_STATUS = status === OrderStatusEnum.Completed;
+  const IS_BEEN_MORE_THAN_15_MIN =
+    Math.round(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore
+      (((new Date() - new Date(updatedAt)) % 86400000) % 3600000) / 60000
+    ) > 15;
   const customerOrCourierInfo = courier || customer;
   const [fetchChangeOrderStatus, { isLoading: fetchingChangeOrderStatus }] =
     useChangeOrderStatusMutation();
@@ -120,13 +127,15 @@ export function OrderScreen() {
   };
 
   const actionButtonViewConfig = [
-    IS_USER_ROLE_CUSTOMER &&
-      IS_AVAILABLE_STATUS && {
-        type: "primary",
-        size: "large",
-        onClick: onClickUpdateButton,
-        label: "Correct the order",
-      },
+    (IS_USER_ROLE_CUSTOMER && IS_AVAILABLE_STATUS) ||
+      (IS_USER_ROLE_CUSTOMER &&
+        IS_ACTIVE_STATUS &&
+        true && {
+          type: "primary",
+          size: "large",
+          onClick: onClickUpdateButton,
+          label: "Correct the order",
+        }),
     !IS_USER_ROLE_CUSTOMER &&
       IS_AVAILABLE_STATUS && {
         size: "large",
@@ -342,15 +351,18 @@ export function OrderScreen() {
       <Row style={{ marginTop: 25 }} justify={"center"}>
         <Button style={{ marginBottom: 10 }} type={"primary"} size="large">
           <a
-          rel="noopener noreferrer"
-          target="_blank"
-            href={`https://www.google.com/maps/dir/${points.map(({address}) => address).join('/')}`}
+            rel="noopener noreferrer"
+            target="_blank"
+            href={`https://www.google.com/maps/dir/${points
+              .map(({ address }) => address)
+              .join("/")}`}
           >
             Open Google Maps
           </a>
         </Button>
         {actionButtonViewConfig.map((btnConfig) => {
           if (!btnConfig) return null;
+          //@ts-ignore
           const { type, size, onClick, label } = btnConfig;
           return (
             <Button

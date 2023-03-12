@@ -230,7 +230,7 @@ export const backendApi = createApi({
           const { data } = await queryFulfilled;
           notification.success({ message: "Your order successful updated!" });
         } catch (e) {
-          notification.error({ message: "Error updating order!" });
+          // notification.error({ message: "Error updating order!" });
         }
       },
     }),
