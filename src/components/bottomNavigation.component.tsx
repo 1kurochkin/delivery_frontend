@@ -58,15 +58,14 @@ export function BottomNavigation() {
             route: ROUTES.SETTINGS
         },
     ]
-    const [selected, setSelected] = useState(bottomNavItems.findIndex(({route}) => route === pathname));
-    useEffect(() => {
-        setSelected(bottomNavItems.findIndex(({route}) => route === pathname))
-    }, [pathname])
+    const [selected] = useState(bottomNavItems.findIndex(({route}) => route === pathname));
+
     return (
         <>
             <BottomNavigationModule
                 items={bottomNavItems}
                 defaultSelected={selected}
+            
                 onItemClick={({route}: any) => navigate(route)}
             />
         </>

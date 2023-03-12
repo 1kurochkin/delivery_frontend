@@ -25,11 +25,11 @@ const OrderCardTimelineItem = ({
         </span>
         from{" "}
         <span className={"font-bold"}>
-          {moment(timeRangeFrom).format("HH:MM A") + " "}
+          {moment(timeRangeFrom).format("h A") + " "}
         </span>
         to{" "}
         <span className={"font-bold"}>
-          {moment(timeRangeTo).format("HH:MM A")}
+          {moment(timeRangeTo).format("h A")}
         </span>
       </Typography.Paragraph>
       <span className={"font-bold"}>{address}</span>
