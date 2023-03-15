@@ -276,7 +276,7 @@ export function CreateScreen() {
                       initialValue={[moment(), moment().add(5, "hours")]}
                     >
                       <TimePicker.RangePicker
-                        format={"HH A"}
+                        format={"h A"}
                         use12Hours={true}
                       />
                     </Form.Item>

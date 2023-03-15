@@ -80,8 +80,15 @@ export function OrderScreen() {
     Math.round(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-ignore
-      (((new Date() - new Date(updatedAt)) % 86400000) % 3600000) / 60000
+      (((new Date(updatedAt) - new Date()) % 86400000) % 3600000) / 60000
     ) > 15;
+  console.log(
+    Math.round(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore
+      (((new Date(updatedAt) - new Date()) % 86400000) % 3600000) / 60000
+    )
+  );
   const customerOrCourierInfo = courier || customer;
   const [fetchChangeOrderStatus, { isLoading: fetchingChangeOrderStatus }] =
     useChangeOrderStatusMutation();
@@ -125,17 +132,17 @@ export function OrderScreen() {
         notification.error({ message: "Error complete order!" });
       });
   };
-
+  console.log(IS_BEEN_MORE_THAN_15_MIN);
   const actionButtonViewConfig = [
     (IS_USER_ROLE_CUSTOMER && IS_AVAILABLE_STATUS) ||
       (IS_USER_ROLE_CUSTOMER &&
         IS_ACTIVE_STATUS &&
-        true && {
+        !IS_BEEN_MORE_THAN_15_MIN) ? {
           type: "primary",
           size: "large",
           onClick: onClickUpdateButton,
           label: "Correct the order",
-        }),
+        } : null,
     !IS_USER_ROLE_CUSTOMER &&
       IS_AVAILABLE_STATUS && {
         size: "large",
@@ -417,7 +424,7 @@ const TimeLineOrderScreenItem = ({
             {`${moment(date).format("MM/DD")}`}
           </Typography.Paragraph>
           <Typography.Paragraph style={{ marginBottom: 0, marginLeft: 40 }}>
-            {`from ${moment(timeRangeFrom).format("HH:MM A")} to ${moment(
+            {`from ${moment(timeRangeFrom).format("h A")} to ${moment(
               timeRangeTo
             ).format("HH:MM A")}`}
           </Typography.Paragraph>
