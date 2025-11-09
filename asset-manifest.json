@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/delivery_frontend/static/css/main.97a1d150.css",
-    "main.js": "/delivery_frontend/static/js/main.ba49b0b8.js",
+    "main.js": "/delivery_frontend/static/js/main.1f5e0ab5.js",
     "static/media/preloader.gif": "/delivery_frontend/static/media/preloader.58e79fbfd5b0c284d792.gif",
     "static/media/Gilroy-Regular.ttf": "/delivery_frontend/static/media/Gilroy-Regular.fa652e766b6a85a1f9cb.ttf",
     "static/media/Gilroy-Bold.ttf": "/delivery_frontend/static/media/Gilroy-Bold.901a60fc2835c74fba67.ttf",
@@ -15,10 +15,10 @@
     "static/media/list.svg": "/delivery_frontend/static/media/list.0520726994d21693b4a8c2d64788ea06.svg",
     "static/media/arrowBack.svg": "/delivery_frontend/static/media/arrowBack.e6284536e9eacf6caa867d1813d8e5b2.svg",
     "main.97a1d150.css.map": "/delivery_frontend/static/css/main.97a1d150.css.map",
-    "main.ba49b0b8.js.map": "/delivery_frontend/static/js/main.ba49b0b8.js.map"
+    "main.1f5e0ab5.js.map": "/delivery_frontend/static/js/main.1f5e0ab5.js.map"
   },
   "entrypoints": [
     "static/css/main.97a1d150.css",
-    "static/js/main.ba49b0b8.js"
+    "static/js/main.1f5e0ab5.js"
   ]
 }

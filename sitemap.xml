@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
-  <loc>https://deliverybackend-production-300a.up.railway.app/login</loc>
-  <loc>https://deliverybackend-production-300a.up.railway.app/order/create</loc>
-  <loc>https://deliverybackend-production-300a.up.railway.app/order/update</loc>
-  <loc>https://deliverybackend-production-300a.up.railway.app/order/list</loc>
-  <loc>https://deliverybackend-production-300a.up.railway.app/order</loc>
-  <loc>https://deliverybackend-production-300a.up.railway.app/settings</loc>
-  <loc>https://deliverybackend-production-300a.up.railway.app/</loc>
-  <loc>https://deliverybackend-production-300a.up.railway.app/courierFaq</loc>
-  <loc>https://deliverybackend-production-300a.up.railway.app/customerFaq</loc>
-  <loc>https://deliverybackend-production-300a.up.railway.app/termsAndConditions</loc>
-  <loc>https://deliverybackend-production-300a.up.railway.app/privacyPolicy</loc>
-  <loc>https://deliverybackend-production-300a.up.railway.app/checkout</loc>
-  <lastmod>2025-11-09T23:00:51.403Z</lastmod>
+  <loc>https://1kurochkin.github.io/delivery_frontend/login</loc>
+  <loc>https://1kurochkin.github.io/delivery_frontend/order/create</loc>
+  <loc>https://1kurochkin.github.io/delivery_frontend/order/update</loc>
+  <loc>https://1kurochkin.github.io/delivery_frontend/order/list</loc>
+  <loc>https://1kurochkin.github.io/delivery_frontend/order</loc>
+  <loc>https://1kurochkin.github.io/delivery_frontend/settings</loc>
+  <loc>https://1kurochkin.github.io/delivery_frontend/</loc>
+  <loc>https://1kurochkin.github.io/delivery_frontend/courierFaq</loc>
+  <loc>https://1kurochkin.github.io/delivery_frontend/customerFaq</loc>
+  <loc>https://1kurochkin.github.io/delivery_frontend/termsAndConditions</loc>
+  <loc>https://1kurochkin.github.io/delivery_frontend/privacyPolicy</loc>
+  <loc>https://1kurochkin.github.io/delivery_frontend/checkout</loc>
+  <lastmod>2025-11-09T23:14:11.298Z</lastmod>
 </url>
 </urlset>
