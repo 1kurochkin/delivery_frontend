@@ -1,5 +1,5 @@
 import { Footer } from "antd/es/layout/layout";
-import { Navigate, Route, Routes as RouterDomRoutes } from 'react-router-dom';
+import { Navigate, Route, Routes as RouterDomRoutes, BrowserRouter } from 'react-router-dom';
 import { BottomNavigation } from "../components/bottomNavigation.component";
 import { ProtectedRoute } from "../components/protectedRoute.component";
 import { ROUTES } from '../configs/app.constants';
@@ -13,6 +13,8 @@ import { PrivacyPolicyScreen } from "../screens/privacyPolicy.screen";
 import { SettingsScreen } from "../screens/settings.screen";
 import { TermsAndConditionsScreen } from "../screens/termsAndConditions.screen";
 import { UserRoleEnum } from '../store/reducers/backend/backend.api.types';
+import {StartScreen} from "../screens/start.screen";
+import {CheckoutScreen} from "../screens/checkout.screen";
 
 function AppRoutes({isAuth, pathname = ''}) {
     return (
@@ -20,7 +22,7 @@ function AppRoutes({isAuth, pathname = ''}) {
             <RouterDomRoutes>
                 {
                     !isAuth && <>
-                        {/* <Route path={ROUTES.START} element={<StartScreen/>}/> */}
+                        <Route path={ROUTES.START} element={<StartScreen/>}/>
                         <Route path={ROUTES.LOGIN.PATH + ROUTES.LOGIN.PARAMS}
                                element={<LoginScreen/>}/>
                     </>
@@ -30,13 +32,13 @@ function AppRoutes({isAuth, pathname = ''}) {
                 <Route path={ROUTES.TERMS_AND_CONDITIONS} element={<TermsAndConditionsScreen/>}/>
                 <Route path={ROUTES.COURIER_FAQ} element={<CourierFaq/>}/>
                 <Route path={ROUTES.CUSTOMER_FAQ} element={<CustomerFaqScreen/>}/>
-                {/* <Route path={ROUTES.CHECKOUT}
+                <Route path={ROUTES.CHECKOUT}
                        element={
                            <ProtectedRoute auth={isAuth}>
                                <CheckoutScreen/>
                            </ProtectedRoute>
                        }
-                /> */}
+                />
                 <Route path={ROUTES.LIST_ORDERS}
                        element={
                            <ProtectedRoute auth={isAuth}>

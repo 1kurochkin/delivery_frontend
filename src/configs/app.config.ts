@@ -2,7 +2,7 @@ export default {
     //
     isProd: true,
     api: {
-        url: Number(process.env.REACT_APP_IS_PROD) ? "https://bringa.me" : "http://localhost:5000",
+        url: Number(process.env.REACT_APP_IS_PROD) ? "https://deliverybackend-production-300a.up.railway.app" : "http://localhost:5000",
         api: "/api"
     },
     // urls: {

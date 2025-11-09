@@ -1,5 +1,6 @@
 {
   "name": "delivery_frontend",
+  "homepage": "https://1kurochkin.github.io/delivery_frontend",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -51,7 +52,9 @@
     "build": "REACT_APP_IS_PROD=1 ts-node src/scripts/sitemapBuilder.scripts.ts && REACT_APP_IS_PROD=1 react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "eslint --ignore-path .gitignore ."
+    "lint": "eslint --ignore-path .gitignore .",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -77,6 +80,7 @@
     "@types/js-cookie": "^3.0.2",
     "@types/react-google-recaptcha": "^2.1.5",
     "@typescript-eslint/eslint-plugin": "^5.31.0",
-    "eslint": "^7.32.0"
+    "eslint": "^7.32.0",
+    "gh-pages": "^6.3.0"
   }
 }

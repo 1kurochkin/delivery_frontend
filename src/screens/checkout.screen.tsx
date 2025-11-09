@@ -1,12 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {Anchor, Button, Col, Form, Image, Row, Spin, Typography} from "antd";
-import {Link, useLocation, useNavigate} from "react-router-dom";
+import {Row} from "antd";
+import {useLocation, useNavigate} from "react-router-dom";
 import {ROUTES} from "../configs/app.constants";
-import {UserRoleEnum} from "../store/reducers/backend/backend.api.types";
-import {SearchPlaces} from "../components/searchPlaces.component";
-import courierPic from "../assets/pictures/courier.jpg"
-import {useForm} from "antd/es/form/Form";
-import {VALIDATION_CONFIG} from "../configs/validation.config";
 import {ButtonBack} from "../components/buttonBack.component";
 import {Preloader} from "../components/preloader.component";
 

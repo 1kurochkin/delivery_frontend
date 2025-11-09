@@ -1,32 +1,15 @@
-import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Col,
-  Divider,
-  Form,
-  Input,
-  Modal,
-  notification,
-  Row,
-  Timeline,
-  Typography,
-} from "antd";
-import {
-  useChangeOrderStatusMutation,
-  useLazyGetOrderQuery,
-} from "../store/reducers/backend/backend.api";
-import { useAppSelector } from "../hooks/useAppSelector";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { ButtonBack } from "../components/buttonBack.component";
-import {
-  OrderStatusEnum,
-  UserRoleEnum,
-} from "../store/reducers/backend/backend.api.types";
-import { COLORS, ROUTES } from "../configs/app.constants";
-import { SizeType } from "antd/es/config-provider/SizeContext";
-import { useModalSupport } from "../components/modalSupport.component";
+import React, {useEffect, useState} from "react";
+import {Button, Col, Divider, Form, Input, Modal, notification, Row, Timeline, Typography,} from "antd";
+import {useChangeOrderStatusMutation, useLazyGetOrderQuery,} from "../store/reducers/backend/backend.api";
+import {useAppSelector} from "../hooks/useAppSelector";
+import {useNavigate, useParams} from "react-router-dom";
+import {ButtonBack} from "../components/buttonBack.component";
+import {OrderStatusEnum, UserRoleEnum,} from "../store/reducers/backend/backend.api.types";
+import {COLORS, ROUTES} from "../configs/app.constants";
+import {SizeType} from "antd/es/config-provider/SizeContext";
+import {useModalSupport} from "../components/modalSupport.component";
 import moment from "moment";
-import { Preloader } from "../components/preloader.component";
+import {Preloader} from "../components/preloader.component";
 
 export function OrderScreen() {
   const { orderId } = useParams();
@@ -80,13 +63,13 @@ export function OrderScreen() {
     Math.round(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-ignore
-      (((new Date(updatedAt) - new Date()) % 86400000) % 3600000) / 60000
+      (((new Date() - new Date(updatedAt)) % 86400000) % 3600000) / 60000
     ) > 15;
   console.log(
     Math.round(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-ignore
-      (((new Date(updatedAt) - new Date()) % 86400000) % 3600000) / 60000
+      (((new Date() - new Date(updatedAt)) % 86400000) % 3600000) / 60000
     )
   );
   const customerOrCourierInfo = courier || customer;
@@ -426,7 +409,7 @@ const TimeLineOrderScreenItem = ({
           <Typography.Paragraph style={{ marginBottom: 0, marginLeft: 40 }}>
             {`from ${moment(timeRangeFrom).format("h A")} to ${moment(
               timeRangeTo
-            ).format("HH:MM A")}`}
+            ).format("h A")}`}
           </Typography.Paragraph>
         </Row>
       </Row>

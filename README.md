@@ -1,46 +1,206 @@
-# Getting Started with Create React App
+# Express Delivery Service in New York
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern web application for on-demand delivery services in New York City, connecting customers who need packages delivered with couriers who can fulfill those deliveries.
 
-## Available Scripts
+🔗 **Live Demo:** [https://1kurochkin.github.io/delivery_frontend](https://1kurochkin.github.io/delivery_frontend)
 
-In the project directory, you can run:
+## 🧪 Test Account
 
-### `npm start`
+Use the following credentials to test the application:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- **Phone Number:** `19168918139`
+- **Verification Code:** `123456`
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+You can register as either:
+- **Customer** - To create and manage delivery orders
+- **Courier** - To accept and fulfill delivery orders
 
-### `npm test`
+## 👥 User Roles
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Customer Role
+1. Create delivery orders by specifying pickup and delivery locations
+2. Set package details (type, weight, price)
+3. Choose delivery method and payment type
+4. Track order status in real-time
+5. View order history
+6. Update profile information
 
-### `npm run build`
+### Courier Role
+1. Browse available delivery orders
+2. View order details including route and payment
+3. Accept orders to fulfill
+4. Mark orders as completed
+5. Manage wallet and view earnings
+6. Top up balance via BTC Pay
+7. View transaction history
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 📋 Table of Contents
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- [Overview](#overview)
+- [Main Features](#main-features)
+- [Technology Stack](#technology-stack)
+- [Getting Started](#getting-started)
+- [Test Account](#test-account)
+- [User Roles](#user-roles)
+- [Available Scripts](#available-scripts)
+- [Project Structure](#project-structure)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 🎯 Overview
 
-### `npm run eject`
+delivery_frontend is a Progressive Web App (PWA) that facilitates express delivery services across New York City's five boroughs (Manhattan, Brooklyn, Queens, Bronx, and Staten Island). The platform supports two types of users: customers who need deliveries and couriers who fulfill them.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## ✨ Main Features
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### For Customers
+- **Quick Order Creation**: Enter pickup and delivery addresses with Google Places autocomplete
+- **Flexible Scheduling**: Choose specific dates and time windows for pickup and delivery
+- **Multiple Delivery Methods**: Walking, car, or truck delivery options
+- **Real-time Price Calculation**: Automatic pricing based on distance and delivery type
+- **Order Management**: Track orders through various statuses (Available, Active, Completed, Canceled)
+- **Multiple Payment Options**:
+    - Sender pays by cash
+    - Recipient pays by cash
+    - Payment via bank apps
+- **Order History**: View all past and current orders
+- **Profile Management**: Update personal information and preferences
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### For Couriers
+- **Order Marketplace**: Browse available delivery orders
+- **Wallet System**: Track earnings and balance
+- **BTC Pay Integration**: Top up balance securely
+- **Order Acceptance**: Accept orders that fit your schedule and route
+- **Route Planning**: Direct Google Maps integration for navigation
+- **Transaction History**: View payment history and invoices
+- **Earnings Tracking**: Monitor active balance and held funds
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### General Features
+- **Mobile-First Design**: Responsive design optimized for mobile devices
+- **PWA Support**: Install as a native app on iOS and Android
+- **Phone Authentication**: Secure SMS-based verification
+- **Real-time Updates**: Live order status tracking
+- **Customer Support**: Built-in contact form
+- **FAQ Pages**: Separate guides for customers and couriers
+- **Privacy & Terms**: Complete legal documentation
 
-## Learn More
+## 🛠 Technology Stack
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Frontend
+- **React 18.2** - UI framework
+- **TypeScript** - Type safety
+- **Redux Toolkit** - State management
+- **RTK Query** - Data fetching and caching
+- **React Router 6** - Navigation
+- **Ant Design 4** - UI component library
+- **Google Maps API** - Location services and autocomplete
+- **Moment.js** - Date/time handling
+- **Service Workers** - PWA functionality
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Build Tools
+- **Create React App** - Project scaffolding
+- **LESS** - CSS preprocessing
+- **Workbox** - Service worker generation
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js (v16 or higher)
+- npm or yarn
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/1kurochkin/delivery_frontend.git
+
+# Navigate to project directory
+cd delivery_frontend
+
+# Install dependencies
+npm install
+
+# Start development server
+npm start
+```
+
+The app will open at [http://localhost:3000](http://localhost:3000)
+
+### Build for Production
+
+```bash
+# Create optimized production build
+npm run build
+```
+
+## 📜 Available Scripts
+
+```bash
+# Start development server
+npm start
+
+# Build for production
+npm run build
+
+# Run tests
+npm test
+
+# Eject from Create React App (one-way operation)
+npm run eject
+
+# Run linting
+npm run lint
+
+# Generate theme from LESS
+npm run generate:theme
+```
+
+## 📁 Project Structure
+
+```
+src/
+├── assets/          # Images, fonts, SVGs
+├── components/      # Reusable UI components
+├── configs/         # App configuration and constants
+├── hooks/           # Custom React hooks
+├── routes/          # Route definitions
+├── screens/         # Page components
+├── store/           # Redux store configuration
+│   └── reducers/    # Redux slices and API endpoints
+├── styles/          # Global styles (LESS)
+└── App.tsx          # Root component
+```
+
+## 🔑 Key Dependencies
+
+- `@reduxjs/toolkit` - State management
+- `antd` - UI components
+- `react-router-dom` - Routing
+- `use-places-autocomplete` - Google Places integration
+- `moment` - Date manipulation
+- `js-cookie` - Cookie management
+- `workbox-*` - PWA capabilities
+
+## 🌍 Supported Areas
+
+The service currently operates in:
+- Manhattan
+- Brooklyn
+- Queens
+- Bronx
+- Staten Island
+
+## 📱 PWA Features
+
+- **Installable**: Add to home screen on iOS and Android
+- **Offline Support**: Service worker caching
+- **Push Notifications**: Real-time order updates
+- **App-like Experience**: Full-screen mode on mobile
+
+## 🆘 Support
+
+For questions or issues, contact: **contact@ikurochkin.com**
+
+## 📝 License
+
+This project is private and proprietary.
+
+---

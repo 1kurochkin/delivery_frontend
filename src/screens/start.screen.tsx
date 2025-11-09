@@ -1,11 +1,11 @@
-import { Button, Col, Form, Row, Space, Typography, Image } from "antd";
-import { useForm } from "antd/es/form/Form";
-import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { SearchPlaces } from "../components/searchPlaces.component";
-import { ROUTES } from "../configs/app.constants";
-import { VALIDATION_CONFIG } from "../configs/validation.config";
-import { UserRoleEnum } from "../store/reducers/backend/backend.api.types";
+import {Button, Col, Form, Row, Space, Typography} from "antd";
+import {useForm} from "antd/es/form/Form";
+import {useEffect} from "react";
+import {Link, useNavigate} from "react-router-dom";
+import {ROUTES} from "../configs/app.constants";
+import {UserRoleEnum} from "../store/reducers/backend/backend.api.types";
+import {SearchPlaces} from "../components/searchPlaces.component";
+import {VALIDATION_CONFIG} from "../configs/validation.config";
 
 export function StartScreen() {
   const [orderForm] = useForm();
@@ -36,7 +36,7 @@ export function StartScreen() {
   ];
 
   const loginButtonsView = [
-    // {userRole: UserRoleEnum.Courier, label: ' courier'},
+    {userRole: UserRoleEnum.Courier, label: ' courier'},
     { userRole: UserRoleEnum.Customer, label: " customer" },
   ];
 
@@ -46,7 +46,7 @@ export function StartScreen() {
       form={orderForm}
       onFinish={onFinishFormHandler}
     >
-      <Space direction={"vertical"} size={"large"}>
+      <Space style={{gap: 60}} direction={"vertical"} size={"large"}>
         <Row style={{ marginBottom: 10 }}>
           <Typography.Title>
             Express Delivery
@@ -54,7 +54,8 @@ export function StartScreen() {
             Service
           </Typography.Title>
         </Row>
-        {/* <Row style={{marginBottom: 20}}>
+
+        <Row style={{marginBottom: 20}}>
                     {orderFormInputsView.map(({label, placeholder, name}) =>
                         <Form.Item style={{width: '100%'}} rules={VALIDATION_CONFIG.address}
                                    colon={false}
@@ -65,7 +66,7 @@ export function StartScreen() {
                         </Form.Item>
                     )}
                     <Button size={"large"} style={{marginTop: 20}} htmlType={'submit'}>Create order</Button>
-                </Row> */}
+                </Row>
         <Row justify={"space-between"}>
           {loginButtonsView.map(({ userRole, label }, index) => (
             <Col offset={index} span={index === 0 ? 11 : 12}>

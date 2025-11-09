@@ -32,7 +32,7 @@ const OrderCardTimelineItem = ({
           {moment(timeRangeTo).format("h A")}
         </span>
       </Typography.Paragraph>
-      <span className={"font-bold"}>{address}</span>
+      <span className={"font-bold"}>{address.substr(0, address?.length - 5)}</span>
     </>
   );
 };

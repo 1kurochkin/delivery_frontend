@@ -25,10 +25,10 @@ export function LoginScreen() {
   const { userRole: role } = useParams();
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => window.scrollTo(0, 0), 300) 
+    const timeoutId = setTimeout(() => window.scrollTo(0, 0), 300)
     return () => clearTimeout(timeoutId)
   }, [])
-  
+
   const carouselRef = useRef<CarouselRef>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   //----REQUESTS----//
