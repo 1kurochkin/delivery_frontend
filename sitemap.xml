@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
-  <loc>https://bringa.me/login</loc>
-  <loc>https://bringa.me/order/create</loc>
-  <loc>https://bringa.me/order/update</loc>
-  <loc>https://bringa.me/order/list</loc>
-  <loc>https://bringa.me/order</loc>
-  <loc>https://bringa.me/settings</loc>
-  <loc>https://bringa.me/</loc>
-  <loc>https://bringa.me/courierFaq</loc>
-  <loc>https://bringa.me/customerFaq</loc>
-  <loc>https://bringa.me/termsAndConditions</loc>
-  <loc>https://bringa.me/privacyPolicy</loc>
-  <loc>https://bringa.me/checkout</loc>
-  <lastmod>2025-11-09T22:16:25.723Z</lastmod>
+  <loc>https://deliverybackend-production-300a.up.railway.app/login</loc>
+  <loc>https://deliverybackend-production-300a.up.railway.app/order/create</loc>
+  <loc>https://deliverybackend-production-300a.up.railway.app/order/update</loc>
+  <loc>https://deliverybackend-production-300a.up.railway.app/order/list</loc>
+  <loc>https://deliverybackend-production-300a.up.railway.app/order</loc>
+  <loc>https://deliverybackend-production-300a.up.railway.app/settings</loc>
+  <loc>https://deliverybackend-production-300a.up.railway.app/</loc>
+  <loc>https://deliverybackend-production-300a.up.railway.app/courierFaq</loc>
+  <loc>https://deliverybackend-production-300a.up.railway.app/customerFaq</loc>
+  <loc>https://deliverybackend-production-300a.up.railway.app/termsAndConditions</loc>
+  <loc>https://deliverybackend-production-300a.up.railway.app/privacyPolicy</loc>
+  <loc>https://deliverybackend-production-300a.up.railway.app/checkout</loc>
+  <lastmod>2025-11-09T22:19:00.584Z</lastmod>
 </url>
 </urlset>
