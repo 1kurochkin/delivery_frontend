@@ -1,4 +1,3 @@
-import appConfig from '../configs/app.config'
 import {ROUTES} from '../configs/app.constants'
 // @ts-ignore
 const fs = require('fs');
@@ -7,7 +6,7 @@ const path = require('path');
 const routes = Object.values(ROUTES).map((route) => {
     // console.log(appConfig.urls.prod)
  // @ts-ignore
-    return `  <loc>${appConfig.api.url}${typeof route === 'object' ? route?.PATH : route}</loc>\r`
+    return `  <loc>https://1kurochkin.github.io/delivery_frontend${typeof route === 'object' ? route?.PATH : route}</loc>\r`
 });
 const newSitemapXml = [
     '<?xml version="1.0" encoding="UTF-8"?>\r',
